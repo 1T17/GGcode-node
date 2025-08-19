@@ -1,0 +1,31 @@
+{
+  "language": "en",
+  "sections": {
+    "basics": {
+      "title": "GGcode Basics",
+      "content": [
+        {
+          "type": "text",
+          "value": "GGcode is a high-level language for CNC programming."
+        },
+        {
+          "type": "code",
+          "value": "G0 X10 Y10\nG1 X20 Y20"
+        }
+      ]
+    },
+    "variables": {
+      "title": "Variables",
+      "content": [
+        {
+          "type": "text", 
+          "value": "Variables can be defined and used in GGcode."
+        },
+        {
+          "type": "code",
+          "value": "var speed = 1000\nG1 F{speed} X10 Y10"
+        }
+      ]
+    }
+  }
+}

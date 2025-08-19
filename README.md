@@ -470,16 +470,6 @@ Common issues and solutions:
 - **Discussions**: GitHub Discussions for questions
 - **Documentation**: In-app help system
 
-## 🗺️ Roadmap
-
-### Upcoming Features
-
-- [ ] Real-time collaboration
-- [ ] Cloud storage integration
-- [ ] Advanced 3D visualization
-- [ ] Plugin system
-- [ ] Mobile responsive design
-- [ ] Offline mode support
 
 ### Version History
 
@@ -487,5 +477,3 @@ Common issues and solutions:
 - **v0.9.x**: Legacy monolithic structure
 
 ---
-
-**Built with ❤️ by the GGcode Development Team**

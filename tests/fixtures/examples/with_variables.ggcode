@@ -1,0 +1,12 @@
+// GGcode with variables for testing
+var speed = 1000
+var depth = -2.5
+
+G0 Z5
+G0 X0 Y0
+G1 Z{depth} F{speed/2}
+G1 X10 Y0 F{speed}
+G1 X10 Y10
+G1 X0 Y10
+G1 X0 Y0
+G0 Z5

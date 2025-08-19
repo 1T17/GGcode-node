@@ -1,0 +1,142 @@
+<form id="ggform" action="/compile" method="POST" onsubmit="return submitGGcode(event)">
+  <!-- Editor and Output -->
+  <div class="main-content">
+    <div class="left-panel">
+      <div id="editor"></div>
+    </div>
+    <div class="right-panel">
+      <div id="output"></div>
+
+      <div id="annotations-container">
+        <div class="ann-toolbar">
+          <div id="ann-toggle" class="ann-toggle" aria-label="Toggle annotations" aria-expanded="true">
+            <!-- chevron (white via currentColor) -->
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+        <div id="annotations"></div>
+      </div>
+    </div>
+  </div>
+
+  <textarea name="ggcode" id="ggcode" style="display:none;"><%= input %></textarea>
+
+  <!-- Bottom Control Bar -->
+  <div class="control-bar">
+    <div class="control-left">
+      <div class="button-group">
+        <!-- Compile -->
+        <button type="submit" title="Compile GGcode">
+          <svg width="14" height="14" fill="#d38a2c" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 16h16V0H0zm2-2V2h12v12zm4-3 5-3-5-3z" fill-rule="evenodd" />
+          </svg>
+          <div style="color: #d38a2c;">Compile</div>
+        </button>
+        <div class="separator"></div>
+
+        <!-- Configurator -->
+        <button type="button" onclick="showConfigurator()" title="Open Configurator" id="configuratorBtn">
+          <svg width="14" height="14" fill="#2c90d3" viewBox="1 1 23 23" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M20.1 9.221c-1.81 0-2.55-1.28-1.65-2.85.52-.91.21-2.07-.7-2.59l-1.73-.99c-.79-.47-1.81-.19-2.28.6l-.11.19c-.9 1.57-2.38 1.57-3.29 0l-.11-.19a1.64 1.64 0 0 0-2.26-.6l-1.73.99c-.91.52-1.22 1.69-.7 2.6.91 1.56.17 2.84-1.64 2.84-1.04 0-1.9.85-1.9 1.9v1.76c0 1.04.85 1.9 1.9 1.9 1.81 0 2.55 1.28 1.64 2.85-.52.91-.21 2.07.7 2.59l1.73.99c.79.47 1.81.19 2.28-.6l.11-.19c.9-1.57 2.38-1.57 3.29 0l.11.19c.47.79 1.49 1.07 2.28.6l1.73-.99c.91-.52 1.22-1.69.7-2.59-.91-1.57-.17-2.85 1.64-2.85 1.04 0 1.9-.85 1.9-1.9v-1.76a1.92 1.92 0 0 0-1.91-1.9m-8.1 6.03c-1.79 0-3.25-1.46-3.25-3.25s1.46-3.25 3.25-3.25 3.25 1.46 3.25 3.25-1.46 3.25-3.25 3.25" />
+          </svg>
+          <div style="color: #2c90d3;">Configurator</div>
+        </button>
+
+        <div class="separator"></div>
+
+        <!-- Open -->
+        <button type="button" id="openGGcodeBtn" title="Open GGcode file">
+          <svg width="14" height="14" fill="#ffffff" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 16h16V0H0zm2-4V2h12v10zm2-2h2V8H4zm6 0h2V8h-2z" fill-rule="evenodd" />
+          </svg>
+          Open
+        </button>
+
+        <div class="separator"></div>
+
+        <!-- Examples -->
+        <button type="button" onclick="showExamples()" title="Load example files">
+          <svg width="14" height="14" fill="#d32cc5" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+            <path d="m0 10 8 4 8-4v2l-8 4-8-4zm0-4 8 4 8-4v2l-8 4-8-4zm8-6 8 4-8 4-8-4z" fill-rule="evenodd" />
+          </svg>
+          <div style="color: #d32cc5;">Examples</div>
+        </button>
+
+        <div class="separator"></div>
+
+        <!-- Save -->
+        <button type="button" onclick="saveGGcode()" title="Save GGcode input to file">
+          <svg width="14" height="14" fill="#3ad32c" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+            <path d="M11 14v-4H5v4H3V8h10v6zh3V2H4v4h8V2h-2v2H6V2H2v12h3zM0 0h16v16H0z" fill-rule="evenodd" />
+          </svg>
+          <div style="color: #3ad32c;">Save</div>
+        </button>
+      </div>
+    </div>
+
+    <div class="control-right">
+      <div class="gcode-group">
+        <!-- Copy -->
+        <button type="button" onclick="copyOutput()" title="Copy output G-code">
+          <svg width="14" height="14" fill="#ffffff" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14 12V2H4V0h12v12zM0 4h12v12H0zm2 2v8h8V6z" fill-rule="evenodd" />
+          </svg>
+          Copy
+        </button>
+
+        <div class="separator"></div>
+
+        <!-- Visualizer -->
+        <button type="button" onclick="showGcodeViewer()" title="Open 3D G-code visualizer">
+          <svg width="14" height="14" fill="#d3b42c" viewBox="820 800 150 180" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M992.633 885.563c-9.229-13.025-43.469-55.521-96.634-55.521-53.167 0-87.404 42.496-96.631 55.52-4.49 6.339-4.491 14.533-.001 20.877 9.228 13.024 43.471 55.52 96.632 55.52 53.176 0 87.406-42.495 96.63-55.518 4.494-6.339 4.494-14.534.004-20.878m-139.105-19.592a45.2 45.2 0 0 1 7.564-13.338 19.47 19.47 0 0 1 9.397-6.301c7.865-2.413 16.378-3.863 25.509-3.863s17.645 1.45 25.508 3.863a19.54 19.54 0 0 1 9.397 6.3 45.1 45.1 0 0 1 7.564 13.339 45 45 0 0 1 2.626 15.204c0 24.864-20.229 45.093-45.096 45.093s-45.096-20.229-45.096-45.093a45 45 0 0 1 2.627-15.204m128.962 33.285c-8.354 11.794-39.279 50.276-86.491 50.276-47.2 0-78.136-38.483-86.491-50.274-1.423-2.01-1.423-4.506 0-6.512 4.573-6.456 15.922-20.899 32.989-32.658-.224.563-.461 1.122-.667 1.692a57.4 57.4 0 0 0-3.353 19.395c0 31.716 25.805 57.519 57.522 57.519 31.718 0 57.522-25.803 57.522-57.519a57.4 57.4 0 0 0-3.354-19.396c-.205-.569-.443-1.128-.666-1.691 17.066 11.759 28.417 26.204 32.99 32.658 1.423 2.008 1.423 4.501-.001 6.51" />
+            <path
+              d="M896.204 912.338c17.025 0 30.825-13.801 30.825-30.825 0-17.022-13.8-30.825-30.825-30.825a30.7 30.7 0 0 0-13.521 3.121c6.785.541 12.12 6.201 12.12 13.123 0 7.276-5.899 13.178-13.18 13.178-6.919 0-12.581-5.338-13.123-12.115a30.7 30.7 0 0 0-3.12 13.519c-.001 17.023 13.802 30.824 30.824 30.824" />
+          </svg>
+          <div style="color: #d3b42c;">Visualizer</div>
+        </button>
+
+        <div class="separator"></div>
+
+        <!-- Export -->
+        <button type="button" onclick="saveOutput()" title="Save output G-code to file">
+          <svg width="14" height="14" fill="#3ad32c" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14 3.5 8.5 9 7 7.5 12.5 2H10V0h6v6h-2zM6 0v2H2v12h12v-4h2v6H0V0z" fill-rule="evenodd" />
+          </svg>
+          <div style="color: #3ad32c;">Export</div>
+        </button>
+      </div>
+
+      <div class="utility-group">
+        <!-- Help -->
+        <button type="button" onclick="showHelp()" title="Show help and documentation">
+          <svg width="14" height="14" fill="#2cd3b7" viewBox="10 10 420 420" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M213.333 0c117.82 0 213.334 95.512 213.334 213.333 0 117.82-95.513 213.334-213.334 213.334C95.513 426.667 0 331.154 0 213.333S95.513 0 213.333 0m0 282.667c-14.729 0-26.668 11.938-26.668 26.666S198.605 336 213.332 336 240 324.061 240 309.333s-11.94-26.666-26.667-26.666m-3.56-189.332c-20.765 0-38.218 5.657-52.338 16.94-16.732 13.516-25.091 33.476-25.091 59.898h45.362v-.304c0-10.081 2.123-18.35 6.36-24.8 5.845-8.67 15.327-13.01 28.435-13.01 8.067 0 14.933 2.118 20.57 6.346 7.054 5.858 10.593 14.725 10.593 26.624 0 7.463-1.824 14.114-5.45 19.966-3.025 5.242-7.864 10.38-14.528 15.425-14.114 9.679-23.292 19.26-27.52 28.743-3.631 7.864-5.455 20.367-5.455 37.504h42.665c0-11.296 1.501-19.76 4.54-25.41 2.416-4.638 7.463-9.575 15.127-14.822 13.315-9.885 22.785-19.064 28.436-27.534 6.853-10.08 10.288-21.881 10.288-35.397 0-28.01-11.392-47.878-34.195-59.58-13.706-7.056-29.638-10.59-47.799-10.59" />
+          </svg>
+          <div style="color: #2cd3b7;">Help</div>
+        </button>
+
+        <!-- Clear -->
+        <button type="button" onclick="clearMemory()" title="Clear saved content and settings">
+          <svg width="14" height="14" fill="#d32c2c" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M0 14.545 1.455 16 8 9.455 14.545 16 16 14.545 9.455 8 16 1.455 14.545 0 8 6.545 1.455 0 0 1.455 6.545 8z"
+              fill-rule="evenodd" />
+          </svg>
+          <div style="color: #d32c2c;">Clear</div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <input type="file" id="ggcodeFileInput" accept=".ggcode,.txt" style="display:none;" />
+</form>
+
+<%- include('../partials/modals') %>
+<%- include('../partials/viewer') %>

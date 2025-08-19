@@ -1,0 +1,95 @@
+{
+  "name": "ggcode-compiler",
+  "version": "1.0.0",
+  "description": "GGcode Compiler - A web-based compiler for GGcode to G-code conversion",
+  "main": "src/server/index.js",
+  "scripts": {
+    "start": "NODE_ENV=production node src/server/index.js",
+    "dev": "NODE_ENV=development node --inspect src/server/index.js",
+    "dev:watch": "NODE_ENV=development nodemon --inspect src/server/index.js",
+    "prod": "NODE_ENV=production node src/server/index.js",
+    "test": "NODE_ENV=test jest",
+    "test:watch": "NODE_ENV=test jest --watch",
+    "test:coverage": "NODE_ENV=test jest --coverage",
+    "lint": "eslint src/ --ext .js",
+    "lint:fix": "eslint src/ --ext .js --fix",
+    "format": "prettier --write \"src/**/*.js\"",
+    "format:check": "prettier --check \"src/**/*.js\"",
+    "build": "npm run lint && npm run test",
+    "build:prod": "npm run lint && npm run test && npm run format:check",
+    "clean": "rm -rf coverage/ .nyc_output/",
+    "health-check": "curl -f http://localhost:6990/api/health || exit 1",
+    "setup": "./scripts/setup-hooks.sh",
+    "maintenance:health": "./scripts/check-project-health.sh",
+    "maintenance:deps": "./scripts/update-dependencies.sh",
+    "maintenance:docs": "./scripts/generate-docs.sh",
+    "maintenance:all": "npm run maintenance:health && npm run maintenance:deps && npm run maintenance:docs",
+    "update-structure": "node scripts/update-readme-structure.js",
+    "update-changelog": "node scripts/update-changelog.js",
+    "commit": "./scripts/smart-commit.sh",
+    "com": "./scripts/smart-commit.sh"
+  },
+  "keywords": [
+    "ggcode",
+    "gcode",
+    "compiler",
+    "cnc",
+    "manufacturing",
+    "web-app"
+  ],
+  "author": "GGcode Development Team",
+  "license": "ISC",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-rate-limit": "^8.0.1",
+    "ffi-napi": "^4.0.3",
+    "ref-napi": "^3.0.3",
+    "three": "^0.178.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^30.0.5",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.6.2",
+    "supertest": "^6.3.4"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/setup.js"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/**/*.test.js",
+      "!src/**/index.js"
+    ],
+    "coverageDirectory": "coverage",
+    "coverageReporters": [
+      "text",
+      "lcov",
+      "html"
+    ],
+    "testMatch": [
+      "**/tests/**/*.test.js",
+      "**/__tests__/**/*.js"
+    ],
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1",
+      "^@tests/(.*)$": "<rootDir>/tests/$1"
+    }
+  },
+  "prettier": {
+    "semi": true,
+    "trailingComma": "es5",
+    "singleQuote": true,
+    "printWidth": 80,
+    "tabWidth": 2
+  }
+}

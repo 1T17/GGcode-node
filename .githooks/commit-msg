@@ -1,0 +1,67 @@
+#!/bin/bash
+
+# Commit message hook for GGcode Compiler
+# Ensures commit messages follow conventional commit format
+
+set -e
+
+COMMIT_MSG_FILE=$1
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+# Skip merge commits
+if echo "$COMMIT_MSG" | grep -q "^Merge"; then
+    exit 0
+fi
+
+# Skip revert commits
+if echo "$COMMIT_MSG" | grep -q "^Revert"; then
+    exit 0
+fi
+
+# Check conventional commit format
+CONVENTIONAL_COMMIT_REGEX="^(feat|fix|docs|style|refactor|test|chore|perf|ci|build)(\(.+\))?: .{1,50}"
+
+if ! echo "$COMMIT_MSG" | grep -qE "$CONVENTIONAL_COMMIT_REGEX"; then
+    echo "❌ Invalid commit message format!"
+    echo ""
+    echo "Commit messages must follow the Conventional Commits format:"
+    echo "  <type>[optional scope]: <description>"
+    echo ""
+    echo "Types:"
+    echo "  feat:     A new feature"
+    echo "  fix:      A bug fix"
+    echo "  docs:     Documentation only changes"
+    echo "  style:    Changes that do not affect the meaning of the code"
+    echo "  refactor: A code change that neither fixes a bug nor adds a feature"
+    echo "  test:     Adding missing tests or correcting existing tests"
+    echo "  chore:    Changes to the build process or auxiliary tools"
+    echo "  perf:     A code change that improves performance"
+    echo "  ci:       Changes to CI configuration files and scripts"
+    echo "  build:    Changes that affect the build system or external dependencies"
+    echo ""
+    echo "Examples:"
+    echo "  feat(api): add new compilation endpoint"
+    echo "  fix(editor): resolve syntax highlighting issue"
+    echo "  docs(readme): update installation instructions"
+    echo "  test(compiler): add unit tests for validation"
+    echo ""
+    echo "Your commit message:"
+    echo "  $COMMIT_MSG"
+    echo ""
+    exit 1
+fi
+
+# Check commit message length
+FIRST_LINE=$(echo "$COMMIT_MSG" | head -n1)
+if [ ${#FIRST_LINE} -gt 72 ]; then
+    echo "⚠️  Commit message first line is longer than 72 characters (${#FIRST_LINE})"
+    echo "Consider shortening the description or moving details to the body."
+fi
+
+# Check for imperative mood (basic check)
+if echo "$FIRST_LINE" | grep -qE "(added|fixed|updated|changed|removed)"; then
+    echo "⚠️  Consider using imperative mood (add, fix, update, change, remove)"
+    echo "Example: 'fix bug' instead of 'fixed bug'"
+fi
+
+echo "✅ Commit message format is valid"

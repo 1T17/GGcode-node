@@ -1,0 +1,184 @@
+/* UI Components styles */
+
+/* Control Bar */
+.control-bar {
+  background: #252526;
+  border-top: 1px solid #3c3c3c;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.control-bar button {
+  background: transparent;
+  color: #cccccc;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 400;
+  transition: background-color 0.1s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 70px;
+  justify-content: center;
+}
+
+.control-bar button:hover {
+  background: #2a2d2e;
+  color: #ffffff;
+}
+
+.control-bar button:active {
+  background: #37373d;
+}
+
+.control-bar button.primary {
+  color: #ffffff;
+}
+
+.control-bar button.primary:hover {
+  background: #7a7a7a23;
+  color: #ffffff;
+}
+
+.control-bar button.danger {
+  color: #ffffff;
+}
+
+.control-bar button.danger:hover {
+  background: #7070705d;
+  color: #ffffff;
+}
+
+.control-bar button.success {
+  color: #ffffff;
+}
+
+.control-bar button.success:hover {
+  background: #7272723a;
+  color: #ffffff;
+}
+
+.control-bar .toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.control-bar .toggle-container input[type="checkbox"] {
+  width: 12px;
+  height: 12px;
+  accent-color: #007acc;
+  margin: 0;
+}
+
+.control-bar .separator {
+  width: 1px;
+  height: 20px;
+  background: #3c3c3c;
+  margin: 0 6px;
+}
+
+.control-bar .spacer {
+  flex: 1;
+}
+
+.control-bar .button-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.control-bar .group-label {
+  color: #8c8c8c;
+  font-size: 16px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-right: 4px;
+}
+
+.control-left,
+.control-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.control-right {
+  background-color: #6666663b;
+  padding-left: 7px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  position: relative;
+}
+
+.control-right .gcode-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.control-right .utility-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* G-code Header */
+.gcode-header {
+  background: #252526;
+  border-bottom: 1px solid #3c3c3c;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: static;
+  width: 100%;
+  z-index: 1;
+  flex: 0 0 auto;
+}
+
+.gcode-title {
+  color: #cccccc;
+  font-size: 12px;
+  font-weight: 500;
+  margin-right: auto;
+}
+
+.gcode-header button {
+  background: transparent;
+  color: #cccccc;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 400;
+  transition: background-color 0.1s ease;
+}
+
+.gcode-header button:hover {
+  background: #2a2d2e;
+  color: #ffffff;
+}
+
+.gcode-header button:last-child {
+  color: #365235;
+}
+
+.gcode-header button:last-child:hover {
+  background: #8585853d;
+  color: #ffffff;
+}

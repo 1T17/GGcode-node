@@ -1,0 +1,65 @@
+#!/bin/bash
+
+# Post-commit hook for GGcode Compiler
+# Performs maintenance tasks after successful commits
+
+set -e
+
+COMMIT_HASH=$(git rev-parse HEAD)
+COMMIT_MSG=$(git log -1 --pretty=%B)
+BRANCH_NAME=$(git branch --show-current)
+
+echo "📝 Post-commit maintenance for $COMMIT_HASH"
+
+# 1. Update CHANGELOG.md for version tags
+if git describe --exact-match --tags HEAD >/dev/null 2>&1; then
+    VERSION_TAG=$(git describe --exact-match --tags HEAD)
+    echo "🏷️  Version tag detected: $VERSION_TAG"
+    
+    # Check if CHANGELOG.md needs updating
+    if ! grep -q "$VERSION_TAG" CHANGELOG.md 2>/dev/null; then
+        echo "⚠️  Consider updating CHANGELOG.md for version $VERSION_TAG"
+    fi
+fi
+
+# 2. Check for documentation updates needed
+CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r HEAD)
+
+# Check if source files changed but docs didn't
+SRC_CHANGED=$(echo "$CHANGED_FILES" | grep -E '^src/' | wc -l)
+DOCS_CHANGED=$(echo "$CHANGED_FILES" | grep -E '^(docs/|README\.md|CONTRIBUTING\.md)' | wc -l)
+
+if [ "$SRC_CHANGED" -gt 0 ] && [ "$DOCS_CHANGED" -eq 0 ]; then
+    echo "📚 Source files changed but no documentation updated"
+    echo "Consider updating relevant documentation:"
+    echo "$CHANGED_FILES" | grep -E '^src/' | head -5
+fi
+
+# 3. Check for new dependencies
+if echo "$CHANGED_FILES" | grep -q "package.json"; then
+    echo "📦 package.json changed - checking for new dependencies"
+    
+    # Check if package-lock.json was also updated
+    if ! echo "$CHANGED_FILES" | grep -q "package-lock.json"; then
+        echo "⚠️  package.json changed but package-lock.json wasn't updated"
+        echo "Run 'npm install' to update the lock file"
+    fi
+    
+    # Security audit reminder
+    echo "💡 Consider running 'npm audit' to check for vulnerabilities"
+fi
+
+# 4. Performance reminder for large commits
+FILE_COUNT=$(echo "$CHANGED_FILES" | wc -l)
+if [ "$FILE_COUNT" -gt 10 ]; then
+    echo "📊 Large commit detected ($FILE_COUNT files changed)"
+    echo "Consider running performance tests if significant changes were made"
+fi
+
+# 5. Backup reminder for important branches
+if [ "$BRANCH_NAME" = "main" ] || [ "$BRANCH_NAME" = "master" ]; then
+    echo "🔒 Commit to main branch detected"
+    echo "Ensure CI/CD pipeline will handle deployment properly"
+fi
+
+echo "✅ Post-commit maintenance completed"

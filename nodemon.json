@@ -1,0 +1,10 @@
+{
+  "watch": ["src/"],
+  "ext": "js,json,ejs",
+  "ignore": ["src/**/*.test.js", "node_modules/"],
+  "exec": "node --inspect src/server/index.js",
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "delay": "1000"
+}

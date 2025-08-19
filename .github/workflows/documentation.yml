@@ -1,0 +1,242 @@
+name: Documentation
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'docs/**'
+      - 'README.md'
+      - 'CONTRIBUTING.md'
+      - 'CHANGELOG.md'
+      - 'src/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'docs/**'
+      - 'README.md'
+      - 'CONTRIBUTING.md'
+      - 'CHANGELOG.md'
+      - 'src/**'
+
+jobs:
+  validate-docs:
+    name: Validate Documentation
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        
+    - name: Check documentation structure
+      run: |
+        echo "📚 Checking documentation structure..."
+        
+        # Required documentation files
+        required_files=(
+          "README.md"
+          "CHANGELOG.md" 
+          "CONTRIBUTING.md"
+          "docs/ARCHITECTURE.md"
+          "docs/DEPLOYMENT.md"
+          "docs/PROJECT_STRUCTURE.md"
+        )
+        
+        missing_files=()
+        for file in "${required_files[@]}"; do
+          if [ ! -f "$file" ]; then
+            missing_files+=("$file")
+          fi
+        done
+        
+        if [ ${#missing_files[@]} -ne 0 ]; then
+          echo "❌ Missing required documentation files:"
+          printf '%s\n' "${missing_files[@]}"
+          exit 1
+        fi
+        
+        echo "✅ All required documentation files present"
+        
+    - name: Check documentation quality
+      run: |
+        echo "🔍 Checking documentation quality..."
+        
+        # Check for empty files
+        for file in docs/*.md README.md CONTRIBUTING.md CHANGELOG.md; do
+          if [ -f "$file" ] && [ ! -s "$file" ]; then
+            echo "❌ Empty documentation file: $file"
+            exit 1
+          fi
+        done
+        
+        # Check for basic content in README
+        if ! grep -q "# GGcode Compiler" README.md; then
+          echo "❌ README.md missing main title"
+          exit 1
+        fi
+        
+        if ! grep -q "## Installation" README.md; then
+          echo "⚠️  README.md missing Installation section"
+        fi
+        
+        if ! grep -q "## Usage" README.md; then
+          echo "⚠️  README.md missing Usage section"
+        fi
+        
+        echo "✅ Documentation quality checks passed"
+        
+    - name: Check for outdated documentation
+      run: |
+        echo "📅 Checking for potentially outdated documentation..."
+        
+        # Get last modification times
+        readme_time=$(git log -1 --format="%ct" -- README.md 2>/dev/null || echo "0")
+        src_time=$(git log -1 --format="%ct" -- src/ 2>/dev/null || echo "0")
+        
+        # If source code is newer than README by more than 30 days
+        time_diff=$((src_time - readme_time))
+        days_diff=$((time_diff / 86400))
+        
+        if [ "$days_diff" -gt 30 ]; then
+          echo "⚠️  README.md might be outdated (source code changed $days_diff days after README)"
+        fi
+        
+        # Check if package.json version matches CHANGELOG
+        if [ -f "package.json" ] && [ -f "CHANGELOG.md" ]; then
+          version=$(node -p "require('./package.json').version")
+          if ! grep -q "## \[$version\]" CHANGELOG.md; then
+            echo "⚠️  CHANGELOG.md missing entry for current version $version"
+          fi
+        fi
+
+  spell-check:
+    name: Spell Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Install aspell
+      run: sudo apt-get install -y aspell aspell-en
+      
+    - name: Create custom dictionary
+      run: |
+        cat > .aspell.en.pws << 'EOF'
+        personal_ws-1.1 en 50
+        GGcode
+        ggcode
+        gcode
+        API
+        APIs
+        CLI
+        npm
+        Node.js
+        JavaScript
+        TypeScript
+        ESLint
+        Prettier
+        Monaco
+        Three.js
+        WebGL
+        JSON
+        HTTP
+        HTTPS
+        SSL
+        TLS
+        Docker
+        nginx
+        PM2
+        systemd
+        Ubuntu
+        CentOS
+        macOS
+        Windows
+        GitHub
+        GitLab
+        CI/CD
+        README
+        CHANGELOG
+        middleware
+        webpack
+        babel
+        async
+        await
+        localhost
+        EOF
+        
+    - name: Spell check documentation
+      run: |
+        echo "📝 Running spell check on documentation..."
+        
+        # Check markdown files
+        for file in README.md CONTRIBUTING.md CHANGELOG.md docs/*.md; do
+          if [ -f "$file" ]; then
+            echo "Checking $file..."
+            
+            # Extract text content and check spelling
+            # Remove code blocks, URLs, and technical terms
+            cat "$file" | \
+              sed 's/```[^`]*```//g' | \
+              sed 's/`[^`]*`//g' | \
+              sed 's/http[s]\?:\/\/[^ ]*//g' | \
+              sed 's/\[[^\]]*\]([^)]*)//g' | \
+              aspell --personal=.aspell.en.pws --lang=en list | \
+              sort -u > "$file.misspelled"
+            
+            if [ -s "$file.misspelled" ]; then
+              echo "⚠️  Potential misspellings in $file:"
+              cat "$file.misspelled"
+            fi
+            
+            rm -f "$file.misspelled"
+          fi
+        done
+
+  generate-api-docs:
+    name: Generate API Documentation
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Generate JSDoc documentation
+      run: |
+        # Install JSDoc if not already installed
+        npm install -g jsdoc
+        
+        # Generate API documentation
+        mkdir -p docs/api
+        
+        jsdoc -c .jsdoc.json -d docs/api src/server/routes/*.js src/server/services/*.js
+        
+        echo "📖 API documentation generated in docs/api/"
+        
+    - name: Commit generated documentation
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        if [ -n "$(git status --porcelain docs/api/)" ]; then
+          git add docs/api/
+          git commit -m "docs: update generated API documentation"
+          git push
+          echo "✅ API documentation updated and committed"
+        else
+          echo "ℹ️  No changes to API documentation"
+        fi

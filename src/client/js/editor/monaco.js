@@ -3,6 +3,8 @@
  * Handles Monaco editor initialization, configuration, and management
  */
 
+import storageManager from '../utils/storageManager.js';
+
 class MonacoEditorManager {
   constructor() {
     this.editor = null;
@@ -34,16 +36,18 @@ class MonacoEditorManager {
       onAnnotationUpdate = null,
     } = options;
 
-    // Configure Monaco loader
-    require.config({
-      paths: {
-        vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs',
-      },
-    });
+    //console.log('MonacoEditorManager: Starting initialization...');
+    //console.log('Looking for containers:', { inputContainerId, outputContainerId });
 
+    // Check if DOM elements exist
+    //  const inputContainer = document.getElementById(inputContainerId);
+    //  const outputContainer = document.getElementById(outputContainerId);
+
+    // Always check for global Monaco first (works for both webpack and AMD loading)
     return new Promise((resolve, reject) => {
-      require(['vs/editor/editor.main'], () => {
+      const initializeEditor = () => {
         try {
+          //console.log('MonacoEditorManager: Monaco available, initializing editors...');
           this._registerGGcodeLanguage();
           this._defineGGcodeTheme();
           this._createEditors(
@@ -56,11 +60,71 @@ class MonacoEditorManager {
           this._setupDragAndDrop();
 
           this.monacoReady = true;
+          //console.log('MonacoEditorManager: Initialization complete!');
           resolve();
         } catch (error) {
+          console.error('MonacoEditorManager: Initialization failed:', error);
           reject(error);
         }
-      });
+      };
+
+      // Check if Monaco is already available globally
+      if (typeof window.monaco !== 'undefined') {
+        //console.log('MonacoEditorManager: Monaco already available globally');
+        initializeEditor();
+      } else {
+        // Load Monaco dynamically using the global require (from loader.js)
+        //console.log('MonacoEditorManager: Loading Monaco dynamically...');
+
+        const loadMonaco = () => {
+          // Check if the global require from loader.js is available
+          if (
+            typeof window.require !== 'undefined' &&
+            typeof window.require.config === 'function'
+          ) {
+            //console.log('MonacoEditorManager: Using global require to load Monaco');
+
+            // Configure Monaco paths
+            window.require.config({
+              paths: {
+                vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs',
+              },
+            });
+
+            // Load Monaco
+            window.require(['vs/editor/editor.main'], () => {
+              //console.log('MonacoEditorManager: Monaco loaded successfully');
+              initializeEditor();
+            });
+          } else {
+            // Fallback: wait for Monaco to be available
+            //console.log('MonacoEditorManager: Waiting for Monaco...');
+            let attempts = 0;
+            const maxAttempts = 50; // Wait up to 5 seconds
+
+            const checkMonaco = () => {
+              attempts++;
+              if (typeof window.monaco !== 'undefined') {
+                //console.log('MonacoEditorManager: Monaco became available after', attempts * 100, 'ms');
+                initializeEditor();
+              } else if (attempts < maxAttempts) {
+                setTimeout(checkMonaco, 100);
+              } else {
+                console.error(
+                  'MonacoEditorManager: Timeout waiting for Monaco to load'
+                );
+                reject(
+                  new Error('Monaco Editor failed to load within timeout')
+                );
+              }
+            };
+            checkMonaco();
+          }
+        };
+
+        // Give the loader.js a moment to set up the global require
+        setTimeout(loadMonaco, 100);
+      }
     });
   }
 
@@ -236,41 +300,50 @@ class MonacoEditorManager {
     initialInput,
     initialOutput
   ) {
-    // Load saved content from localStorage
-    const savedInput = localStorage.getItem('ggcode_input_content');
-    const savedOutput = localStorage.getItem('ggcode_output_content');
+    // Load saved content from StorageManager
+    const savedInput = storageManager.getInputContent();
+    const savedOutput = storageManager.getOutputContent();
 
     const inputContent =
       savedInput && savedInput.trim() !== '' ? savedInput : initialInput;
     const outputContent =
       savedOutput && savedOutput.trim() !== '' ? savedOutput : initialOutput;
 
-    // Create input editor
-    this.editor = monaco.editor.create(
-      document.getElementById(inputContainerId),
-      {
-        value: inputContent,
-        language: 'ggcode',
-        theme: 'ggcode-dark',
-        automaticLayout: true,
-        minimap: { enabled: true },
-      }
+    // Hide loading indicators and show editor containers
+    const inputLoading = document.getElementById(inputContainerId + '-loading');
+    const outputLoading = document.getElementById(
+      outputContainerId + '-loading'
     );
+    const inputContainer = document.getElementById(inputContainerId);
+    const outputContainer = document.getElementById(outputContainerId);
+
+    if (inputLoading) inputLoading.style.display = 'none';
+    if (outputLoading) outputLoading.style.display = 'none';
+    if (inputContainer) inputContainer.style.display = 'block';
+    if (outputContainer) outputContainer.style.display = 'block';
+
+    // Create input editor
+    this.editor = monaco.editor.create(inputContainer, {
+      value: inputContent,
+      language: 'ggcode',
+      theme: 'ggcode-dark',
+      automaticLayout: true,
+      minimap: { enabled: true },
+    });
 
     // Create output editor
-    this.outputEditor = monaco.editor.create(
-      document.getElementById(outputContainerId),
-      {
-        value: outputContent,
-        language: 'ggcode',
-        theme: 'ggcode-dark',
-        automaticLayout: true,
-        minimap: { enabled: true },
-      }
-    );
+    this.outputEditor = monaco.editor.create(outputContainer, {
+      value: outputContent,
+      language: 'ggcode',
+      theme: 'ggcode-dark',
+      automaticLayout: true,
+      minimap: { enabled: true },
+    });
 
     // Make output editor globally accessible for backward compatibility
     window.outputEditor = this.outputEditor;
+
+    console.log('MonacoEditorManager: Editors created successfully');
   }
 
   /**
@@ -388,7 +461,7 @@ class MonacoEditorManager {
    */
   setAutoCompile(enabled) {
     this.autoCompile = enabled;
-    localStorage.setItem('ggcode_auto_compile', enabled.toString());
+    storageManager.setAutoCompileState(enabled);
   }
 
   /**
@@ -403,10 +476,7 @@ class MonacoEditorManager {
    * Load auto-compile state from localStorage
    */
   loadAutoCompileState() {
-    const savedAutoCompile = localStorage.getItem('ggcode_auto_compile');
-    if (savedAutoCompile !== null) {
-      this.autoCompile = savedAutoCompile === 'true';
-    }
+    this.autoCompile = storageManager.getAutoCompileState();
     return this.autoCompile;
   }
 
@@ -416,7 +486,7 @@ class MonacoEditorManager {
    */
   setLastOpenedFilename(filename) {
     this.lastOpenedFilename = filename;
-    localStorage.setItem('ggcode_last_filename', filename);
+    storageManager.setLastFilename(filename);
   }
 
   /**
@@ -431,10 +501,7 @@ class MonacoEditorManager {
    * Load last opened filename from localStorage
    */
   loadLastOpenedFilename() {
-    const savedFilename = localStorage.getItem('ggcode_last_filename');
-    if (savedFilename) {
-      this.lastOpenedFilename = savedFilename;
-    }
+    this.lastOpenedFilename = storageManager.getLastFilename();
     return this.lastOpenedFilename;
   }
 
@@ -444,23 +511,13 @@ class MonacoEditorManager {
   saveContent() {
     try {
       if (this.editor) {
-        localStorage.setItem('ggcode_input_content', this.editor.getValue());
+        storageManager.setInputContent(this.editor.getValue());
       }
       if (this.outputEditor) {
-        localStorage.setItem(
-          'ggcode_output_content',
-          this.outputEditor.getValue()
-        );
+        storageManager.setOutputContent(this.outputEditor.getValue());
       }
     } catch (e) {
-      if (
-        e.name === 'QuotaExceededError' ||
-        e.name === 'NS_ERROR_DOM_QUOTA_REACHED'
-      ) {
-        console.warn('LocalStorage quota exceeded, unable to save content');
-      } else {
-        throw e;
-      }
+      console.warn('Failed to save content to storage:', e);
     }
   }
 

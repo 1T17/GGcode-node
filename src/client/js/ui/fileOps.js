@@ -345,6 +345,178 @@ class FileOperations {
 
     return stats;
   }
+
+  /**
+   * Copy output G-code to clipboard
+   */
+  copyOutput() {
+    if (
+      window.outputEditor &&
+      typeof window.outputEditor.getValue === 'function'
+    ) {
+      const content = window.outputEditor.getValue();
+      navigator.clipboard
+        .writeText(content)
+        .then(() => {
+          console.log('Output copied to clipboard');
+        })
+        .catch((err) => {
+          console.error('Failed to copy output:', err);
+          alert('Failed to copy: ' + err.message);
+        });
+    } else {
+      alert('No output content available to copy');
+    }
+  }
+
+  /**
+   * Save output G-code to file
+   */
+  saveOutput() {
+    if (
+      !window.outputEditor ||
+      typeof window.outputEditor.getValue !== 'function'
+    ) {
+      alert('No output content available to save');
+      return;
+    }
+
+    const text = window.outputEditor.getValue();
+    if (!text.trim()) {
+      alert('No output content to save');
+      return;
+    }
+
+    // Get last opened filename for suggestion
+    const lastFilename = localStorage.getItem('ggcode_last_filename') || '';
+
+    // Generate suggested filename
+    let suggestedFilename = '';
+    if (lastFilename) {
+      let base = lastFilename;
+      if (base.endsWith('.gcode') || base.endsWith('.ggcode')) {
+        base = base.replace(/\.(gcode|ggcode)$/i, '');
+      } else if (base.lastIndexOf('.') > 0) {
+        base = base.slice(0, base.lastIndexOf('.'));
+      }
+      suggestedFilename = base + '.g.gcode';
+    }
+    if (!suggestedFilename) suggestedFilename = 'output.g.gcode';
+
+    // Prompt user for filename
+    const userFilename = window.prompt('Save G-code as:', suggestedFilename);
+    if (!userFilename) return; // User cancelled
+
+    try {
+      // Create and download file
+      const utf8Bytes = new TextEncoder().encode(text);
+      const blob = new Blob([utf8Bytes], { type: 'application/octet-stream' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = userFilename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+
+      console.log('Output saved as:', userFilename);
+    } catch (error) {
+      console.error('Failed to save output:', error);
+      alert('Failed to save file: ' + error.message);
+    }
+  }
+
+  /**
+   * Save GGcode input to file
+   */
+  saveGGcode() {
+    if (!window.editor || typeof window.editor.getValue !== 'function') {
+      alert('No input content available to save');
+      return;
+    }
+
+    const content = window.editor.getValue();
+    if (!content.trim()) {
+      alert('No input content to save');
+      return;
+    }
+
+    // Get last opened filename for suggestion
+    const lastFilename = localStorage.getItem('ggcode_last_filename') || '';
+
+    // Generate suggested filename
+    let suggestedFilename =
+      lastFilename && lastFilename.endsWith('.ggcode') ? lastFilename : '';
+    if (!suggestedFilename && lastFilename) {
+      const dot = lastFilename.lastIndexOf('.');
+      suggestedFilename =
+        (dot > 0 ? lastFilename.slice(0, dot) : lastFilename) + '.ggcode';
+    }
+    if (!suggestedFilename) suggestedFilename = 'input.ggcode';
+
+    // Prompt user for filename
+    const userFilename = window.prompt('Save GGcode as:', suggestedFilename);
+    if (!userFilename) return; // User cancelled
+
+    try {
+      // Create and download file
+      const blob = new Blob([content], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = userFilename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+
+      console.log('GGcode saved as:', userFilename);
+    } catch (error) {
+      console.error('Failed to save GGcode:', error);
+      alert('Failed to save file: ' + error.message);
+    }
+  }
+
+  /**
+   * Clear all saved content and settings
+   */
+  clearMemory() {
+    if (
+      !confirm('This will clear all saved content and settings. Are you sure?')
+    ) {
+      return;
+    }
+
+    try {
+      // Clear localStorage
+      localStorage.removeItem('ggcode_input_content');
+      localStorage.removeItem('ggcode_output_content');
+      localStorage.removeItem('ggcode_last_filename');
+      localStorage.removeItem('ggcode_auto_compile');
+
+      // Reset editors if available
+      if (window.editor && typeof window.editor.setValue === 'function') {
+        window.editor.setValue('');
+      }
+      if (
+        window.outputEditor &&
+        typeof window.outputEditor.setValue === 'function'
+      ) {
+        window.outputEditor.setValue('');
+      }
+
+      // Reset auto-compile checkbox
+      const autoCheckbox = document.getElementById('autoCompileCheckbox');
+      if (autoCheckbox) {
+        autoCheckbox.checked = false;
+      }
+
+      console.log('Memory cleared successfully');
+      alert('Memory cleared successfully!');
+    } catch (error) {
+      console.error('Failed to clear memory:', error);
+      alert('Failed to clear memory: ' + error.message);
+    }
+  }
 }
 
 // Create global instance

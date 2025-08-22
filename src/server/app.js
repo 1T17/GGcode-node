@@ -22,7 +22,7 @@ class Application {
    */
   async initialize() {
     try {
-      console.log('Initializing application...');
+      //console.log('Initializing application...');
 
       // Initialize services first
       await this.initializeServices();
@@ -36,7 +36,7 @@ class Application {
       // Setup error handling (must be last)
       this.setupErrorHandling();
 
-      console.log('Application initialized successfully');
+      //console.log('Application initialized successfully');
     } catch (error) {
       console.error('Failed to initialize application:', error);
       throw error;

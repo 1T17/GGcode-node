@@ -119,6 +119,12 @@ server.log
 build/
 dist/
 
+# Built JavaScript files (generated from src/)
+public/js/main.js
+public/js/main.js.map
+public/js/visualizer.js
+public/js/visualizer.js.map
+
 # Compiled native modules
 *.so
 *.dll

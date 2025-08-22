@@ -6,21 +6,24 @@
 import MonacoEditorManager from './editor/monaco.js';
 import GcodeAnnotationSystem from './editor/annotations.js';
 import ConfiguratorManager from './configurator/index.js';
-// import { GcodeVisualizer } from './visualizer/index.js'; // TODO: Implement visualizer integration
+import * as VisualizerModules from './visualizer/index.js';
 import { ModalManager } from './ui/modals.js';
 // import { ToolbarManager } from './ui/toolbar.js'; // TODO: Implement toolbar integration
 import { FileOperations } from './ui/fileOps.js';
 import { APIManager } from './api/index.js';
+import storageManager from './utils/storageManager.js';
+import NavigationManager from './ui/navigation.js';
 
 // Application state
 let editorManager;
 let annotationSystem;
 let configuratorManager;
-// let visualizer; // TODO: Implement visualizer integration
+let visualizerModules;
 let modalManager;
 // let toolbarManager; // TODO: Implement toolbar integration
 let fileOperations;
 let apiManager;
+let navigationManager;
 
 // Legacy global variables for backward compatibility
 let editor, outputEditor;
@@ -31,6 +34,7 @@ let lastOpenedFilename = '';
 
 // Initialize application when DOM is ready
 document.addEventListener('DOMContentLoaded', async function () {
+  //console.log('DOM Content Loaded - Starting application initialization...');
   try {
     await initializeApplication();
   } catch (error) {
@@ -42,20 +46,27 @@ document.addEventListener('DOMContentLoaded', async function () {
  * Initialize all application modules
  */
 async function initializeApplication() {
+  //console.log('Initializing application modules...');
+
   // Initialize managers
   editorManager = new MonacoEditorManager();
   annotationSystem = new GcodeAnnotationSystem();
   configuratorManager = new ConfiguratorManager();
-  // visualizer = new GcodeVisualizer(); // TODO: Implement visualizer integration
+  visualizerModules = VisualizerModules; // Initialize visualizer modules
   modalManager = new ModalManager();
   // toolbarManager = new ToolbarManager(); // TODO: Implement toolbar integration
   fileOperations = new FileOperations();
   apiManager = new APIManager();
+  navigationManager = new NavigationManager();
+
+  //console.log('Managers created, initializing Monaco editor...');
 
   // Make managers globally available for the functions
   window.editorManager = editorManager;
   window.apiManager = apiManager;
   window.configuratorManager = configuratorManager;
+  window.visualizerModules = visualizerModules;
+  window.navigationManager = navigationManager;
 
   // Make editor instances globally available for backward compatibility
   const editors = editorManager.getEditors();
@@ -63,10 +74,7 @@ async function initializeApplication() {
   window.editor = editors.input;
 
   // Load saved filename
-  const savedFilename = localStorage.getItem('ggcode_last_filename');
-  if (savedFilename) {
-    lastOpenedFilename = savedFilename;
-  }
+  lastOpenedFilename = storageManager.getLastFilename();
 
   // Initialize annotation system
   await annotationSystem.initialize();
@@ -88,7 +96,7 @@ async function initializeApplication() {
   // Setup file operations
   setupFileOperations();
 
-  console.log('Application initialized successfully');
+  //console.log('Application initialized successfully');
 }
 
 /**
@@ -96,12 +104,8 @@ async function initializeApplication() {
  */
 async function initializeMonacoEditor() {
   // Load saved content
-  const savedInput = localStorage.getItem('ggcode_input_content');
-  const savedOutput = localStorage.getItem('ggcode_output_content');
-
-  const initialInput =
-    savedInput || document.getElementById('ggcode')?.value || '';
-  const initialOutput = savedOutput || '';
+  const initialInput = storageManager.getInputContent();
+  const initialOutput = storageManager.getOutputContent();
 
   await editorManager.initialize({
     inputContainerId: 'editor',
@@ -262,14 +266,12 @@ async function submitGGcode(event, customCode = null) {
   return false;
 }
 
-// File operations - using modular approach with backward compatibility
+// File operations - using modular approach
 function copyOutput() {
   if (fileOperations) {
     fileOperations.copyOutput();
-  } else if (outputEditor) {
-    navigator.clipboard
-      .writeText(outputEditor.getValue())
-      .catch((err) => alert('Failed to copy: ' + err));
+  } else {
+    console.error('FileOperations module not available');
   }
 }
 
@@ -277,31 +279,7 @@ function saveOutput() {
   if (fileOperations) {
     fileOperations.saveOutput();
   } else {
-    // Fallback implementation
-    if (outputEditor) {
-      const text = outputEditor.getValue();
-      const utf8Bytes = new TextEncoder().encode(text);
-      const blob = new Blob([utf8Bytes], { type: 'application/octet-stream' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-
-      let filename = '';
-      if (lastOpenedFilename) {
-        let base = lastOpenedFilename;
-        if (base.endsWith('.gcode') || base.endsWith('.ggcode')) {
-          base = base.replace(/\.(gcode|ggcode)$/i, '');
-        } else if (base.lastIndexOf('.') > 0) {
-          base = base.slice(0, base.lastIndexOf('.'));
-        }
-        filename = base + '.g.gcode';
-      }
-      if (!filename) filename = 'output.g.gcode';
-
-      const userFilename = window.prompt('Save G-code as:', filename);
-      if (!userFilename) return;
-      a.download = userFilename;
-      a.click();
-    }
+    console.error('FileOperations module not available');
   }
 }
 
@@ -309,26 +287,7 @@ function saveGGcode() {
   if (fileOperations) {
     fileOperations.saveGGcode();
   } else {
-    // Fallback implementation
-    const blob = new Blob([editor.getValue()], { type: 'text/plain' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    let filename =
-      lastOpenedFilename && lastOpenedFilename.endsWith('.ggcode')
-        ? lastOpenedFilename
-        : '';
-    if (!filename && lastOpenedFilename) {
-      const dot = lastOpenedFilename.lastIndexOf('.');
-      filename =
-        (dot > 0 ? lastOpenedFilename.slice(0, dot) : lastOpenedFilename) +
-        '.ggcode';
-    }
-    if (!filename) filename = 'input.ggcode';
-
-    const userFilename = window.prompt('Save GGcode as:', filename);
-    if (!userFilename) return;
-    a.download = userFilename;
-    a.click();
+    console.error('FileOperations module not available');
   }
 }
 
@@ -336,50 +295,16 @@ function clearMemory() {
   if (fileOperations) {
     fileOperations.clearMemory();
   } else {
-    // Fallback implementation
-    if (
-      confirm('This will clear all saved content and settings. Are you sure?')
-    ) {
-      localStorage.removeItem('ggcode_input_content');
-      localStorage.removeItem('ggcode_output_content');
-      localStorage.removeItem('ggcode_last_filename');
-      localStorage.removeItem('ggcode_auto_compile');
-
-      lastOpenedFilename = '';
-      autoCompile = false;
-
-      const autoCheckbox = document.getElementById('autoCompileCheckbox');
-      if (autoCheckbox) {
-        autoCheckbox.checked = false;
-      }
-
-      if (editor) {
-        editor.setValue('');
-      }
-      if (outputEditor) {
-        outputEditor.setValue('');
-      }
-
-      alert('Memory cleared successfully!');
-    }
+    console.error('FileOperations module not available');
   }
 }
 
-// Modal functions - using modular approach with backward compatibility
+// Modal functions - using modular approach
 function showModal(modalId) {
   if (modalManager) {
     modalManager.showModal(modalId);
   } else {
-    // Fallback implementation
-    const modal = document.getElementById(modalId);
-    if (modal) {
-      modal.style.display = 'flex';
-      modal.addEventListener('click', function (e) {
-        if (e.target === modal) {
-          closeModal(modalId);
-        }
-      });
-    }
+    console.error('ModalManager module not available');
   }
 }
 
@@ -387,11 +312,7 @@ function closeModal(modalId) {
   if (modalManager) {
     modalManager.closeModal(modalId);
   } else {
-    // Fallback implementation
-    const modal = document.getElementById(modalId);
-    if (modal) {
-      modal.style.display = 'none';
-    }
+    console.error('ModalManager module not available');
   }
 }
 
@@ -405,7 +326,7 @@ function updateAnnotations(lineNumber, lineContent) {
   }
 }
 
-// Note: showGcodeViewer is provided by visualizer.js
+// Note: showGcodeViewer is provided by the visualizer module
 
 async function showExamples() {
   showModal('examplesModal');
@@ -470,7 +391,7 @@ async function loadExample(filename) {
       }
       // Remember filename
       lastOpenedFilename = filename;
-      localStorage.setItem('ggcode_last_filename', lastOpenedFilename);
+      storageManager.setLastFilename(lastOpenedFilename);
       // Direct compilation after file load
       submitGGcode(new Event('submit'));
       closeModal('examplesModal');
@@ -491,8 +412,7 @@ function showHelp() {
   showModal('helpModal');
 
   // Get saved language preference or default to English
-  const savedLanguage =
-    localStorage.getItem('ggcode_selected_language') || 'en';
+  const savedLanguage = storageManager.getSelectedLanguage();
 
   // Load help content when modal opens
   loadHelpContent(savedLanguage);
@@ -618,14 +538,13 @@ function setupLanguageSelector() {
   if (!languageSelector) return;
 
   // Set current language
-  const currentLanguage =
-    localStorage.getItem('ggcode_selected_language') || 'en';
+  const currentLanguage = storageManager.getSelectedLanguage();
   languageSelector.value = currentLanguage;
 
   // Add change event listener
   languageSelector.addEventListener('change', function () {
     const selectedLanguage = this.value;
-    localStorage.setItem('ggcode_selected_language', selectedLanguage);
+    storageManager.setSelectedLanguage(selectedLanguage);
     loadHelpContent(selectedLanguage);
   });
 }
@@ -750,30 +669,7 @@ function showConfigurator() {
     const ggcode = editorManager ? editorManager.getInputValue() : '';
     configuratorManager.showConfigurator(ggcode);
   } else {
-    // Fallback implementation
-    const modal = document.getElementById('configuratorModal');
-    const contentModal = document.getElementById('configuratorContent');
-    if (!modal) return;
-
-    // Get GGcode from the main editor
-    let ggcodeContent = '';
-    if (editorManager) {
-      ggcodeContent = editorManager.getInputValue();
-    } else {
-      const ta = document.getElementById('ggcode');
-      if (ta) ggcodeContent = ta.value;
-    }
-
-    // TODO: Parse configurator variables and render form
-    contentModal.innerHTML =
-      '<div style="color:#aaa; padding:2em;">Configurator integration in progress...</div>';
-    modal.style.display = 'flex';
-
-    // Log the content for debugging
-    console.log(
-      'Configurator opened with content length:',
-      ggcodeContent.length
-    );
+    console.error('ConfiguratorManager module not available');
   }
 }
 
@@ -845,8 +741,7 @@ function configuratorSaveAndCompile() {
       () => submitGGcode(new Event('submit'))
     );
   } else {
-    console.log('Configurator save and compile - using fallback');
-    closeConfigurator();
+    console.error('ConfiguratorManager module not available');
   }
 }
 
@@ -857,11 +752,11 @@ function configuratorCompileOnly() {
       submitGGcode(new Event('submit'), code)
     );
   } else {
-    console.log('Configurator compile only - using fallback');
+    console.error('ConfiguratorManager module not available');
   }
 }
 
-// Export the missing global functions (showGcodeViewer is provided by visualizer.js)
+// Export the missing global functions (showGcodeViewer is provided by visualizer module)
 window.showExamples = showExamples;
 window.loadExample = loadExample;
 window.showHelp = showHelp;
@@ -871,11 +766,4 @@ window.closeConfigurator = closeConfigurator;
 window.configuratorSaveAndCompile = configuratorSaveAndCompile;
 window.configuratorCompileOnly = configuratorCompileOnly;
 
-// Make renderGcode3D available globally if it exists in the old public files
-// This is a temporary bridge until full visualizer integration
-if (typeof window.renderGcode3D !== 'function') {
-  window.renderGcode3D = function (gcode) {
-    console.log('renderGcode3D called with G-code length:', gcode?.length || 0);
-    // TODO: Implement 3D rendering with modular visualizer
-  };
-}
+// renderGcode3D is now provided by the visualizer module

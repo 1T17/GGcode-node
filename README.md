@@ -67,10 +67,36 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 │   └── True Spiral with Arcs.ggcode
 ├── public/ # Static assets (legacy)
 │   ├── css/
+│   │   ├── components/
+│   │   │   ├── buttons.css
+│   │   │   ├── controls.css
+│   │   │   ├── headers.css
+│   │   │   └── tooltips.css
+│   │   ├── editor/
+│   │   │   ├── annotation-content.css
+│   │   │   ├── annotation-toolbar.css
+│   │   │   └── annotations.css
+│   │   ├── layout/
+│   │   │   ├── global.css
+│   │   │   ├── grid.css
+│   │   │   └── panels.css
+│   │   ├── modals/
+│   │   │   ├── app-usage.css
+│   │   │   ├── base.css
+│   │   │   ├── code-blocks.css
+│   │   │   ├── collapsible.css
+│   │   │   ├── examples.css
+│   │   │   ├── help-system.css
+│   │   │   ├── language-selector.css
+│   │   │   ├── rtl-support.css
+│   │   │   ├── search.css
+│   │   │   └── states.css
+│   │   ├── base.css
 │   │   ├── components.css
 │   │   ├── editor.css
 │   │   ├── main.css
-│   │   └── modals.css
+│   │   ├── modals.css
+│   │   └── README.md
 │   ├── data/
 │   │   └── help-content/
 │   │       ├── ar.json
@@ -92,10 +118,10 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 │   │       ├── tr.json
 │   │       └── zh.json
 │   ├── js/
-│   │   ├── annotations.js
-│   │   ├── configurator.js
 │   │   ├── main.js
-│   │   └── visualizer.js
+│   │   ├── main.js.map
+│   │   ├── navigation.js
+│   │   └── navigation.js.map
 │   ├── flags.css
 │   ├── logo.png
 │   ├── mill-annotations.json
@@ -113,16 +139,12 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 │   └── verify-setup.sh
 ├── src/ # Source code
 │   ├── client/ # Client-side code (ES6 modules)
-│   │   ├── css/
-│   │   │   ├── components.css
-│   │   │   ├── editor.css
-│   │   │   ├── main.css
-│   │   │   └── modals.css
 │   │   └── js/
 │   │       ├── api/
 │   │       ├── configurator/
 │   │       ├── editor/
 │   │       ├── ui/
+│   │       ├── utils/
 │   │       ├── visualizer/
 │   │       └── main.js
 │   └── server/ # Server-side code (CommonJS)
@@ -142,7 +164,6 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 │       │   ├── compiler.js
 │       │   ├── fileManager.js
 │       │   └── helpContent.js
-│       ├── utils/
 │       ├── app.js
 │       └── index.js
 ├── tests/ # Test suite
@@ -150,10 +171,26 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 │   │   ├── api/
 │   │   │   ├── client.test.js
 │   │   │   └── compiler.test.js
-│   │   ├── configurator/
-│   │   ├── editor/
-│   │   ├── ui/
 │   │   └── visualizer/
+│   │       ├── adaptive-rendering.test.js
+│   │       ├── chunk-loader.test.js
+│   │       ├── debug.test.js
+│   │       ├── frustum-culling-performance.test.js
+│   │       ├── frustum-culling.test.js
+│   │       ├── geometry-manager.test.js
+│   │       ├── geometry-optimization.test.js
+│   │       ├── integration.test.js
+│   │       ├── lod-system.test.js
+│   │       ├── matrix-calculations.test.js
+│   │       ├── parser-simple.test.js
+│   │       ├── pointDataExtractor.test.js
+│   │       ├── pointDataIntegration.test.js
+│   │       ├── pointDetector.test.js
+│   │       ├── render-queue.test.js
+│   │       ├── renderer-optimization.test.js
+│   │       ├── renderer.test.js
+│   │       ├── tooltipIntegration.test.js
+│   │       └── tooltipManager.test.js
 │   ├── config/
 │   │   └── testConfig.js
 │   ├── fixtures/
@@ -165,8 +202,6 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 │   ├── server/
 │   │   ├── config/
 │   │   │   └── config.test.js
-│   │   ├── middleware/
-│   │   ├── routes/
 │   │   └── services/
 │   │       ├── compiler.test.js
 │   │       └── fileManager.test.js
@@ -185,11 +220,12 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 │   │   ├── modals.ejs
 │   │   ├── scripts.ejs
 │   │   └── viewer.ejs
-│   ├── app.ejs
+│   ├── app.ejs.backup
 │   ├── help-template.ejs
 │   ├── helpExamples.ejs
 │   ├── index.ejs
-│   └── view.ejs
+│   ├── view.ejs.old js
+│   └── view.ejs.old.backup
 ├── .eslintrc.js
 ├── .gitignore
 ├── .jsdoc.json
@@ -199,13 +235,21 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 ├── ggcode.js
 ├── libggcode.so
 ├── MAINTENANCE.md
+├── MODERNIZATION_COMPLETE.md
 ├── nodemon.json
+├── nohup.out
 ├── package-lock.json
 ├── package.json
 ├── PROJECT_ORGANIZATION_SUMMARY.md
 ├── README.md
 ├── server.log
-└── update.sh
+├── test-gcode-regex.js
+├── test-parser-simple.js
+├── test-visualization.html
+├── update.sh
+├── VISUALIZER_OPTIMIZATION_CHECKLIST.md
+├── VISUALIZER_OPTIMIZATION_PLAN.md
+└── webpack.config.js
 ```
 
 

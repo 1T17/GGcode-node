@@ -15,8 +15,9 @@
     "lint:fix": "eslint src/ --ext .js --fix",
     "format": "prettier --write \"src/**/*.js\"",
     "format:check": "prettier --check \"src/**/*.js\"",
-    "build": "npm run lint && npm run test",
-    "build:prod": "npm run lint && npm run test && npm run format:check",
+    "build:client": "webpack",
+    "build": "npm run lint && npm run test && npm run build:client",
+    "build:prod": "npm run lint && npm run test && npm run format:check && npm run build:client",
     "clean": "rm -rf coverage/ .nyc_output/",
     "health-check": "curl -f http://localhost:6990/api/health || exit 1",
     "setup": "./scripts/setup-hooks.sh",
@@ -53,12 +54,17 @@
     "three": "^0.178.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.28.3",
+    "@babel/preset-env": "^7.28.3",
+    "babel-loader": "^10.0.0",
     "eslint": "^8.57.1",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^30.0.5",
     "nodemon": "^3.1.10",
     "prettier": "^3.6.2",
-    "supertest": "^6.3.4"
+    "supertest": "^6.3.4",
+    "webpack": "^5.101.3",
+    "webpack-cli": "^6.0.1"
   },
   "jest": {
     "testEnvironment": "node",

@@ -136,10 +136,16 @@ export class GcodeViewerModal {
       //console.log('G-code rendering completed successfully');
 
       // Update stats and info boxes after successful render
-
+      console.log(
+        '[DEBUG modal.js] About to call updateGcodeStats after render'
+      );
       if (window.updateGcodeStats) {
-        //console.log('[modal.js] Calling updateGcodeStats after render (delayed)');
+        console.log(
+          '[DEBUG modal.js] updateGcodeStats function exists, calling it'
+        );
         window.updateGcodeStats();
+      } else {
+        console.log('[DEBUG modal.js] updateGcodeStats function not found!!!');
       }
       //else {
       //   console.log('[modal.js] updateGcodeStats not found (delayed)');

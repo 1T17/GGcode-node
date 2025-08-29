@@ -23,15 +23,45 @@ export {
 // Export modern modules to window for debugging/testing
 
 // --- Enhanced G-code Stats Box Update with Live Performance Data ---
-function updateGcodeStats() {
-  window.updateGcodeStats = updateGcodeStats;
+window.updateGcodeStats = function () {
   const statsContainer = document.getElementById('gcodeViewerStats');
   if (!statsContainer) {
+    console.log('[DEBUG] gcodeViewerStats container not found');
     return;
   }
-  statsContainer.style.display = 'block';
-  statsContainer.style.opacity = '1';
-  statsContainer.style.visibility = 'visible';
+  console.log(
+    '[DEBUG] updateGcodeStats called, container found:',
+    statsContainer
+  );
+  console.log(
+    '[DEBUG] Container initial state:',
+    getComputedStyle(statsContainer).display,
+    getComputedStyle(statsContainer).visibility
+  );
+
+  // Force visibility with !important equivalent styles
+  statsContainer.style.setProperty('display', 'block', 'important');
+  statsContainer.style.setProperty('opacity', '1', 'important');
+  statsContainer.style.setProperty('visibility', 'visible', 'important');
+  statsContainer.style.setProperty(
+    'background',
+    'rgba(0, 0, 0, 0.8)',
+    'important'
+  );
+  statsContainer.style.setProperty('color', '#00ff00', 'important');
+
+  // Add positioning and z-index to ensure it's visible
+  statsContainer.style.position = 'absolute';
+
+  console.log(
+    '[DEBUG] Final container state:',
+    getComputedStyle(statsContainer).display,
+    getComputedStyle(statsContainer).visibility
+  );
+  console.log(
+    '[DEBUG] Container bounding rect:',
+    statsContainer.getBoundingClientRect()
+  );
 
   // Get existing stats
   const perf = window.performanceStats || {};
@@ -147,15 +177,29 @@ function updateGcodeStats() {
     statsHtml += `<div class="timestamp">Updated: ${performanceData.lastUpdate}</div>`;
   }
 
+  // Add some debugging info at the top if no data
+  if (
+    !perf.lineCount &&
+    (!window.gcodeLines || window.gcodeLines.length === 0)
+  ) {
+    statsHtml =
+      '<div class="metric-line metric-info">[DEBUG] G-code data not loaded or empty</div>' +
+      statsHtml;
+  }
+
   statsHtml += `</div>`;
 
   statsContainer.innerHTML = statsHtml;
-}
+  console.log(
+    '[DEBUG] Stats HTML updated:',
+    statsContainer.innerHTML ? 'HTML present' : 'Empty HTML'
+  );
+};
 
 // Patch: Always call updateGcodeStats after parsing/rendering, not just in gcodeRender
 document.addEventListener('DOMContentLoaded', function () {
   // Show initial stats when visualizer opens
-  updateGcodeStats();
+  window.updateGcodeStats();
 });
 
 // Single, unified gcodeRender function with performance optimization
@@ -171,7 +215,7 @@ window.gcodeRender = (function (orig) {
     if (canvas) {
       const now = performance.now();
       if (now - lastStatsUpdate > statsUpdateInterval) {
-        updateGcodeStats();
+        window.updateGcodeStats();
         lastStatsUpdate = now;
       }
       // Don't call line display updates here - it's handled by simulation controls

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Script Test</title>
+</head>
+
+<body>
+    <h1>Test Page</h1>
+    <button onclick="submitGGcode()">Test Compile</button>
+    <button onclick="showAiChat()">Show AI Chat</button>
+    <button onclick="showHelp()">Show Help</button>
+
+    <!-- Load the scripts in the same order as the real app -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+    <script src="/js/navigation.js"></script>
+    <script type="module" src="/js/main.js"></script>
+
+    <div id="globalLoader" style="display: none;">Loading...</div>
+</body>
+
+</html>

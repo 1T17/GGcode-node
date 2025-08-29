@@ -6,6 +6,7 @@
 // Core modules - keep these eager
 import { APIManager } from './api/index.js';
 import './ui/dropdownManager.js'; // Import to initialize global dropdownManager
+import './visualizer/index.js'; // Import visualizer modules to make updateGcodeStats globally available
 import storageManager from './utils/storageManager.js';
 
 // Lazy-loaded modules - loaded on-demand for better performance

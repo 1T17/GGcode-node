@@ -265,6 +265,7 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 │   ├── help-template.ejs
 │   ├── helpExamples.ejs
 │   └── index.ejs
+├──  pm2.json
 ├── .eslintrc.js
 ├── .gitignore
 ├── .jsdoc.json
@@ -275,7 +276,9 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 ├── COMMANDS.md
 ├── CONTRIBUTING.md
 ├── debug-mime-fix.sh
+├── deploy-and-build.sh
 ├── deploy-script.sh
+├── deploy-simple.sh
 ├── fix-mime-error.sh
 ├── ggcode.js
 ├── libggcode.so
@@ -289,10 +292,13 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 ├── README.md
 ├── script-test.html
 ├── server.log
+├── simple-deploy.sh
 ├── test_dictionary_integration.ggcode
 ├── test_functions.ggcode
 ├── test_r_f_colcoding.txt
 ├── test-mime-server.js
+├── update-all.sh
+├── update-simple.sh
 ├── update.sh
 ├── USAGE.md
 └── webpack.config.js

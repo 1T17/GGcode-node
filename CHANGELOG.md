@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.7] - 2025-08-29
 
+### 🐛 Fixed
+
+- fix: fix (ea39905)
+- fix(api): fix (13f4bec)
+- fix: fix (af6e9a8)
+
+
+## [1.0.7] - 2025-08-29
+
 ### ✨ Added
 
 - feat: initial commit - complete GGcode compiler project (2fd1222)

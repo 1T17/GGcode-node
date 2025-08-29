@@ -5,6 +5,24 @@ All notable changes to the GGcode Compiler project will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.0.6] - 2025-08-29
+
+### ✨ Added
+
+- feat: initial commit - complete GGcode compiler project (2fd1222)
+- build(all): new stuff (526ebd2)
+- test: add test file for commit workflow verification (3d71678)
+
+### 🔄 Changed
+
+- chore: update (b25b789)
+- build: update (4644357)
+
+### 🔧 Other
+
+- chore(ui): hmm (723c619)
+
+
 ## [1.0.5] - 2025-08-29
 
 ### ✨ Added

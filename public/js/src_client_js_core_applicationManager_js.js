@@ -3665,21 +3665,21 @@ var MonacoEditorManager = /*#__PURE__*/function () {
 
               // Fallback to hardcoded parameter mapping
               var paramMap = {
-                'X': '[x_pos]',
-                'Y': '[y_pos]',
-                'Z': '[z_pos]',
-                'A': '[a_pos]',
-                'B': '[b_pos]',
-                'C': '[c_pos]',
-                'F': '[feed_rate]',
-                'S': '[rpm]',
-                'T': '[tool_num]',
-                'I': '[arc_x]',
-                'J': '[arc_y]',
-                'K': '[arc_z]',
-                'R': '[radius]',
-                'Q': '[depth]',
-                'P': '[dwell]'
+                X: '[x_pos]',
+                Y: '[y_pos]',
+                Z: '[z_pos]',
+                A: '[a_pos]',
+                B: '[b_pos]',
+                C: '[c_pos]',
+                F: '[feed_rate]',
+                S: '[rpm]',
+                T: '[tool_num]',
+                I: '[arc_x]',
+                J: '[arc_y]',
+                K: '[arc_z]',
+                R: '[radius]',
+                Q: '[depth]',
+                P: '[dwell]'
               };
               return paramMap[p] ? paramMap[p] : "[".concat(p.toLowerCase(), "]");
             }).join(' ');
@@ -5078,10 +5078,10 @@ var AIManager = /*#__PURE__*/function () {
 
       // Update button text based on command type
       var commandNames = {
-        'insertat': 'Insert at Position',
-        'insert': 'Insert at Cursor',
-        'replace': 'Replace Selection',
-        'analyze': 'Analyze Code'
+        insertat: 'Insert at Position',
+        insert: 'Insert at Cursor',
+        replace: 'Replace Selection',
+        analyze: 'Analyze Code'
       };
       executeBtn.innerHTML = "\n      <svg width=\"14\" height=\"14\" viewBox=\"0 0 16 16\" fill=\"currentColor\">\n        <path d=\"M8 0C3.58 0 0 3.58 0 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm3.5 5.5L7.25 10.75 4.5 8l1.5-1.5 1.25 1.25L10 4l1.5 1.5z\"/>\n      </svg>\n      ".concat(commandNames[command] || 'Execute Command', "\n    ");
 
@@ -5312,32 +5312,32 @@ var AIManager = /*#__PURE__*/function () {
       var prompt = '';
       switch (action) {
         case 'review':
-          prompt = "Please review my G-code for best practices, potential issues, and optimization opportunities. Use the /ai:analyze command to examine the code.";
+          prompt = 'Please review my G-code for best practices, potential issues, and optimization opportunities. Use the /ai:analyze command to examine the code.';
           break;
         case 'optimize':
-          prompt = "Please optimize my G-code to improve efficiency, reduce machining time, and maintain accuracy. Use the /ai:analyze command first, then suggest optimizations with /ai:write if needed.";
+          prompt = 'Please optimize my G-code to improve efficiency, reduce machining time, and maintain accuracy. Use the /ai:analyze command first, then suggest optimizations with /ai:write if needed.';
           break;
         case 'explain':
           if (selectedText) {
             prompt = "Please explain the following G-code section:\n\n".concat(selectedText, "\n\nUse the /ai:getlines command to retrieve more context if needed.");
           } else {
-            prompt = "Please explain how my G-code works and what each section does. Use the /ai:getlines command to examine specific parts of the code.";
+            prompt = 'Please explain how my G-code works and what each section does. Use the /ai:getlines command to examine specific parts of the code.';
           }
           break;
         case 'analyze':
-          prompt = "Please analyze my G-code and provide detailed statistics about its structure and complexity. Use the /ai:analyze command to perform the analysis.";
+          prompt = 'Please analyze my G-code and provide detailed statistics about its structure and complexity. Use the /ai:analyze command to perform the analysis.';
           break;
         case 'debug':
-          prompt = "Please help me debug my G-code. Look for potential issues, syntax errors, or logical problems. Use the /ai:analyze command to examine the code thoroughly.";
+          prompt = 'Please help me debug my G-code. Look for potential issues, syntax errors, or logical problems. Use the /ai:analyze command to examine the code thoroughly.';
           break;
         case 'convert':
-          prompt = "Please help me convert or modify my G-code format. Use the /ai:analyze command first to understand the current format, then suggest conversions.";
+          prompt = 'Please help me convert or modify my G-code format. Use the /ai:analyze command first to understand the current format, then suggest conversions.';
           break;
         case 'simulate':
-          prompt = "Please help me understand how this G-code will execute. Use the /ai:analyze command to examine the toolpath and movements.";
+          prompt = 'Please help me understand how this G-code will execute. Use the /ai:analyze command to examine the toolpath and movements.';
           break;
         default:
-          prompt = "Please help me with my G-code. Feel free to use any of your available commands to interact with the code.";
+          prompt = 'Please help me with my G-code. Feel free to use any of your available commands to interact with the code.';
       }
 
       // Add context to the prompt
@@ -6456,7 +6456,7 @@ var FileOperations = /*#__PURE__*/function () {
       // Show loading on the export button
       var restoreButton = null;
       if (exportButton && window.navigationManager) {
-        restoreButton = window.navigationManager.showButtonLoading(exportButton, "Exporting...");
+        restoreButton = window.navigationManager.showButtonLoading(exportButton, 'Exporting...');
       }
 
       // Get last opened filename for suggestion
@@ -6530,7 +6530,7 @@ var FileOperations = /*#__PURE__*/function () {
       // Show loading on the save button
       var restoreButton = null;
       if (saveButton && window.navigationManager) {
-        restoreButton = window.navigationManager.showButtonLoading(saveButton, "Saving...");
+        restoreButton = window.navigationManager.showButtonLoading(saveButton, 'Saving...');
       }
       try {
         // Get last opened filename for suggestion
@@ -7467,59 +7467,59 @@ var HelpSystem = /*#__PURE__*/function () {
 
       // Find the corresponding language option to get its display information
       var languageMap = {
-        'es': {
+        es: {
           flag: '🇪🇸',
           name: 'Español'
         },
-        'fr': {
+        fr: {
           flag: '🇫🇷',
           name: 'Français'
         },
-        'de': {
+        de: {
           flag: '🇩🇪',
           name: 'Deutsch'
         },
-        'it': {
+        it: {
           flag: '🇮🇹',
           name: 'Italiano'
         },
-        'pt': {
+        pt: {
           flag: '🇵🇹',
           name: 'Português'
         },
-        'ru': {
+        ru: {
           flag: '🇷🇺',
           name: 'Русский'
         },
-        'zh': {
+        zh: {
           flag: '🇨🇳',
           name: '中文'
         },
-        'ja': {
+        ja: {
           flag: '🇯🇵',
           name: '日本語'
         },
-        'ko': {
+        ko: {
           flag: '🇰🇷',
           name: '한국어'
         },
-        'ar': {
+        ar: {
           flag: '🇸🇦',
           name: 'العربية'
         },
-        'he': {
+        he: {
           flag: '🇮🇱',
           name: 'עברית'
         },
-        'tr': {
+        tr: {
           flag: '🇹🇷',
           name: 'Türkçe'
         },
-        'pl': {
+        pl: {
           flag: '🇵🇱',
           name: 'Polski'
         },
-        'nl': {
+        nl: {
           flag: '🇳🇱',
           name: 'Nederlands'
         }

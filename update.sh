@@ -38,11 +38,45 @@ if [ -f "libggcode.so.backup" ]; then
     mv libggcode.so.backup libggcode.so
 fi
 
-# Step 4: Build Logic
-echo "🔨 Building components..."
+# Step 4: Build Node.js and JavaScript components
+echo "🔨 Building Node.js application and JavaScript bundles..."
+
+# Ensure public directory structure exists
+mkdir -p public/js
+
+# Install Node.js dependencies first
+if [ -f "package.json" ]; then
+    if command -v npm >/dev/null 2>&1; then
+        echo "📦 Installing Node.js dependencies..."
+        npm install --silent
+    fi
+fi
+
+# Run build scripts if they exist
+if [ -f "package.json" ]; then
+    # Look for build script
+    if grep -q '"build"' package.json; then
+        echo "🏗️  Running npm build..."
+        npm run build
+    fi
+
+    # Look for webpack or other build tools
+    if grep -q '"webpack"' package.json; then
+        echo "🛠️  Running webpack build..."
+        npx webpack --mode=production
+    elif grep -q '"parcel"' package.json; then
+        echo "🛠️  Running parcel build..."
+        npx parcel build
+    elif grep -q '"vite"' package.json; then
+        echo "🛠️  Running vite build..."
+        npx vite build
+    fi
+fi
+
+# Build GG compiler if source files exist
 if [ -f "Makefile" ]; then
-    echo "📋 Found Makefile, building..."
-    make
+    echo "🔧 Building GG compiler with Makefile..."
+    make clean && make
 elif [ -f "ggcode.c" ]; then
     echo "🔨 Building GG compiler..."
     gcc -shared -o libggcode.so ggcode.c
@@ -51,12 +85,18 @@ elif [ -f "ggcode.cpp" ]; then
     g++ -shared -o libggcode.so ggcode.cpp
 fi
 
-if [ -f "package.json" ]; then
-    if command -v npm >/dev/null 2>&1; then
-        echo "📦 Installing dependencies..."
-        npm install --silent
+# Final JavaScript file placement check
+if [ ! -f "public/js/main.js" ]; then
+    if [ -f "src/client/js/main.js" ]; then
+        echo "🔧 Placing main.js in public directory..."
+        cp src/client/js/main.js public/js/main.js
+    elif [ -f "dist/js/main.js" ]; then
+        echo "🔧 Placing built main.js..."
+        cp dist/js/main.js public/js/main.js
     fi
 fi
+
+echo "✅ Build complete!"
 
 # Step 5: Cleanup
 echo "🧹 Cleaning up..."

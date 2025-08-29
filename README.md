@@ -274,6 +274,9 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 ├── CHANGELOG.md
 ├── COMMANDS.md
 ├── CONTRIBUTING.md
+├── debug-mime-fix.sh
+├── deploy-script.sh
+├── fix-mime-error.sh
 ├── ggcode.js
 ├── libggcode.so
 ├── LOCALSTORAGE_LOGIC.md
@@ -282,11 +285,14 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 ├── nohup.out
 ├── package-lock.json
 ├── package.json
+├── quick-problem-fix.sh
 ├── README.md
+├── script-test.html
 ├── server.log
 ├── test_dictionary_integration.ggcode
 ├── test_functions.ggcode
 ├── test_r_f_colcoding.txt
+├── test-mime-server.js
 ├── update.sh
 ├── USAGE.md
 └── webpack.config.js

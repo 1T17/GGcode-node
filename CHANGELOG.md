@@ -20,6 +20,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🐛 Fixed
 
+- fix(api): fix (13f4bec)
+- fix: fix (af6e9a8)
+
+### 🔧 Other
+
+- chore(ui): hmm (723c619)
+
+
+## [1.0.7] - 2025-08-29
+
+### ✨ Added
+
+- feat: initial commit - complete GGcode compiler project (2fd1222)
+- build(all): new stuff (526ebd2)
+- test: add test file for commit workflow verification (3d71678)
+
+### 🔄 Changed
+
+- chore: update (b25b789)
+- build: update (4644357)
+
+### 🐛 Fixed
+
 - fix: fix (af6e9a8)
 
 ### 🔧 Other

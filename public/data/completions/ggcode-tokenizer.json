@@ -1,0 +1,25 @@
+{
+    "tokenizer": {
+        "keywordsFromJSON": true,
+        "constantsFromJSON": true,
+        "builtinsFromJSON": true,
+        "operators": [
+            "=",
+            "+",
+            "-",
+            "*",
+            "/",
+            "%",
+            ".."
+        ],
+        "symbolsPattern": "[=><!~?:&|+\\-*/^%]+",
+        "axisCharacters": "XYZABCEFSHTHRPNIJ",
+        "commentPatterns": {
+            "lineComment": "//",
+            "blockCommentStart": "/%",
+            "blockCommentEnd": "%/"
+        },
+        "brackets": "[]{}()",
+        "gcodePattern": "G\\d+|M\\d+"
+    }
+}

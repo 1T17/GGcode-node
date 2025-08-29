@@ -1,0 +1,66 @@
+/* Collapsible List Styling */
+
+.collapsible-list {
+    margin: 10px 0;
+}
+
+.list-toggle {
+    background: #007acc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    width: 100%;
+    text-align: left;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.list-toggle:hover {
+    background: #005a9e;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.toggle-icon {
+    font-size: 12px;
+    transition: transform 0.2s;
+}
+
+.list-content {
+    margin-top: 10px;
+    padding-left: 20px;
+    border-left: 2px solid #007acc;
+    background: rgba(0, 122, 204, 0.05);
+    border-radius: 0 4px 4px 0;
+    padding: 10px 15px;
+    margin-left: 10px;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.list-content li {
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.list-content li:last-child {
+    margin-bottom: 0;
+}

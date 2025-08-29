@@ -94,4 +94,58 @@ router.get('/api/help/section/:sectionId', async (req, res) => {
   }
 });
 
+/**
+ * GET /api/help/markdown-files - Get list of available markdown files
+ */
+router.get('/api/help/markdown-files', async (req, res) => {
+  try {
+    const helpContentService =
+      req.services.helpContent || new (require('../services/helpContent'))();
+
+    // Get list of markdown files from the help content directory
+    const markdownFiles = await helpContentService.getMarkdownFiles();
+
+    res.json({
+      success: true,
+      files: markdownFiles,
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      error: error.message || 'Failed to get markdown files',
+    });
+  }
+});
+
+/**
+ * GET /api/help/markdown-content - Get content of a specific markdown file
+ */
+router.get('/api/help/markdown-content', async (req, res) => {
+  try {
+    const helpContentService =
+      req.services.helpContent || new (require('../services/helpContent'))();
+    const filePath = req.query.file;
+
+    if (!filePath) {
+      return res.json({
+        success: false,
+        error: 'File parameter is required',
+      });
+    }
+
+    const content = await helpContentService.getMarkdownContent(filePath);
+
+    res.json({
+      success: true,
+      content: content,
+      file: filePath,
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      error: error.message || 'Failed to load markdown content',
+    });
+  }
+});
+
 module.exports = router;

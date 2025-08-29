@@ -1,0 +1,32 @@
+/* Search Components */
+
+.search-container {
+    margin-bottom: 16px;
+    position: relative;
+}
+
+.search-input {
+    width: 95%;
+    padding: 8px 12px;
+    background: #1e1e1e;
+    border: 1px solid #3c3c3c;
+    border-radius: 4px;
+    color: #cccccc;
+    font-size: 14px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #007acc;
+}
+
+.search-input::placeholder {
+    color: #8c8c8c;
+}
+
+.search-results {
+    color: #8c8c8c;
+    font-size: 12px;
+    margin-top: 4px;
+}

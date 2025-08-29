@@ -32,7 +32,7 @@ class GcodeAnnotationSystem {
         this.millDictionary = await dictResponse.json();
         this.millAnnotations = await annotResponse.json();
         this.annotationsLoaded = true;
-        console.log('G-code dictionaries loaded successfully');
+        //console.log('G-code dictionaries loaded successfully');
       } else {
         console.error('Failed to load G-code dictionaries');
       }
@@ -176,9 +176,21 @@ class GcodeAnnotationSystem {
 
     const parsed = this.parseGcodeLine(lineContent);
 
+    // Check if parsing failed first
+    if (!parsed) {
+      return `<div class="annotation-simple">
+        <strong>Line ${lineNumber}:</strong> ${lineContent || '(empty line)'}
+        <br><em>No G-code content detected</em>
+      </div>`;
+    }
+
     // If line has coords but no explicit G, find implied motion from above
     let implied = null;
-    if (!parsed.primaryCommand && this.hasMotionCoords(parsed.parameters)) {
+    if (
+      !parsed.primaryCommand &&
+      parsed.parameters &&
+      this.hasMotionCoords(parsed.parameters)
+    ) {
       const prev = this.findPreviousMotion(lineNumber, outputEditor);
       if (prev.cmd) {
         parsed.primaryCommand = prev.cmd.toUpperCase();
@@ -187,17 +199,10 @@ class GcodeAnnotationSystem {
       }
     }
 
-    if (!parsed) {
-      return `<div class="annotation-simple">
-        <strong>Line ${lineNumber}:</strong> ${lineContent || '(empty line)'}
-        <br><em>No G-code content detected</em>
-      </div>`;
-    }
-
     if (
       !parsed.primaryCommand &&
       !parsed.hasParams &&
-      parsed.commands.length === 0
+      (!parsed.commands || parsed.commands.length === 0)
     ) {
       return `<div class="annotation-simple">
         <strong>Line ${lineNumber}:</strong> ${lineContent}

@@ -1,0 +1,82 @@
+{
+    "languageConfiguration": {
+        "brackets": [
+            [
+                "{",
+                "}"
+            ],
+            [
+                "[",
+                "]"
+            ],
+            [
+                "(",
+                ")"
+            ]
+        ],
+        "autoClosingPairs": [
+            {
+                "open": "{",
+                "close": "}"
+            },
+            {
+                "open": "[",
+                "close": "]"
+            },
+            {
+                "open": "(",
+                "close": ")"
+            },
+            {
+                "open": "\"",
+                "close": "\""
+            },
+            {
+                "open": "'",
+                "close": "'"
+            }
+        ],
+        "surroundingPairs": [
+            {
+                "open": "{",
+                "close": "}"
+            },
+            {
+                "open": "[",
+                "close": "]"
+            },
+            {
+                "open": "(",
+                "close": ")"
+            },
+            {
+                "open": "\"",
+                "close": "\""
+            },
+            {
+                "open": "'",
+                "close": "'"
+            }
+        ],
+        "folding": {
+            "markers": {
+                "start": "%/",
+                "end": "/%"
+            }
+        },
+        "comments": {
+            "lineComment": "//",
+            "blockComment": {
+                "start": "/%",
+                "end": "%/"
+            }
+        }
+    },
+    "tokenizerSymbolsPattern": "=><!~?:&|+\\-*/^%",
+    "axisFallbackPattern1": "[{axis0}{axis1}{axis2}ABC][+-]?[0-9.]+",
+    "axisFallbackPattern2": "[FSTHRP][+-]?[0-9.]+",
+    "variablePattern": "\\[[^\\]]+\\]",
+    "numberPattern": "\\d+(\\.\\d+)?",
+    "identifierPattern": "[a-zA-Z_]\\w*",
+    "bracketSymbols": "{}[]()"
+}

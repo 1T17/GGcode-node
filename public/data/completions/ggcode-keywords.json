@@ -1,0 +1,60 @@
+{
+    "keywords": [
+        {
+            "word": "let",
+            "description": "Variable declaration",
+            "detail": "let variable = value",
+            "snippet": "let ${1:variable} = ${2:value}"
+        },
+        {
+            "word": "if",
+            "description": "Conditional statement",
+            "detail": "if (condition) { ... }",
+            "snippet": "if (${1:condition}) {\n\t${2}\n}"
+        },
+        {
+            "word": "else",
+            "description": "Alternative conditional",
+            "detail": "else { ... }"
+        },
+        {
+            "word": "for",
+            "description": "Loop construct",
+            "detail": "for i = start..end { ... }",
+            "snippet": "for ${1:i} = ${2:start}..${3:end} {\n\t${4}\n}"
+        },
+        {
+            "word": "while",
+            "description": "While loop",
+            "detail": "while (condition) { ... }",
+            "snippet": "while (${1:condition}) {\n\t${2}\n}"
+        },
+        {
+            "word": "function",
+            "description": "Function definition",
+            "detail": "function name(parameters) { ... return value; }",
+            "snippet": "function ${1:name}(${2:parameters}) {\n\t${3}\n\treturn ${4:value};\n}"
+        },
+        {
+            "word": "return",
+            "description": "Return from function",
+            "detail": "return value"
+        },
+        {
+            "word": "note",
+            "description": "Code documentation",
+            "detail": "note { documentation }",
+            "snippet": "note {\n\t${1:documentation}\n}"
+        },
+        {
+            "word": "step",
+            "description": "Loop step increment",
+            "detail": "for i = 0..10 step 2"
+        },
+        {
+            "word": "mod",
+            "description": "Modulo operation",
+            "detail": "mod(dividend, divisor)"
+        }
+    ]
+}

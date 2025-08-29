@@ -1,0 +1,46 @@
+{
+    "brackets": [
+        {
+            "pair": "{}",
+            "description": "Code block",
+            "snippet": "{${1:code}}"
+        },
+        {
+            "pair": "[]",
+            "description": "Array access/Expression",
+            "snippet": "[${1:expression}]"
+        },
+        {
+            "pair": "()",
+            "description": "Function call/Math expression",
+            "snippet": "(${1:expression})"
+        },
+        {
+            "pair": "{",
+            "description": "Code blocks - opening",
+            "snippet": "{${1:code}}"
+        },
+        {
+            "pair": "}",
+            "description": "Code blocks - closing"
+        },
+        {
+            "pair": "[",
+            "description": "Array access - opening",
+            "snippet": "[${1:expression}]"
+        },
+        {
+            "pair": "]",
+            "description": "Array access - closing"
+        },
+        {
+            "pair": "(",
+            "description": "Expression - opening",
+            "snippet": "(${1:expression})"
+        },
+        {
+            "pair": ")",
+            "description": "Expression - closing"
+        }
+    ]
+}

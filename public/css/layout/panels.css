@@ -1,0 +1,125 @@
+/* Panel Layout Styles */
+
+#editor,
+#output {
+    min-height: 0;
+    min-width: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+#output {
+    flex: 1 1 auto;
+    position: static;
+    min-height: 0;
+    min-width: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   BACKGROUND IMAGE SUPPORT FOR MONACO EDITOR
+   ────────────────────────────────────────────────────────────────────── */
+
+#editor,
+#output {
+    transition: background-image 0.3s ease-in-out;
+}
+
+/* Background Image Classes */
+#editor.bg-space,
+#output.bg-space {
+    background-image: url('/images/backgrounds/space.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+#editor.bg-circuit,
+#output.bg-circuit {
+    background-image: url('/images/backgrounds/circuit.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+#editor.bg-code-gradient,
+#output.bg-code-gradient {
+    background: linear-gradient(135deg,
+            #1e1e1e 0%,
+            #252526 50%,
+            #3c3c3c 100%);
+}
+
+#editor.bg-matrix,
+#output.bg-matrix {
+    background-image:
+        radial-gradient(circle at 20px 50%, rgba(0, 150, 0, .3) 0%, transparent 50%),
+        radial-gradient(circle at 20px 50%, rgba(0, 150, 0, .3) 0%, transparent 50%);
+    background-size: 40px 40px;
+    background-position: 0 0, 20px 20px;
+    animation: matrix-rain 10s linear infinite;
+}
+
+@keyframes matrix-rain {
+    from {
+        background-position: 0 0, 20px 20px;
+    }
+
+    to {
+        background-position: 0 1000px, 20px 1020px;
+    }
+}
+
+#editor.bg-coffee-shop,
+#output.bg-coffee-shop {
+    background-image: url('/images/backgrounds/coffee-shop.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    opacity: 0.8;
+}
+
+#editor.bg-minimal-dark,
+#output.bg-minimal-dark {
+    background: linear-gradient(45deg,
+            #1a1a1a 0%,
+            #2d2d30 50%,
+            #1e1e1e 100%);
+}
+
+#editor.bg-minimal-light,
+#output.bg-minimal-light {
+    background: linear-gradient(45deg,
+            #ffffff 0%,
+            #f8f9fa 50%,
+            #e9ecef 100%);
+}
+
+#editor.bg-blue-grid,
+#output.bg-blue-grid {
+    background-image:
+        linear-gradient(rgba(0, 122, 204, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 122, 204, 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+/* Ensure Monaco editor content remains readable */
+#editor.monaco-editor-overided-content *::before,
+#output.monaco-editor-overided-content *::before {
+    display: none !important;
+}
+
+.monaco-editor-background-transparent .monaco-editor-background,
+.monaco-editor .monaco-editor-background {
+    opacity: 0.8 !important;
+}
+
+/* Allow background images to show through semi-transparent editor */
+.monaco-editor .view-lines {
+    background-color: rgba(var(--vscode-editor-background), 0.85) !important;
+}

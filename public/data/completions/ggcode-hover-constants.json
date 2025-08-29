@@ -1,0 +1,32 @@
+{
+    "PI": {
+        "title": "π (Pi)",
+        "description": "Mathematical constant representing the ratio of a circle's circumference to its diameter.",
+        "value": 3.141592653589793,
+        "usage": "Used for circular calculations and trigonometric functions"
+    },
+    "TAU": {
+        "title": "τ (Tau)",
+        "description": "Mathematical constant representing 2π.",
+        "value": 6.283185307179586,
+        "usage": "More intuitive constant for complete circle calculations"
+    },
+    "E": {
+        "title": "e (Euler's number)",
+        "description": "Mathematical constant approximately equal to 2.718.",
+        "value": 2.718281828459045,
+        "usage": "Base for natural logarithms and exponential growth"
+    },
+    "DEG_TO_RAD": {
+        "title": "Degrees to Radians conversion",
+        "description": "Conversion factor: π/180 ≈ 0.017453292519943295",
+        "value": 0.017453292519943295,
+        "usage": "Use: `degrees * DEG_TO_RAD` to convert degrees to radians"
+    },
+    "RAD_TO_DEG": {
+        "title": "Radians to Degrees conversion",
+        "description": "Conversion factor: 180/π ≈ 57.29577951308232",
+        "value": 57.29577951308232,
+        "usage": "Use: `radians * RAD_TO_DEG` to convert radians to degrees"
+    }
+}

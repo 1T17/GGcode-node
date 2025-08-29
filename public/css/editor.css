@@ -1,0 +1,5 @@
+/* Editor - Imports all editor modules */
+
+@import url('./editor/annotations.css');
+@import url('./editor/annotation-content.css');
+@import url('./editor/annotation-toolbar.css');

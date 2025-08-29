@@ -1,149 +1,593 @@
 <!-- Help Modal -->
 <div id="helpModal" class="modal-overlay">
-  <div class="modal-content">
+  <div class="modal-content ai-chat-modal roo-style">
     <div class="modal-header">
-      <h2 class="modal-title">GGcode Help</h2>
-      <div class="language-selector">
-        <div class="custom-select">
-          <div class="select-selected" id="selectSelected">
-            <span class="flag-icon flag-en"></span>
-            <span class="language-name">English</span>
-            <span class="select-arrow">▼</span>
-          </div>
-          <div class="select-items select-hide" id="selectItems">
-            <div class="select-option" data-value="en" data-flag="en">
-              <span class="flag-icon flag-en"></span>
+      <div class="modal-header-left">
+        <h2 class="modal-title">📚 GGcode Help</h2>
+      </div>
+      <div class="modal-header-center">
+        <div class="language-selector">
+          <div class="custom-select">
+            <button class="select-selected" id="selectSelected">
+              <span class="flag-icon flag-en">🇺🇸</span>
               <span class="language-name">English</span>
-            </div>
-            <div class="select-option" data-value="es" data-flag="es">
-              <span class="flag-icon flag-es"></span>
-              <span class="language-name">Español</span>
-            </div>
-            <div class="select-option" data-value="fr" data-flag="fr">
-              <span class="flag-icon flag-fr"></span>
-              <span class="language-name">Français</span>
-            </div>
-            <div class="select-option" data-value="de" data-flag="de">
-              <span class="flag-icon flag-de"></span>
-              <span class="language-name">Deutsch</span>
-            </div>
-            <div class="select-option" data-value="it" data-flag="it">
-              <span class="flag-icon flag-it"></span>
-              <span class="language-name">Italiano</span>
-            </div>
-            <div class="select-option" data-value="pt" data-flag="pt">
-              <span class="flag-icon flag-pt"></span>
-              <span class="language-name">Português</span>
-            </div>
-            <div class="select-option" data-value="ru" data-flag="ru">
-              <span class="flag-icon flag-ru"></span>
-              <span class="language-name">Русский</span>
-            </div>
-            <div class="select-option" data-value="zh" data-flag="zh">
-              <span class="flag-icon flag-zh"></span>
-              <span class="language-name">中文</span>
-            </div>
-            <div class="select-option" data-value="ja" data-flag="ja">
-              <span class="flag-icon flag-ja"></span>
-              <span class="language-name">日本語</span>
-            </div>
-            <div class="select-option" data-value="ko" data-flag="ko">
-              <span class="flag-icon flag-ko"></span>
-              <span class="language-name">한국어</span>
-            </div>
-            <div class="select-option" data-value="ar" data-flag="ar">
-              <span class="flag-icon flag-ar"></span>
-              <span class="language-name">العربية</span>
-            </div>
-            <div class="select-option" data-value="he" data-flag="he">
-              <span class="flag-icon flag-he"></span>
-              <span class="language-name">עברית</span>
-            </div>
-            <div class="select-option" data-value="tr" data-flag="tr">
-              <span class="flag-icon flag-tr"></span>
-              <span class="language-name">Türkçe</span>
-            </div>
-            <div class="select-option" data-value="pl" data-flag="pl">
-              <span class="flag-icon flag-pl"></span>
-              <span class="language-name">Polski</span>
-            </div>
-            <div class="select-option" data-value="nl" data-flag="nl">
-              <span class="flag-icon flag-nl"></span>
-              <span class="language-name">Nederlands</span>
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="#10a37f">
+                <path d="M4.427 6.427L8 10l3.573-3.573L10.354 5 8 7.354 5.646 5z" />
+              </svg>
+            </button>
+            <div class="select-items" id="selectItems">
+              <div class="select-option" data-value="en">
+                <span class="flag-icon flag-en">🇺🇸</span>
+                <span class="language-name">English</span>
+              </div>
+              <div class="select-option" data-value="es">
+                <span class="flag-icon flag-es">🇪🇸</span>
+                <span class="language-name">Español</span>
+              </div>
+              <div class="select-option" data-value="fr">
+                <span class="flag-icon flag-fr">🇫🇷</span>
+                <span class="language-name">Français</span>
+              </div>
+              <div class="select-option" data-value="de">
+                <span class="flag-icon flag-de">🇩🇪</span>
+                <span class="language-name">Deutsch</span>
+              </div>
+              <div class="select-option" data-value="it">
+                <span class="flag-icon flag-it">🇮🇹</span>
+                <span class="language-name">Italiano</span>
+              </div>
+              <div class="select-option" data-value="pt">
+                <span class="flag-icon flag-pt">🇵🇹</span>
+                <span class="language-name">Português</span>
+              </div>
+              <div class="select-option" data-value="ru">
+                <span class="flag-icon flag-ru">🇷🇺</span>
+                <span class="language-name">Русский</span>
+              </div>
+              <div class="select-option" data-value="zh">
+                <span class="flag-icon flag-zh">🇨🇳</span>
+                <span class="language-name">中文</span>
+              </div>
+              <div class="select-option" data-value="ja">
+                <span class="flag-icon flag-ja">🇯🇵</span>
+                <span class="language-name">日本語</span>
+              </div>
+              <div class="select-option" data-value="ko">
+                <span class="flag-icon flag-ko">🇰🇷</span>
+                <span class="language-name">한국어</span>
+              </div>
+              <div class="select-option" data-value="ar">
+                <span class="flag-icon flag-ar">🇸🇦</span>
+                <span class="language-name">العربية</span>
+              </div>
+              <div class="select-option" data-value="he">
+                <span class="flag-icon flag-he">🇮🇱</span>
+                <span class="language-name">עברית</span>
+              </div>
+              <div class="select-option" data-value="tr">
+                <span class="flag-icon flag-tr">🇹🇷</span>
+                <span class="language-name">Türkçe</span>
+              </div>
+              <div class="select-option" data-value="pl">
+                <span class="flag-icon flag-pl">🇵🇱</span>
+                <span class="language-name">Polski</span>
+              </div>
+              <div class="select-option" data-value="nl">
+                <span class="flag-icon flag-nl">🇳🇱</span>
+                <span class="language-name">Nederlands</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <button class="modal-close" onclick="closeModal('helpModal')">&times;</button>
+      <div class="modal-header-right">
+        <button class="modal-close" onclick="closeModal('helpModal')">&times;</button>
+      </div>
     </div>
     <div class="modal-body">
-      <div class="search-container">
-        <input type="text" id="helpSearchInput" class="search-input" placeholder="Search help topics, functions, operators..." />
-        <div id="helpSearchResults" class="search-results"></div>
-      </div>
-      <div class="help-content" id="helpContent">
-        <!-- Help content will be loaded dynamically from JSON -->
-        <div class="loading-indicator">
-          <p>Loading help content...</p>
+      <div class="ai-chat-main">
+        <!-- View Toggle Controls (Top level) -->
+        <div class="simple-controls">
+          <button id="toggleTreeBtn" class="control-btn" title="Show Documentation Tree">
+            📁 Show Files
+          </button>
+          <button id="backToHelpBtn" class="control-btn" style="display: none;" title="Back to Help">
+            ↩ Back to Help
+          </button>
+        </div>
+
+        <!-- Panels Container - Handles two-panel layout -->
+        <div class="help-panels-container">
+          <!-- File Tree Panel - Hidden by default -->
+          <div class="file-tree-panel" id="fileTreeOverlay">
+            <div class="file-tree-container">
+              <div class="file-tree-header">
+                <h3>📁 Documentation Files</h3>
+                <div class="tree-controls">
+                  <button id="hideTreeBtn" class="tree-btn" title="Hide Tree (Keep File)">
+                    ◁
+                  </button>
+                  <button id="closeTreeBtn" class="tree-btn" title="Close Tree">
+                    ✕
+                  </button>
+                </div>
+              </div>
+              <div class="file-tree-content" id="helpFileTreePanel">
+                <!-- File tree will be rendered here by JavaScript -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Content Area - Takes full width when tree hidden -->
+          <div class="help-content-panel">
+
+            <!-- Search for regular help -->
+            <div class="search-container" id="helpSearchContainer">
+              <input type="text" id="helpSearchInput" class="search-input"
+                placeholder="Search help topics, functions, operators..." />
+              <div id="helpSearchResults" class="search-results"></div>
+            </div>
+
+            <!-- Regular Help Content -->
+            <div class="help-content" id="helpContent">
+              <div class="loading-indicator">
+                <p>Loading help content...</p>
+              </div>
+            </div>
+
+            <!-- MD File Content - Simple text viewer -->
+            <div class="md-file-viewer" id="mdFileViewer">
+              <div class="md-file-header">
+                <h4>File: <span id="fileName">None Selected</span></h4>
+                <button id="mdCopyBtn" class="copy-btn" title="Copy Content">
+                  📋 Copy
+                </button>
+              </div>
+              <div class="md-content-body" id="mdContentBody">
+                <div class="md-loading-indicator">
+                  <p>Click a file in the documentation tree to view its content.</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- AI Chat Modal -->
+<div id="aiChatModal" class="modal-overlay">
+  <div class="modal-content ai-chat-modal roo-style">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <h2 class="modal-title">🤖 AI Assistant</h2>
+        <div class="ai-controls">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          <!-- Mode Selector Dropdown -->
+          <div class="ai-mode-dropdown">
+
+
+            <button class="ai-mode-dropdown-btn" id="aiModeDropdownBtn">
+
+
+
+
+              <svg width="14" height="14" fill="#10a37f" viewBox="0 0 24 24">
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
+              </svg>
+
+
+              Assistant Mode
+
+              <svg class="errow" width="12" height="12" viewBox="0 0 16 16" fill="#ffffff">
+                <path d="M4.427 6.427L8 10l3.573-3.573L10.354 5 8 7.354 5.646 5z" />
+              </svg>
+            </button>
+
+            <div class="dropdown-content" id="aiModeDropdownContent">
+
+
+
+
+              <button class="dropdown-option" data-value="assistant">
+
+                <svg width="14" height="14" fill="#10a37f" viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
+                </svg>
+                Assistant Mode
+              </button>
+
+
+
+              <button class="dropdown-option" data-value="editor">
+                <svg width="14" height="14" fill="#10a37f" viewBox="0 0 24 24">
+                  <path
+                    d="M14.06 9.02l.92.92L5.92 19H5v-.92l9.06-9.06M17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29m-3.6 3.19L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z" />
+                </svg>
+                Code Editor Mode
+              </button>
+
+
+
+              <button class="dropdown-option" data-value="optimizer">
+                <svg width="14" height="14" fill="#10a37f" viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
+                </svg>
+                Optimizer Mode
+              </button>
+
+
+              <button class="dropdown-option" data-value="teacher">
+                <svg width="14" height="14" fill="#10a37f" viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-4h2v2h-2zm1.61-9.96c-.78-.79-2.05-.79-2.83 0-.78.78-.78 2.05 0 2.83l1.41 1.41c.78.79 2.05.79 2.83 0 .78-.78.78-2.05 0-2.83L13.61 6.04z" />
+                </svg>
+                Teacher Mode
+              </button>
+
+
+
+            </div>
+
+          </div>
+
+
+
+
+
+
+
+
+
+          <!-- Quick Actions Dropdown -->
+          <div class="ai-actions-dropdown">
+
+
+            <button class="ai-actions-dropdown-btn">
+
+
+              <span id="aiActionsIndicator">Quick Actions</span>
+
+              <svg class="errow" width="12" height="12" viewBox="0 0 16 16" fill="#ffffff">
+                <path d="M4.427 6.427L8 10l3.573-3.573L10.354 5 8 7.354 5.646 5z" />
+              </svg>
+
+            </button>
+
+
+
+
+            <div class="dropdown-content" id="aiQuickActionsContent">
+
+
+
+              <button class="dropdown-option" data-value="review" data-action="review">
+                <svg width="14" height="14" fill="#ffffff" viewBox="0 0 24 24">
+                  <path
+                    d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+                </svg>
+                Review Code
+              </button>
+
+              <button class="dropdown-option" data-value="optimize" data-action="optimize">
+                <svg width="14" height="14" fill="#ffffff" viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
+                </svg>
+                Optimize Code
+              </button>
+
+              <button class="dropdown-option" data-value="explain" data-action="explain">
+                <svg width="14" height="14" fill="#ffffff" viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-4h2v2h-2zm1.61-9.96c-.78-.79-2.05-.79-2.83 0-.78.78-.78 2.05 0 2.83l1.41 1.41c.78.79 2.05.79 2.83 0 .78-.78.78-2.05 0-2.83L13.61 6.04z" />
+                </svg>
+                Explain Code
+              </button>
+
+              <button class="dropdown-option" data-value="analyze" data-action="analyze">
+                <svg width="14" height="14" fill="#ffffff" viewBox="0 0 24 24">
+                  <path
+                    d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" />
+                </svg>
+                Analyze Code
+              </button>
+
+
+            </div>
+          </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="modal-header-right">
+        <!-- Auto-approve toggle -->
+        <div class="auto-approve-container">
+          <label class="auto-approve-toggle">
+            <input type="checkbox" id="autoApproveToggle" onchange="toggleAutoApprove()">
+            <span class="toggle-slider"></span>
+          </label>
+          <span class="auto-approve-label">Auto-approve</span>
+        </div>
+        <button class="modal-close" onclick="closeAiChat()">&times;</button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <!-- Main Chat Area -->
+      <div class="ai-chat-main">
+        <div id="aiChatContent" class="ai-chat-content">
+          <div id="aiChatMessages" class="ai-chat-messages">
+            <!-- Chat messages will appear here -->
+            <div class="ai-message ai-welcome">
+              <div class="ai-message-content">
+                <strong>🤖 :</strong> Hello! I'm here to help you with G-code editing, optimization, and
+                troubleshooting. What would you like to work on?
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ai-chat-input-area">
+          <div class="ai-chat-input-container">
+            <textarea id="aiChatInput" placeholder="Ask me anything about G-code, CNC machining, or optimization..."
+              class="ai-chat-textarea" onkeydown="handleAiChatKeydown(event)"></textarea>
+            <button id="aiChatSendBtn" onclick="sendAiMessage()" class="ai-chat-send-btn">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="#10a37f">
+                <path
+                  d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.5.5 0 0 1-.91.01L5.354 11.05a.5.5 0 0 0-.224-.224l-4.192-1.981a.5.5 0 0 1 .01-.91L15.414.037a.5.5 0 0 1 .54.11z" />
+              </svg>
+              Send
+            </button>
+          </div>
+          <div class="ai-chat-help-text">
+            Press Ctrl+Enter to send • Type /help for commands • Auto-approve: <span id="autoApproveStatus">OFF</span>
+          </div>
+
+          <!-- AI Command Actions -->
+          <div id="aiCommandActions" class="ai-command-actions" style="display: none;">
+            <div class="command-actions-header">
+              <span class="command-actions-title">🤖 AI Command Available</span>
+              <div class="command-actions-buttons">
+                <button id="executeAiCommandBtn" class="execute-command-btn" onclick="executePendingCommandFromUI()">
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="#10a37f">
+                    <path
+                      d="M8 0C3.58 0 0 3.58 0 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm3.5 5.5L7.25 10.75 4.5 8l1.5-1.5 1.25 1.25L10 4l1.5 1.5z" />
+                  </svg>
+                  Execute Command
+                </button>
+                <button class="cancel-command-btn" onclick="hideCommandActions()">
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="#10a37f">
+                    <path d="M2 2L14 14M14 2L2 14" />
+                  </svg>
+                  Cancel
+                </button>
+              </div>
+            </div>
+            <div id="commandPreview" class="command-preview"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div id="settingsModal" class="modal-overlay">
+  <div class="modal-content ai-chat-modal roo-style">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <h2 class="modal-title">⚙️ Editor Settings</h2>
+      </div>
+      <div class="modal-header-right">
+        <!-- Settings Action Buttons -->
+        <button type="button" class="settings-header-btn settings-btn-secondary"
+          onclick="settingsManager.resetToDefaults()" title="Reset all settings to defaults">
+          <svg width="14" height="14" fill="#ffffff" viewBox="0 0 24 24">
+            <path
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-4h2v2h-2zm1.61-9.96c-.78-.79-2.05-.79-2.83 0-.78.78-.78 2.05 0 2.83l1.41 1.41c.78.79 2.05.79 2.83 0 .78-.78.78-2.05 0-2.83L13.61 6.04z" />
+          </svg>
+          <span>Reset to Defaults</span>
+        </button>
+        <button type="button" class="settings-header-btn settings-btn-primary"
+          onclick="settingsManager.applyCurrentSettings()" title="Apply current settings">
+          <svg width="14" height="14" fill="#ffffff" viewBox="0 0 24 24">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+          </svg>
+          <span>Apply Settings</span>
+        </button>
+        <button class="modal-close" onclick="closeSettings()">&times;</button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="ai-chat-main">
+        <div id="settingsContent" class="ai-chat-content">
+          <!-- Settings content will be loaded here by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
 
 <!-- Examples Modal -->
 <div id="examplesModal" class="modal-overlay">
-  <div class="modal-content">
+  <div class="modal-content ai-chat-modal roo-style">
     <div class="modal-header">
-      <h2 class="modal-title">Example Files</h2>
-      <button class="modal-close" onclick="closeModal('examplesModal')">&times;</button>
+      <div class="modal-header-left">
+        <h2 class="modal-title">📁 Example Files</h2>
+      </div>
+      <div class="modal-header-right">
+        <button class="modal-close" onclick="closeModal('examplesModal')">&times;</button>
+      </div>
     </div>
     <div class="modal-body">
-      <div class="search-container">
-        <input type="text" id="examplesSearchInput" class="search-input" placeholder="Search examples by name or description..." />
-        <div id="examplesSearchResults" class="search-results"></div>
-      </div>
-      <div id="examplesList" class="examples-list">
-        <!-- Examples will be loaded here dynamically -->
+      <div class="ai-chat-main">
+        <div class="ai-chat-content">
+          <div class="search-container">
+            <input type="text" id="examplesSearchInput" class="search-input"
+              placeholder="Search examples by name or description..." />
+            <div id="examplesSearchResults" class="search-results"></div>
+          </div>
+          <div id="examplesList" class="examples-list">
+            <!-- Examples will be loaded here dynamically -->
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!-- Configurator Modal -->
-<div id="configuratorModal"
-  style="display:none; position:fixed; top:0; left:0; right:auto; width:50vw; height:100vh; background:rgba(30, 30, 30, 0.856); z-index:1000; box-shadow: 4px 0 24px #0008; flex-direction:column;">
-  <div style="width:100%; display:flex; justify-content:flex-end; padding:10px;">
-    <button onclick="closeConfigurator()" title="Close" class="sim-btn sim-exit" style="margin-left:auto;">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M2 2L14 14M14 2L2 14" stroke="#fff" stroke-width="2" stroke-linecap="round" />
-      </svg>
-    </button>
-  </div>
+<div id="configuratorModal" class="modal-overlay">
+  <div class="modal-content ai-chat-modal roo-style">
 
-  <div id="configuratorContent" style="overflow-y:auto; height:calc(100vh - 60px);">
-    <!-- configurator Content here -->
-  </div>
 
-  <div class="control-bar">
-    <div class="button-group">
-      <!-- Save & Compile -->
-      <button type="button" title="Save & Compile GGcode" onclick="configuratorSaveAndCompile()">
-        <svg width="14" height="14" fill="#3ad32c" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-          <path d="M11 14v-4H5v4H3V8h10v6zh3V2H4v4h8V2h-2v2H6V2H2v12h3zM0 0h16v16H0z" fill-rule="evenodd" />
-        </svg>
-        <div style="color: #3ad32c;">Save</div>
-      </button>
 
-      <div class="separator"></div>
 
-      <!-- Compile -->
-      <button type="button" title="Compile GGcode" onclick="configuratorCompileOnly()">
-        <svg width="14" height="14" fill="#d38a2c" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0 16h16V0H0zm2-2V2h12v12zm4-3 5-3-5-3z" fill-rule="evenodd" />
-        </svg>
-        <div style="color: #d38a2c;">Compile</div>
-      </button>
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <h2 class="modal-title">⚙️ Configurator</h2>
+        <div class="configurator-info">
+          <span class="configurator-status">Ready</span>
+        </div>
+      </div>
+      <div class="modal-header-right">
+        <!-- Save & Compile Button -->
+        <button type="button" title="Save & Compile GGcode" onclick="configuratorSaveAndCompile()"
+          class="configurator-header-btn">
+          <svg width="14" height="14" fill="#3ad32c" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+            <path d="M11 14v-4H5v4H3V8h10v6zh3V2H4v4h8V2h-2v2H6V2H2v12h3zM0 0h16v16H0z" fill-rule="evenodd" />
+          </svg>
+          <span>Save & Compile</span>
+        </button>
+
+        <!-- Compile Button -->
+        <button type="button" title="Compile GGcode" onclick="configuratorCompileOnly()"
+          class="configurator-header-btn">
+          <svg width="14" height="14" fill="#d38a2c" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 16h16V0H0zm2-2V2h12v12zm4-3 5-3-5-3z" fill-rule="evenodd" />
+          </svg>
+          <span>Compile Only</span>
+        </button>
+
+        <button class="modal-close" onclick="closeConfigurator()" title="Close">&times;</button>
+      </div>
     </div>
+
+
+    <div class="modal-body">
+      <div class="ai-chat-main">
+
+
+        <div id="configuratorContent" class="ai-chat-content">
+
+          //this gets genrated by js not static
+
+        </div>
+
+
+
+
+
+
+
+      </div>
+    </div>
+
+
+
+
+
   </div>
 </div>

@@ -6,7 +6,6 @@
 
 import { setupSimulationControls } from './controls.js';
 import { parseGcodeOptimized } from './parser.js';
-import { ToolpathHoverSystem } from './index.js';
 import { GeometryManager } from './geometry-manager.js';
 import { ChunkLoader } from './chunk-loader.js';
 
@@ -24,6 +23,11 @@ export class GcodeVisualizer {
     this.hoverSystem = null;
     this.geometryManager = new GeometryManager();
     this.chunkLoader = new ChunkLoader(this);
+
+    // Camera mode properties
+    this.cameraMode = 'perspective'; // 'perspective' or 'orthographic'
+    this.perspectiveCamera = null;
+    this.orthographicCamera = null;
 
     // Performance monitoring
     this.performanceMonitor = {
@@ -58,6 +62,7 @@ export class GcodeVisualizer {
     this.progressiveLoading = true; // Always use progressive loading for proper state management
     this.loadingProgress = 0;
     this.isLoading = false;
+    this.loadingTimeout = null; // Timeout to force hide loading indicator
   }
 
   /**
@@ -175,21 +180,61 @@ export class GcodeVisualizer {
       }
     }
 
-    // Log performance stats periodically
+    // Store performance stats globally for live display (update every second)
     if (
       currentTime - this.performanceMonitor.lastLogTime >
-      this.performanceMonitor.logInterval
+      1000 // Update every 1 second for live display
     ) {
       const avgRenderTime =
-        this.performanceMonitor.renderTimeHistory.reduce((a, b) => a + b, 0) /
-        this.performanceMonitor.renderTimeHistory.length;
-      console.log('Performance Monitor:', {
+        this.performanceMonitor.renderTimeHistory.length > 0
+          ? this.performanceMonitor.renderTimeHistory.reduce(
+              (a, b) => a + b,
+              0
+            ) / this.performanceMonitor.renderTimeHistory.length
+          : 0;
+
+      // Store performance data globally
+      window.performanceData = {
         averageFPS: this.performanceMonitor.averageFPS,
-        averageRenderTime: `${avgRenderTime.toFixed(2)}ms`,
+        averageRenderTime: avgRenderTime,
         culledObjects: this.culledObjects.size,
         totalObjects: this.scene ? this.scene.children.length : 0,
         adaptiveRendering: this.adaptiveRendering,
-      });
+        canvasSize: this.renderer
+          ? {
+              width: this.renderer.domElement.width,
+              height: this.renderer.domElement.height,
+            }
+          : { width: 0, height: 0 },
+        memoryInfo: performance.memory
+          ? {
+              used: Math.round(performance.memory.usedJSHeapSize / 1024 / 1024),
+              total: Math.round(
+                performance.memory.totalJSHeapSize / 1024 / 1024
+              ),
+              limit: Math.round(
+                performance.memory.jsHeapSizeLimit / 1024 / 1024
+              ),
+            }
+          : null,
+        lastUpdate: new Date().toLocaleTimeString(),
+      };
+
+      // Update the HTML stats display immediately
+      if (window.updateGcodeStats) {
+        try {
+          window.updateGcodeStats();
+        } catch (error) {
+          console.warn('Error updating stats display:', error);
+        }
+      }
+
+      // Console log performance data every 5 seconds (less frequent for console spam)
+      if (currentTime - (this.performanceMonitor.lastConsoleLog || 0) > 5000) {
+        //console.log('Performance Monitor:', window.performanceData);
+        this.performanceMonitor.lastConsoleLog = currentTime;
+      }
+
       this.performanceMonitor.lastLogTime = currentTime;
     }
   }
@@ -249,33 +294,33 @@ export class GcodeVisualizer {
     return;
 
     /*
-        if (!this.frustum) return;
-
-        this.culledObjects.clear();
-
-        // Only apply culling selectively to avoid over-culling
-        this.scene.traverse((child) => {
-            // Only apply culling to meshes that are likely to be toolpath objects
-            if (child.isMesh && child.geometry && child.userData && child.userData.isToolpathObject) {
-                const wasVisible = child.visible;
-                child.visible = this.isObjectVisible(child);
-
-                // Track changes for debugging
-                if (wasVisible !== child.visible) {
-                    if (child.visible) {
-                        this.culledObjects.delete(child);
-                    } else {
-                        this.culledObjects.add(child);
-                        // Log only occasionally to avoid spam
+            if (!this.frustum) return;
+    
+            this.culledObjects.clear();
+    
+            // Only apply culling selectively to avoid over-culling
+            this.scene.traverse((child) => {
+                // Only apply culling to meshes that are likely to be toolpath objects
+                if (child.isMesh && child.geometry && child.userData && child.userData.isToolpathObject) {
+                    const wasVisible = child.visible;
+                    child.visible = this.isObjectVisible(child);
+    
+                    // Track changes for debugging
+                    if (wasVisible !== child.visible) {
+                        if (child.visible) {
+                            this.culledObjects.delete(child);
+                        } else {
+                            this.culledObjects.add(child);
+                            // Log only occasionally to avoid spam
+                        }
                     }
                 }
+            });
+    
+            // Log culling stats occasionally
+            if (this.culledObjects.size > 0 && Math.random() < 0.001) {
             }
-        });
-
-        // Log culling stats occasionally
-        if (this.culledObjects.size > 0 && Math.random() < 0.001) {
-        }
-        */
+            */
   }
 
   /**
@@ -286,29 +331,49 @@ export class GcodeVisualizer {
 
     // Setup Three.js scene
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x000000); // Black background
+    // Remove background color to keep it transparent
+    // this.scene.background = new THREE.Color(0x000000);
 
-    this.camera = new THREE.PerspectiveCamera(
+    // Create perspective camera (default)
+    this.perspectiveCamera = new THREE.PerspectiveCamera(
       60,
       container.offsetWidth / container.offsetHeight,
       0.1,
       50000
     );
-    this.camera.position.set(0, -100, 80);
-    this.camera.up.set(0, 0, 1); // Z is up
+    this.perspectiveCamera.position.set(0, -100, 80);
+    this.perspectiveCamera.up.set(0, 0, 1); // Z is up
 
-    // Create optimized renderer with performance-focused settings
+    // Create orthographic camera (for flat view)
+    const aspect = container.offsetWidth / container.offsetHeight;
+    const frustumSize = 200; // Adjust this value based on your needs
+    this.orthographicCamera = new THREE.OrthographicCamera(
+      (-frustumSize * aspect) / 2,
+      (frustumSize * aspect) / 2,
+      frustumSize / 2,
+      -frustumSize / 2,
+      0.1,
+      50000
+    );
+    this.orthographicCamera.position.set(0, -100, 80);
+    this.orthographicCamera.up.set(0, 0, 1); // Z is up
+
+    // Set default camera
+    this.camera = this.perspectiveCamera;
+
+    // Create optimized renderer with transparent background support
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
-      alpha: false,
+      alpha: true, // Enable alpha channel for transparency
       powerPreference: 'high-performance',
       precision: 'mediump', // Use medium precision for better performance
       stencil: false, // Disable stencil buffer if not needed
       depth: true,
     });
 
-    // Optimize renderer settings for performance
-    this.renderer.setClearColor(0x000000, 1); // Black background
+    // Set transparent background for the canvas
+    this.renderer.setClearColor(0x000000, 0); // Transparent background (alpha = 0)
+    this.renderer.setClearAlpha(0); // Ensure alpha is 0 for full transparency
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // Limit pixel ratio for performance
     this.renderer.setSize(container.offsetWidth, container.offsetHeight);
 
@@ -324,7 +389,7 @@ export class GcodeVisualizer {
 
     // GPU optimizations if available
     if (this.renderer.capabilities.isWebGL2) {
-      console.log('WebGL2 detected - enabling advanced performance features');
+      //console.log('WebGL2 detected - enabling advanced performance features');
     }
 
     //console.log('Renderer optimized for CNC visualization performance');
@@ -352,7 +417,6 @@ export class GcodeVisualizer {
 
     this.setupControls();
     this.setupEventListeners();
-    this.setupHoverSystem();
 
     // Enable conservative optimizations by default
     // Adaptive rendering can cause perceived lag, so start disabled
@@ -404,25 +468,14 @@ export class GcodeVisualizer {
       if (!this.container) return;
       const w = this.container.offsetWidth;
       const h = this.container.offsetHeight;
-      this.camera.aspect = w / h;
-      this.camera.updateProjectionMatrix();
+
+      // Update camera aspect ratio for both cameras
+      this.updateCameraAspect();
+
+      // Update renderer size
       this.renderer.setSize(w, h);
     };
     window.addEventListener('resize', onResize);
-  }
-
-  /**
-   * Setup hover system for point detection and tooltips
-   */
-  setupHoverSystem() {
-    this.hoverSystem = new ToolpathHoverSystem();
-    this.hoverSystem.initialize(
-      this.scene,
-      this.camera,
-      this.container,
-      this.controls
-    );
-    window.gcodeHoverSystem = this.hoverSystem;
   }
 
   /**
@@ -433,13 +486,54 @@ export class GcodeVisualizer {
       return { success: false, error: 'No G-code content' };
     }
 
-    // Always use progressive loading for consistency and proper state management
-    if (this.progressiveLoading) {
-      return await this.renderGcodeProgressive(gcode);
-    }
+    // Track file render time
+    const renderStartTime = performance.now();
+    this.performanceMonitor.fileRenderStartTime = renderStartTime;
 
-    // Fallback to original rendering for small files (if progressive loading is disabled)
-    return this.renderGcodeImmediate(gcode);
+    let result;
+    try {
+      // Always use progressive loading for consistency and proper state management
+      if (this.progressiveLoading) {
+        result = await this.renderGcodeProgressive(gcode);
+      } else {
+        // Fallback to original rendering for small files (if progressive loading is disabled)
+        result = this.renderGcodeImmediate(gcode);
+      }
+
+      // Calculate total file render time
+      const renderEndTime = performance.now();
+      const fileRenderTime = renderEndTime - renderStartTime;
+
+      // Store file render time in global performance stats
+      if (window.performanceStats) {
+        window.performanceStats.fileRenderTime = fileRenderTime;
+      }
+
+      // Store in performance data for live display
+      if (window.performanceData) {
+        window.performanceData.fileRenderTime = fileRenderTime;
+        window.performanceData.lastFileRenderTime =
+          new Date().toLocaleTimeString();
+      }
+
+      //console.log(`File render completed in ${fileRenderTime.toFixed(2)}ms`);
+
+      // Force update the HTML stats display immediately after file render
+      if (window.updateGcodeStats) {
+        try {
+          window.updateGcodeStats();
+          //console.log('Stats updated after file render');
+        } catch (error) {
+          console.warn('Error updating stats after file render:', error);
+        }
+      }
+
+      return result;
+    } catch (error) {
+      // Clear render start time on error
+      this.performanceMonitor.fileRenderStartTime = null;
+      throw error;
+    }
   }
 
   /**
@@ -496,16 +590,6 @@ export class GcodeVisualizer {
     window.gcodeToolpathModes = this.parseResult.toolpathModes;
     window.gcodeLineMap = this.parseResult.lineMap;
 
-    // Update hover system with toolpath data
-    if (this.hoverSystem) {
-      this.hoverSystem.updateToolpath({
-        toolpathPoints: this.parseResult.toolpathPoints,
-        toolpathSegments: this.parseResult.toolpathSegments,
-        toolpathModes: this.parseResult.toolpathModes,
-        lineMap: this.parseResult.lineMap,
-      });
-    }
-
     // Fit camera to show all points
     this.fitCameraToToolpath();
 
@@ -537,12 +621,24 @@ export class GcodeVisualizer {
     this.loadingProgress = 0;
 
     try {
-      // Show loading indicator
+      // Show loading indicator with timeout
       this.showLoadingIndicator(true);
+
+      // Set a timeout to force hide the loading indicator after 30 seconds
+      this.loadingTimeout = setTimeout(() => {
+        console.warn(
+          'Loading timeout reached - forcing hide of loading indicator'
+        );
+        try {
+          this.showLoadingIndicator(false);
+        } catch (error) {
+          console.error('Error in timeout hide:', error);
+        }
+      }, 30000); // 30 second timeout
 
       // Load G-code progressively
       const result = await this.chunkLoader.loadGcodeProgressive(gcode, {
-        chunkSize: 10,
+        chunkSize: 1000,
         maxChunksPerFrame: 5,
         onProgress: (progress) => {
           this.loadingProgress = progress.progress;
@@ -570,7 +666,7 @@ export class GcodeVisualizer {
           result.segments || [],
           result.modes || []
         ),
-        lineMap: this.createLineMap(result.segments || [], gcode),
+        lineMap: result.lineMap || [], // Use the correct line map from parser
         anyDrawn: (result.segments && result.segments.length > 0) || false,
       };
 
@@ -615,16 +711,6 @@ export class GcodeVisualizer {
       window.gcodeToolpathModes = this.parseResult.toolpathModes;
       window.gcodeLineMap = this.parseResult.lineMap;
 
-      // Update hover system with toolpath data
-      if (this.hoverSystem) {
-        this.hoverSystem.updateToolpath({
-          toolpathPoints: this.parseResult.toolpathPoints,
-          toolpathSegments: this.parseResult.toolpathSegments,
-          toolpathModes: this.parseResult.toolpathModes,
-          lineMap: this.parseResult.lineMap,
-        });
-      }
-
       // Fit camera to show all points
       this.fitCameraToToolpath();
 
@@ -642,11 +728,36 @@ export class GcodeVisualizer {
       return { success: true, parseResult: this.parseResult };
     } catch (error) {
       console.error('Progressive rendering failed:', error);
+      // Clear the timeout
+      if (this.loadingTimeout) {
+        clearTimeout(this.loadingTimeout);
+        this.loadingTimeout = null;
+      }
+      // Make sure loading indicator is hidden even on error
+      try {
+        this.showLoadingIndicator(false);
+      } catch (hideError) {
+        console.error('Error hiding loading indicator after error:', hideError);
+      }
       return { success: false, error: error.message };
     } finally {
+      // console.log(
+      //   'Progressive loading finally block - hiding loading indicator'
+      // );
+
+      // Clear the timeout to prevent it from firing
+      if (this.loadingTimeout) {
+        clearTimeout(this.loadingTimeout);
+        this.loadingTimeout = null;
+      }
+
       this.isLoading = false;
       this.loadingProgress = 100;
-      this.showLoadingIndicator(false);
+      try {
+        this.showLoadingIndicator(false);
+      } catch (error) {
+        console.error('Error hiding loading indicator:', error);
+      }
     }
   }
 
@@ -802,7 +913,7 @@ export class GcodeVisualizer {
 
     // Store globally for simulation
     window.gcodeInstancedMeshes = this.instancedMeshes;
-    console.log('Instanced toolpath lines created');
+    //console.log('Instanced toolpath lines created');
   }
 
   /**
@@ -970,10 +1081,54 @@ export class GcodeVisualizer {
    * Show/hide loading indicator
    */
   showLoadingIndicator(show) {
-    // In a real implementation, this would update the UI
+    // Create or find loading indicator element
+    let loadingIndicator = document.getElementById('gcodeLoadingIndicator');
+
     if (show) {
+      if (!loadingIndicator) {
+        // Create loading indicator if it doesn't exist
+        loadingIndicator = document.createElement('div');
+        loadingIndicator.id = 'gcodeLoadingIndicator';
+        loadingIndicator.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: rgba(0, 0, 0, 0.9);
+                    color: white;
+                    padding: 20px 30px;
+                    border-radius: 10px;
+                    font-family: monospace;
+                    font-size: 14px;
+                    text-align: center;
+                    z-index: 10000;
+                    border: 2px solid #007acc;
+                    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+                `;
+
+        // Add loading animation
+        loadingIndicator.innerHTML = `
+                    <div style="margin-bottom: 10px; font-weight: bold;">Loading G-code...</div>
+                    <div id="loadingProgress" style="width: 200px; height: 4px; background: #333; border-radius: 2px; overflow: hidden; margin: 0 auto;">
+                        <div id="loadingProgressBar" style="height: 100%; background: linear-gradient(90deg, #007acc, #00ff99); width: 0%; transition: width 0.3s ease; border-radius: 2px;"></div>
+                    </div>
+                    <div id="loadingText" style="margin-top: 10px; font-size: 12px; color: #ccc;">Initializing...</div>
+                `;
+
+        document.body.appendChild(loadingIndicator);
+      }
+      loadingIndicator.style.display = 'block';
       //console.log('Loading G-code file...');
     } else {
+      if (loadingIndicator) {
+        loadingIndicator.style.display = 'none';
+        // Remove after fade out
+        setTimeout(() => {
+          if (loadingIndicator.parentNode) {
+            loadingIndicator.parentNode.removeChild(loadingIndicator);
+          }
+        }, 300);
+      }
       //console.log('Loading completed');
     }
   }
@@ -982,10 +1137,15 @@ export class GcodeVisualizer {
    * Update loading indicator with progress
    */
   updateLoadingIndicator(progress) {
-    // In a real implementation, this would update a progress bar
-    if (Math.floor(progress.progress) % 10 === 0) {
-      // Log every 10%
-      //console.log(`Loading progress: ${progress.progress.toFixed(1)}% (${progress.processedChunks}/${progress.totalChunks} chunks)`);
+    const loadingProgressBar = document.getElementById('loadingProgressBar');
+    const loadingText = document.getElementById('loadingText');
+
+    if (loadingProgressBar) {
+      loadingProgressBar.style.width = `${progress.progress}%`;
+    }
+
+    if (loadingText) {
+      loadingText.textContent = `Processing: ${Math.round(progress.progress)}% (${progress.processedChunks}/${progress.totalChunks} chunks)`;
     }
   }
 
@@ -1002,13 +1162,7 @@ export class GcodeVisualizer {
     return counts;
   }
 
-  /**
-   * Create line map from segments and original G-code
-   */
-  createLineMap(segments, _gcode) {
-    // Simplified implementation - in a real scenario, this would map segments to line numbers
-    return new Array(segments.length).fill(0).map((_, i) => i);
-  }
+  // REMOVED: createLineMap function - now using correct line map from parser
 
   /**
    * Fit camera to show entire toolpath
@@ -1041,7 +1195,7 @@ export class GcodeVisualizer {
         this.controls.update();
       }
 
-      console.log('Camera fitted to toolpath:', { center, size, cameraZ });
+      //console.log('Camera fitted to toolpath:', { center, size, cameraZ });
     } else {
       // Default camera position if no points
       this.camera.position.set(0, -100, 80);
@@ -1051,6 +1205,102 @@ export class GcodeVisualizer {
         this.controls.update();
       }
     }
+  }
+
+  /**
+   * Switch between perspective and orthographic camera modes
+   * @param {string} mode - 'perspective' or 'orthographic'
+   */
+  switchCameraMode(mode) {
+    if (!this.perspectiveCamera || !this.orthographicCamera) {
+      console.warn('Cameras not initialized');
+      return;
+    }
+
+    // Store current camera transform
+    const currentPosition = this.camera.position.clone();
+    const currentQuaternion = this.camera.quaternion.clone();
+    const currentTarget = this.controls ? this.controls.target.clone() : null;
+
+    // Switch camera
+    if (mode === 'orthographic' && this.camera !== this.orthographicCamera) {
+      this.camera = this.orthographicCamera;
+      this.cameraMode = 'orthographic';
+      console.log('Switched to orthographic camera');
+    } else if (
+      mode === 'perspective' &&
+      this.camera !== this.perspectiveCamera
+    ) {
+      this.camera = this.perspectiveCamera;
+      this.cameraMode = 'perspective';
+      console.log('Switched to perspective camera');
+    } else {
+      return; // Already on the requested mode
+    }
+
+    // Apply stored transform to new camera
+    this.camera.position.copy(currentPosition);
+    this.camera.quaternion.copy(currentQuaternion);
+
+    // Update controls
+    if (this.controls) {
+      this.controls.object = this.camera;
+      if (currentTarget) {
+        this.controls.target.copy(currentTarget);
+      }
+      this.controls.update();
+    }
+
+    // Update camera aspect ratio
+    this.updateCameraAspect();
+
+    // Force a render to update the view
+    this.render();
+  }
+
+  /**
+   * Export current visualization as image
+   */
+  exportImage() {
+    if (!this.renderer || !this.renderer.domElement) {
+      console.warn('Renderer not available for export');
+      return;
+    }
+
+    // Force a render to ensure current frame is captured
+    this.render();
+
+    // Get image data from canvas
+    const imageData = this.renderer.domElement.toDataURL('image/png');
+
+    // Create download link
+    const link = document.createElement('a');
+    link.href = imageData;
+    link.download = `gcode_visualization_${this.cameraMode}_${Date.now()}.png`;
+    link.click();
+
+    console.log('Image exported successfully');
+  }
+
+  /**
+   * Update camera aspect ratio and projection matrix
+   */
+  updateCameraAspect() {
+    if (!this.container || !this.camera) return;
+
+    const aspect = this.container.offsetWidth / this.container.offsetHeight;
+
+    if (this.camera.isPerspectiveCamera) {
+      this.camera.aspect = aspect;
+    } else if (this.camera.isOrthographicCamera) {
+      const frustumSize = 200; // Match the value used in initialization
+      this.camera.left = (-frustumSize * aspect) / 2;
+      this.camera.right = (frustumSize * aspect) / 2;
+      this.camera.top = frustumSize / 2;
+      this.camera.bottom = -frustumSize / 2;
+    }
+
+    this.camera.updateProjectionMatrix();
   }
 
   /**
@@ -1118,11 +1368,6 @@ export class GcodeVisualizer {
         if (this.frustum && Math.random() < 0.1) {
           // Only update culling 10% of the time
           this.applyFrustumCulling();
-        }
-
-        // Update hover system (for point indicator scaling)
-        if (this.hoverSystem) {
-          this.hoverSystem.update();
         }
 
         this.renderer.render(this.scene, this.camera);
@@ -1202,10 +1447,6 @@ export class GcodeVisualizer {
    * Dispose of resources
    */
   dispose() {
-    if (this.hoverSystem) {
-      this.hoverSystem.dispose();
-      this.hoverSystem = null;
-    }
     if (this.renderer) {
       this.renderer.dispose();
     }
@@ -1251,7 +1492,7 @@ window.optimizationControls = {
     if (window.gcodeVisualizer) {
       window.gcodeVisualizer.toggleOptimization('adaptiveRendering', true);
       window.gcodeVisualizer.toggleOptimization('frustumCulling', true);
-      console.log('All optimizations enabled');
+      //console.log('All optimizations enabled');
     }
   },
   disableAllOptimizations: () => {

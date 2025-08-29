@@ -1,0 +1,349 @@
+{
+    "functions": {
+        "sin": {
+            "label": "sin(angle)",
+            "documentation": "Sine function - input in radians",
+            "parameters": [
+                {
+                    "label": "angle",
+                    "documentation": "Angle in radians"
+                }
+            ]
+        },
+        "cos": {
+            "label": "cos(angle)",
+            "documentation": "Cosine function - input in radians",
+            "parameters": [
+                {
+                    "label": "angle",
+                    "documentation": "Angle in radians"
+                }
+            ]
+        },
+        "tan": {
+            "label": "tan(angle)",
+            "documentation": "Tangent function - input in radians",
+            "parameters": [
+                {
+                    "label": "angle",
+                    "documentation": "Angle in radians"
+                }
+            ]
+        },
+        "asin": {
+            "label": "asin(value)",
+            "documentation": "Arc sine function - returns radians",
+            "parameters": [
+                {
+                    "label": "value",
+                    "documentation": "Value between -1 and 1"
+                }
+            ]
+        },
+        "acos": {
+            "label": "acos(value)",
+            "documentation": "Arc cosine function - returns radians",
+            "parameters": [
+                {
+                    "label": "value",
+                    "documentation": "Value between -1 and 1"
+                }
+            ]
+        },
+        "atan": {
+            "label": "atan(value)",
+            "documentation": "Arc tangent function - returns radians",
+            "parameters": [
+                {
+                    "label": "value",
+                    "documentation": "Any numeric value"
+                }
+            ]
+        },
+        "atan2": {
+            "label": "atan2(y, x)",
+            "documentation": "Arc tangent of y/x - returns radians",
+            "parameters": [
+                {
+                    "label": "y",
+                    "documentation": "Y coordinate"
+                },
+                {
+                    "label": "x",
+                    "documentation": "X coordinate"
+                }
+            ]
+        },
+        "sqrt": {
+            "label": "sqrt(value)",
+            "documentation": "Square root function",
+            "parameters": [
+                {
+                    "label": "value",
+                    "documentation": "Value ≥ 0"
+                }
+            ]
+        },
+        "pow": {
+            "label": "pow(base, exponent)",
+            "documentation": "Power function",
+            "parameters": [
+                {
+                    "label": "base",
+                    "documentation": "Base value"
+                },
+                {
+                    "label": "exponent",
+                    "documentation": "Exponent value"
+                }
+            ]
+        },
+        "abs": {
+            "label": "abs(value)",
+            "documentation": "Absolute value function",
+            "parameters": [
+                {
+                    "label": "value",
+                    "documentation": "Any numeric value"
+                }
+            ]
+        },
+        "min": {
+            "label": "min(a, b)",
+            "documentation": "Minimum of two values",
+            "parameters": [
+                {
+                    "label": "a",
+                    "documentation": "First value"
+                },
+                {
+                    "label": "b",
+                    "documentation": "Second value"
+                }
+            ]
+        },
+        "max": {
+            "label": "max(a, b)",
+            "documentation": "Maximum of two values",
+            "parameters": [
+                {
+                    "label": "a",
+                    "documentation": "First value"
+                },
+                {
+                    "label": "b",
+                    "documentation": "Second value"
+                }
+            ]
+        },
+        "clamp": {
+            "label": "clamp(value, min, max)",
+            "documentation": "Clamp value between min and max",
+            "parameters": [
+                {
+                    "label": "value",
+                    "documentation": "Value to clamp"
+                },
+                {
+                    "label": "min",
+                    "documentation": "Minimum value"
+                },
+                {
+                    "label": "max",
+                    "documentation": "Maximum value"
+                }
+            ]
+        },
+        "floor": {
+            "label": "floor(value)",
+            "documentation": "Round down to nearest integer",
+            "parameters": [
+                {
+                    "label": "value",
+                    "documentation": "Value to round"
+                }
+            ]
+        },
+        "ceil": {
+            "label": "ceil(value)",
+            "documentation": "Round up to nearest integer",
+            "parameters": [
+                {
+                    "label": "value",
+                    "documentation": "Value to round"
+                }
+            ]
+        },
+        "round": {
+            "label": "round(value)",
+            "documentation": "Round to nearest integer",
+            "parameters": [
+                {
+                    "label": "value",
+                    "documentation": "Value to round"
+                }
+            ]
+        },
+        "hypot": {
+            "label": "hypot(x, y)",
+            "documentation": "Hypotenuse (sqrt(x² + y²))",
+            "parameters": [
+                {
+                    "label": "x",
+                    "documentation": "X coordinate"
+                },
+                {
+                    "label": "y",
+                    "documentation": "Y coordinate"
+                }
+            ]
+        },
+        "lerp": {
+            "label": "lerp(start, end, t)",
+            "documentation": "Linear interpolation between start and end",
+            "parameters": [
+                {
+                    "label": "start",
+                    "documentation": "Start value"
+                },
+                {
+                    "label": "end",
+                    "documentation": "End value"
+                },
+                {
+                    "label": "t",
+                    "documentation": "Interpolation factor (0-1)"
+                }
+            ]
+        },
+        "map": {
+            "label": "map(value, in_min, in_max, out_min, out_max)",
+            "documentation": "Map value from one range to another",
+            "parameters": [
+                {
+                    "label": "value",
+                    "documentation": "Value to map"
+                },
+                {
+                    "label": "in_min",
+                    "documentation": "Input range minimum"
+                },
+                {
+                    "label": "in_max",
+                    "documentation": "Input range maximum"
+                },
+                {
+                    "label": "out_min",
+                    "documentation": "Output range minimum"
+                },
+                {
+                    "label": "out_max",
+                    "documentation": "Output range maximum"
+                }
+            ]
+        },
+        "distance": {
+            "label": "distance(x1, y1, x2, y2)",
+            "documentation": "Distance between two points",
+            "parameters": [
+                {
+                    "label": "x1",
+                    "documentation": "First point X coordinate"
+                },
+                {
+                    "label": "y1",
+                    "documentation": "First point Y coordinate"
+                },
+                {
+                    "label": "x2",
+                    "documentation": "Second point X coordinate"
+                },
+                {
+                    "label": "y2",
+                    "documentation": "Second point Y coordinate"
+                }
+            ]
+        },
+        "sign": {
+            "label": "sign(value)",
+            "documentation": "Sign of value (-1, 0, or 1)",
+            "parameters": [
+                {
+                    "label": "value",
+                    "documentation": "Value to get sign of"
+                }
+            ]
+        },
+        "log": {
+            "label": "log(value)",
+            "documentation": "Natural logarithm",
+            "parameters": [
+                {
+                    "label": "value",
+                    "documentation": "Value > 0"
+                }
+            ]
+        },
+        "exp": {
+            "label": "exp(power)",
+            "documentation": "e raised to power",
+            "parameters": [
+                {
+                    "label": "power",
+                    "documentation": "Exponent"
+                }
+            ]
+        },
+        "noise": {
+            "label": "noise(value)",
+            "documentation": "Perlin noise",
+            "parameters": [
+                {
+                    "label": "value",
+                    "documentation": "Input value"
+                }
+            ]
+        },
+        "deg": {
+            "label": "deg(radians)",
+            "documentation": "Convert radians to degrees",
+            "parameters": [
+                {
+                    "label": "radians",
+                    "documentation": "Angle in radians"
+                }
+            ]
+        },
+        "rad": {
+            "label": "rad(degrees)",
+            "documentation": "Convert degrees to radians",
+            "parameters": [
+                {
+                    "label": "degrees",
+                    "documentation": "Angle in degrees"
+                }
+            ]
+        },
+        "mod": {
+            "label": "mod(dividend, divisor)",
+            "documentation": "Modulo operation",
+            "parameters": [
+                {
+                    "label": "dividend",
+                    "documentation": "Number to divide"
+                },
+                {
+                    "label": "divisor",
+                    "documentation": "Divisor"
+                }
+            ]
+        }
+    },
+    "userFunctions": {
+        "template": {
+            "label": "__NAME__(__PARAMS__)",
+            "documentation": "__DOCUMENTATION__",
+            "parameters": []
+        }
+    }
+}

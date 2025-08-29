@@ -1,0 +1,283 @@
+/* Settings Modal Styles */
+/* Centralized CSS for the Monaco editor settings modal */
+
+.settings-container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    background: #1e1e1e;
+    border-radius: 8px;
+    color: #cccccc;
+    max-height: 95%;
+    overflow-y: auto;
+}
+
+.settings-header {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #3e3e42;
+}
+
+.settings-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.settings-title-section {
+    flex: 1;
+}
+
+.settings-header h3 {
+    margin: 0 0 10px 0;
+    color: #ffffff;
+    font-size: 24px;
+}
+
+.settings-header-buttons {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.settings-description {
+    margin: 0;
+    color: #999999;
+    font-size: 14px;
+}
+
+.settings-group {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #2a2a2a;
+    border-radius: 6px;
+    border: 1px solid #3e3e42;
+}
+
+.settings-group h4 {
+    margin: 0 0 20px 0;
+    color: #ffffff;
+    font-size: 18px;
+    border-bottom: 1px solid #3e3e42;
+    padding-bottom: 10px;
+}
+
+.setting-item {
+    margin-bottom: 20px;
+}
+
+.setting-item label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #cccccc;
+}
+
+.setting-item input[type="text"],
+.setting-item input[type="number"],
+.setting-item select {
+    width: 100%;
+    padding: 8px 12px;
+    background: #3c3c3c;
+    border: 1px solid #3e3e42;
+    border-radius: 4px;
+    color: #cccccc;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.setting-item input[type="text"]:focus,
+.setting-item input[type="number"]:focus,
+.setting-item select:focus {
+    outline: none;
+    border-color: #007acc;
+    box-shadow: 0 0 0 1px #007acc;
+}
+
+.setting-description {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #999999;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 600;
+    color: #cccccc;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin-right: 8px;
+    width: auto;
+}
+
+/* Footer styles removed - buttons moved to header */
+
+.settings-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.settings-btn-primary {
+    background: #007acc;
+    color: white;
+}
+
+.settings-btn-primary:hover {
+    background: #0056b3;
+}
+
+.settings-btn-secondary {
+    background: #3c3c3c;
+    color: #cccccc;
+    border: 1px solid #3e3e42;
+}
+
+.settings-btn-secondary:hover {
+    background: #4c4c4c;
+    border-color: #5a5a5a;
+}
+
+.settings-fade-in {
+    animation: settingsFadeIn 0.3s ease-out;
+}
+
+@keyframes settingsFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .settings-container {
+        margin: 10px;
+        padding: 15px;
+        max-height: 80vh;
+    }
+
+    .settings-header-content {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .settings-title-section {
+        text-align: center;
+    }
+
+    .settings-header-buttons {
+        justify-content: center;
+    }
+
+    .settings-btn {
+        flex: 1;
+        max-width: 150px;
+    }
+}
+
+/* Settings Header Buttons */
+.settings-header-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    margin-right: 8px;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.settings-header-btn svg {
+    flex-shrink: 0;
+}
+
+.settings-header-btn span {
+    display: none;
+    /* Hide text on small screens */
+}
+
+.settings-btn-primary {
+    background: #007acc;
+    color: white;
+}
+
+.settings-btn-primary:hover {
+    background: #0056b3;
+    transform: translateY(-1px);
+}
+
+.settings-btn-secondary {
+    background: #3c3c3c;
+    color: #cccccc;
+    border: 1px solid #3e3e42;
+}
+
+.settings-btn-secondary:hover {
+    background: #4c4c4c;
+    border-color: #5a5a5a;
+    transform: translateY(-1px);
+}
+
+/* Show text on larger screens */
+@media (min-width: 768px) {
+    .settings-header-btn span {
+        display: inline;
+    }
+
+    .settings-header-btn {
+        padding: 8px 16px;
+    }
+}
+
+/* Monaco editor styling is now controlled by settings - no hardcoded overrides */
+
+/* Settings Modal Header Layout */
+#settingsModal .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+#settingsModal .modal-header-left {
+    flex: 0 0 auto;
+}
+
+#settingsModal .modal-header-right {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Compact layout for smaller screens */
+@media (max-width: 767px) {
+    .settings-header-btn {
+        padding: 6px 8px;
+        margin-right: 4px;
+    }
+
+    #settingsModal .modal-header {
+        gap: 8px;
+    }
+}

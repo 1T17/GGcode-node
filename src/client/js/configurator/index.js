@@ -214,8 +214,8 @@ class ConfiguratorManager {
       return;
     }
 
-    console.log('[Configurator] Saving values from form:', result.values);
-    console.log('[Configurator] Updated code:', result.code);
+    //console.log('[Configurator] Saving values from form:', result.values);
+    //console.log('[Configurator] Updated code:', result.code);
 
     // Update editor
     if (editorSetValue) {
@@ -255,7 +255,7 @@ class ConfiguratorManager {
       return;
     }
 
-    console.log('[Configurator] Compiling with values:', result.values);
+    //console.log('[Configurator] Compiling with values:', result.values);
 
     // Compile with temporary code
     if (compileFunction) {

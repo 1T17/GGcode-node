@@ -1,0 +1,19 @@
+{
+  "timestamp": "2025-08-22T23:20:26.742Z",
+  "duration": 9500,
+  "totalTests": 1,
+  "passed": 1,
+  "failed": 0,
+  "results": [
+    {
+      "type": "command",
+      "command": "help",
+      "params": "",
+      "success": true,
+      "statusCode": 200,
+      "response": " ```plaintext\nHere are the available commands and their usage:\n- Insert text at cursor: /ai:insert [text]\n- Replace selected text: /ai:replace [new text]\n- Insert at specific position: /ai:insertat [lineNumber,column,text]\n- Analyze code: /ai:analyze\n- Get lines: /ai:getlines [startLine-endLine]\n- Replace range: /ai:replacerange [startLine,startColumn,endLine,endColumn,newText]\n```",
+      "expected": "commands",
+      "timestamp": "2025-08-22T23:20:26.740Z"
+    }
+  ]
+}

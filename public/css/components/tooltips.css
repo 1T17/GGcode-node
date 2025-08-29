@@ -1,0 +1,169 @@
+/* Tooltip Components - Toolpath point display tooltips */
+
+/* Base tooltip styling */
+.toolpath-tooltip {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.9);
+    color: #ffffff;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.4;
+    pointer-events: none;
+    z-index: 10000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    max-width: 300px;
+    word-wrap: break-word;
+    opacity: 0;
+    transition: opacity 0.15s ease-in-out;
+    display: none;
+}
+
+/* Tooltip content sections */
+.tooltip-coordinates {
+    font-weight: bold;
+    margin-bottom: 4px;
+    color: #00ff99;
+    /* Default green for coordinates */
+}
+
+.tooltip-command {
+    color: #ffffff;
+    font-style: italic;
+    opacity: 0.9;
+}
+
+/* Arc information section for G2/G3 commands */
+.tooltip-arc-info {
+    color: #ffdd44;
+    font-size: 11px;
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    opacity: 0.9;
+}
+
+/* Technical information section */
+.tooltip-technical {
+    color: #cccccc;
+    font-size: 10px;
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    opacity: 0.8;
+    font-style: normal;
+}
+
+/* Mode-specific color coding for coordinates */
+.toolpath-tooltip.mode-g0 .tooltip-coordinates {
+    color: #ff8e37;
+    /* Orange for G0 rapid moves */
+}
+
+.toolpath-tooltip.mode-g1 .tooltip-coordinates {
+    color: #00ff99;
+    /* Green for G1 linear moves */
+}
+
+.toolpath-tooltip.mode-g2 .tooltip-coordinates {
+    color: #0074d9;
+    /* Blue for G2 clockwise arcs */
+}
+
+.toolpath-tooltip.mode-g3 .tooltip-coordinates {
+    color: #f012be;
+    /* Magenta for G3 counter-clockwise arcs */
+}
+
+/* Enhanced styling for different modes */
+.toolpath-tooltip.mode-g0 {
+    border-left: 3px solid #ff8e37;
+}
+
+.toolpath-tooltip.mode-g1 {
+    border-left: 3px solid #00ff99;
+}
+
+.toolpath-tooltip.mode-g2 {
+    border-left: 3px solid #0074d9;
+}
+
+.toolpath-tooltip.mode-g3 {
+    border-left: 3px solid #f012be;
+}
+
+/* Responsive tooltip sizing */
+@media (max-width: 768px) {
+    .toolpath-tooltip {
+        max-width: 250px;
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .toolpath-tooltip {
+        max-width: 200px;
+        font-size: 10px;
+        padding: 5px 8px;
+    }
+}
+
+/* High DPI display support */
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
+    .toolpath-tooltip {
+        border-width: 0.5px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+    }
+}
+
+/* Animation states */
+.toolpath-tooltip.showing {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toolpath-tooltip.hiding {
+    opacity: 0;
+    transform: translateY(-5px);
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+    .toolpath-tooltip {
+        transition: none;
+    }
+}
+
+/* Dark theme adjustments */
+@media (prefers-color-scheme: dark) {
+    .toolpath-tooltip {
+        background: rgba(20, 20, 20, 0.95);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+}
+
+/* Light theme adjustments */
+@media (prefers-color-scheme: light) {
+    .toolpath-tooltip {
+        background: rgba(255, 255, 255, 0.95);
+        color: #333333;
+        border-color: rgba(0, 0, 0, 0.2);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .toolpath-tooltip .tooltip-command {
+        color: #666666;
+    }
+
+    .toolpath-tooltip .tooltip-arc-info {
+        color: #cc9900;
+    }
+
+    .toolpath-tooltip .tooltip-technical {
+        color: #888888;
+    }
+}

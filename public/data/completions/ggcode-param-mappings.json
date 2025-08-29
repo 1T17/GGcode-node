@@ -1,0 +1,110 @@
+{
+    "paramMappings": {
+        "X": "[x_pos]",
+        "Y": "[y_pos]",
+        "Z": "[z_pos]",
+        "A": "[a_pos]",
+        "B": "[b_pos]",
+        "C": "[c_pos]",
+        "F": "[feed_rate]",
+        "S": "[rpm]",
+        "T": "[tool_num]",
+        "H": "[offset]",
+        "R": "[radius]",
+        "P": "[dwell]",
+        "I": "[arc_x]",
+        "J": "[arc_y]",
+        "K": "[arc_z]",
+        "Q": "[depth]",
+        "D": "[tool_diam]",
+        "L": "[count]",
+        "N": "[seq_num]"
+    },
+    "axisParameters": [
+        {
+            "param": " X",
+            "description": "X-coordinate",
+            "snippet": " X[${1:x}]"
+        },
+        {
+            "param": " Y",
+            "description": "Y-coordinate",
+            "snippet": " Y[${1:y}]"
+        },
+        {
+            "param": " Z",
+            "description": "Z-coordinate",
+            "snippet": " Z[${1:z}]"
+        },
+        {
+            "param": " A",
+            "description": "A-rotation",
+            "snippet": " A[${1:a}]"
+        },
+        {
+            "param": " B",
+            "description": "B-rotation",
+            "snippet": " B[${1:b}]"
+        },
+        {
+            "param": " C",
+            "description": "C-rotation",
+            "snippet": " C[${1:c}]"
+        },
+        {
+            "param": " F",
+            "description": "Feed rate",
+            "snippet": " F[${1:feed}]"
+        },
+        {
+            "param": " S",
+            "description": "Spindle speed",
+            "snippet": " S[${1:speed}]"
+        },
+        {
+            "param": " T",
+            "description": "Tool number",
+            "snippet": " T[${1:tool}]"
+        },
+        {
+            "param": " R",
+            "description": "Radius/Return level",
+            "snippet": " R[${1:value}]"
+        },
+        {
+            "param": " I",
+            "description": "Arc center offset X",
+            "snippet": " I[${1:ix}]"
+        },
+        {
+            "param": " J",
+            "description": "Arc center offset Y",
+            "snippet": " J[${1:jy}]"
+        },
+        {
+            "param": " K",
+            "description": "Arc center offset Z",
+            "snippet": " K[${1:kz}]"
+        },
+        {
+            "param": " D",
+            "description": "Tool diameter/cutter compensation",
+            "snippet": " D[${1:diam}]"
+        },
+        {
+            "param": " H",
+            "description": "Tool height offset",
+            "snippet": " H[${1:height}]"
+        },
+        {
+            "param": " L",
+            "description": "Loop count/Subprogram repeat",
+            "snippet": " L[${1:count}]"
+        },
+        {
+            "param": " P",
+            "description": "Dwell time/Sequence number",
+            "snippet": " P[${1:value}]"
+        }
+    ]
+}

@@ -1,4 +1,33 @@
 <meta charset="UTF-8">
 <title>GGcode Compiler</title>
+<link rel="icon" type="image/x-icon" href="/GGcode.ico">
 <link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/css/components/navigation.css">
+<link rel="stylesheet" href="/css/modals/settings.css">
+<link rel="stylesheet" href="/css/modals/help-system.css">
 <link rel="stylesheet" href="/flags.css">
+
+<!-- Emergency Monaco Border Removal - Final Override -->
+<style>
+    /* Absolute final override for any remaining Monaco borders */
+    .monaco-editor,
+    .monaco-editor * {
+        border: none !important;
+        border-color: transparent !important;
+        box-shadow: none !important;
+        outline: none !important;
+        border-radius: 0 !important;
+    }
+
+    /* Target by ID if containers have specific IDs */
+    #editor,
+    #output,
+    #editor .monaco-editor,
+    #output .monaco-editor {
+        border: none !important;
+        border-color: transparent !important;
+        box-shadow: none !important;
+        outline: none !important;
+        border-radius: 0 !important;
+    }
+</style>

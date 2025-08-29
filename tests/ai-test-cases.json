@@ -1,0 +1,182 @@
+{
+    "testSuite": "AI Commands Integration Tests",
+    "description": "Comprehensive test cases for AI command system",
+    "version": "1.0.0",
+    "testCases": [
+        {
+            "type": "command",
+            "name": "Help Command",
+            "command": "help",
+            "params": "",
+            "expected": "Available commands"
+        },
+        {
+            "type": "command",
+            "name": "Get Content",
+            "command": "getcontent",
+            "params": "",
+            "expected": "content"
+        },
+        {
+            "type": "command",
+            "name": "Analyze Code",
+            "command": "analyze",
+            "params": "",
+            "expected": "analysis"
+        },
+        {
+            "type": "command",
+            "name": "Insert at Position",
+            "command": "insertat",
+            "params": "1,1,\"// Test Comment\"",
+            "expected": "inserted"
+        },
+        {
+            "type": "command",
+            "name": "Get Lines",
+            "command": "getlines",
+            "params": "1,5",
+            "expected": "lines"
+        },
+        {
+            "type": "command",
+            "name": "Go to Line",
+            "command": "gotoline",
+            "params": "10",
+            "expected": "line"
+        },
+        {
+            "type": "natural_language",
+            "name": "Show File Content",
+            "input": "Show me the content of the file",
+            "expectedCommands": [
+                "getcontent"
+            ]
+        },
+        {
+            "type": "natural_language",
+            "name": "Add Comment Request",
+            "input": "Add a comment at the top of the file",
+            "expectedCommands": [
+                "insertat"
+            ]
+        },
+        {
+            "type": "natural_language",
+            "name": "Analyze Code Request",
+            "input": "Analyze this G-code for optimization opportunities",
+            "expectedCommands": [
+                "analyze"
+            ]
+        },
+        {
+            "type": "natural_language",
+            "name": "Navigation Request",
+            "input": "Go to line 15 and show me what's there",
+            "expectedCommands": [
+                "gotoline",
+                "getlines"
+            ]
+        },
+        {
+            "type": "natural_language",
+            "name": "Replace Text Request",
+            "input": "Replace 'rapid' with 'fast' in the code",
+            "expectedCommands": [
+                "replace",
+                "replaceall"
+            ]
+        },
+        {
+            "type": "sequence",
+            "name": "Complete Edit Workflow",
+            "commands": [
+                {
+                    "command": "getcontent",
+                    "params": "",
+                    "expected": "content",
+                    "description": "Get current file content"
+                },
+                {
+                    "command": "insertat",
+                    "params": "1,1,\"// AI-Generated Comment\"",
+                    "expected": "inserted",
+                    "description": "Add comment at top"
+                },
+                {
+                    "command": "getlines",
+                    "params": "1,3",
+                    "expected": "lines",
+                    "description": "Verify comment was added"
+                },
+                {
+                    "command": "analyze",
+                    "params": "",
+                    "expected": "analysis",
+                    "description": "Analyze the updated code"
+                }
+            ]
+        },
+        {
+            "type": "sequence",
+            "name": "Navigation Workflow",
+            "commands": [
+                {
+                    "command": "gotoline",
+                    "params": "5",
+                    "expected": "line",
+                    "description": "Navigate to line 5"
+                },
+                {
+                    "command": "getlines",
+                    "params": "3,7",
+                    "expected": "lines",
+                    "description": "Get context around line 5"
+                }
+            ]
+        },
+        {
+            "type": "natural_language",
+            "name": "Complex Multi-Step Request",
+            "input": "Find all G0 commands and add comments before each one explaining what they do",
+            "expectedCommands": [
+                "findall",
+                "insertat",
+                "analyze"
+            ]
+        },
+        {
+            "type": "natural_language",
+            "name": "Optimization Request",
+            "input": "Optimize this G-code by removing redundant moves and adding feed rate optimizations",
+            "expectedCommands": [
+                "analyze",
+                "optimize",
+                "replace"
+            ]
+        },
+        {
+            "type": "command",
+            "name": "Get Selection",
+            "command": "getselection",
+            "params": "",
+            "expected": "selection"
+        },
+        {
+            "type": "command",
+            "name": "Get Cursor Position",
+            "command": "getcursor",
+            "params": "",
+            "expected": "position"
+        },
+        {
+            "type": "natural_language",
+            "name": "Format Code Request",
+            "input": "Format this code to be more readable",
+            "expectedCommands": [
+                "format",
+                "indent"
+            ]
+        }
+    ]
+}

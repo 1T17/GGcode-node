@@ -1,0 +1,27 @@
+/* Annotation Toolbar */
+
+.ann-toolbar {
+    right: 5px;
+    position: absolute;
+}
+
+/* Arrow button */
+.ann-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    color: #fff;
+    cursor: pointer;
+}
+
+.ann-toggle svg {
+    transition: transform .15s ease;
+}
+
+/* Rotate arrow when collapsed */
+#annotations-container.collapsed .ann-toggle svg {
+    transform: rotate(180deg);
+}

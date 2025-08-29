@@ -1,0 +1,79 @@
+{
+    "axes": [
+        {
+            "axis": "X",
+            "description": "X-axis coordinate",
+            "snippet": "X[${1:value}]"
+        },
+        {
+            "axis": "Y",
+            "description": "Y-axis coordinate",
+            "snippet": "Y[${1:value}]"
+        },
+        {
+            "axis": "Z",
+            "description": "Z-axis coordinate",
+            "snippet": "Z[${1:value}]"
+        },
+        {
+            "axis": "A",
+            "description": "A-axis rotation",
+            "snippet": "A[${1:degrees}]"
+        },
+        {
+            "axis": "B",
+            "description": "B-axis rotation",
+            "snippet": "B[${1:degrees}]"
+        },
+        {
+            "axis": "C",
+            "description": "C-axis rotation",
+            "snippet": "C[${1:degrees}]"
+        },
+        {
+            "axis": "F",
+            "description": "Feed rate",
+            "snippet": "F[${1:feed_rate}]"
+        },
+        {
+            "axis": "S",
+            "description": "Spindle speed",
+            "snippet": "S[${1:rpm}]"
+        },
+        {
+            "axis": "T",
+            "description": "Tool number",
+            "snippet": "T[${1:tool}]"
+        },
+        {
+            "axis": "H",
+            "description": "Tool height offset",
+            "snippet": "H[${1:offset}]"
+        },
+        {
+            "axis": "R",
+            "description": "Arc radius",
+            "snippet": "R[${1:radius}]"
+        },
+        {
+            "axis": "P",
+            "description": "Dwell time/Sequence number",
+            "snippet": "P[${1:value}]"
+        },
+        {
+            "axis": "I",
+            "description": "Arc center X offset",
+            "snippet": "I[${1:offset_x}]"
+        },
+        {
+            "axis": "J",
+            "description": "Arc center Y offset",
+            "snippet": "J[${1:offset_y}]"
+        },
+        {
+            "axis": "K",
+            "description": "Arc center Z offset",
+            "snippet": "K[${1:offset_z}]"
+        }
+    ]
+}

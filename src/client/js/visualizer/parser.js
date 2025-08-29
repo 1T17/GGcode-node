@@ -15,6 +15,7 @@ const GCODE_REGEX = {
   R_RADIUS: /R(-?\d*\.?\d+)/i,
   HAS_COORDS: /[XYZIJR]/i,
   N_LINE: /^N\d+\s*/,
+  COMMENT: /\([^)]*\)/g, // Match G-code comments in parentheses
 };
 
 /**
@@ -78,13 +79,28 @@ export function parseGcodeOptimized(gcode, initialState = {}) {
     lines.forEach((line, idx) => {
       line = line.trim();
 
+      // Remove G-code comments (anything in parentheses) before processing
+      // This prevents comments like "(Arc Spiral Pattern Example)" from being processed as G2 commands
+      const lineWithoutComments = line.replace(GCODE_REGEX.COMMENT, '').trim();
+
+      // Debug: Log when comments containing G-codes are filtered
+      if (line !== lineWithoutComments && /G[0-9]/.test(line)) {
+        //console.log(`[PARSER] Filtered G-code comment: "${line}" -> "${lineWithoutComments}"`);
+      }
+
+      // Skip empty lines after comment removal
+      if (!lineWithoutComments) {
+        return;
+      }
+
       // Find motion mode - G-code remembers the last G mode
-      const allModes = [...line.matchAll(GCODE_REGEX.G_MODE)];
+      // Use the line without comments to avoid false matches
+      const allModes = [...lineWithoutComments.matchAll(GCODE_REGEX.G_MODE)];
       if (allModes.length > 0) {
         currentMotionMode = allModes[allModes.length - 1][0];
       }
 
-      const hasCoords = GCODE_REGEX.HAS_COORDS.test(line);
+      const hasCoords = GCODE_REGEX.HAS_COORDS.test(lineWithoutComments);
       if (!currentMotionMode && !hasCoords) {
         // Track lines that don't create segments to maintain proper indexing
         lineMap.push(idx);
@@ -93,12 +109,13 @@ export function parseGcodeOptimized(gcode, initialState = {}) {
       if (!currentMotionMode) currentMotionMode = 'G1'; // Default to G1 if no mode specified
 
       // Parse coordinates - G-code maintains previous values if not specified
-      const matchX = line.match(GCODE_REGEX.X_COORD);
-      const matchY = line.match(GCODE_REGEX.Y_COORD);
-      const matchZ = line.match(GCODE_REGEX.Z_COORD);
-      const matchI = line.match(GCODE_REGEX.I_OFFSET);
-      const matchJ = line.match(GCODE_REGEX.J_OFFSET);
-      const matchR = line.match(GCODE_REGEX.R_RADIUS);
+      // Use the line without comments to avoid parsing coordinates from comments
+      const matchX = lineWithoutComments.match(GCODE_REGEX.X_COORD);
+      const matchY = lineWithoutComments.match(GCODE_REGEX.Y_COORD);
+      const matchZ = lineWithoutComments.match(GCODE_REGEX.Z_COORD);
+      const matchI = lineWithoutComments.match(GCODE_REGEX.I_OFFSET);
+      const matchJ = lineWithoutComments.match(GCODE_REGEX.J_OFFSET);
+      const matchR = lineWithoutComments.match(GCODE_REGEX.R_RADIUS);
 
       // G-code behavior: if coordinate not specified, use previous value
       const targetX = matchX ? parseFloat(matchX[1]) : x;
@@ -150,6 +167,8 @@ export function parseGcodeOptimized(gcode, initialState = {}) {
               arcPoints[i].clone(),
             ]);
             toolpathModes.push(currentMotionMode);
+            // Map all segments of an arc to the same line number
+            // This ensures that all segments of a G2/G3 command are associated with the correct G-code line
             lineMap.push(idx);
             segmentCounts[currentMotionMode]++;
             anyDrawn = true;
@@ -202,6 +221,10 @@ export function parseGcodeOptimized(gcode, initialState = {}) {
       currentMotionMode,
       anyDrawn,
     };
+
+    //console.log(`[DEBUG PARSER] Created ${toolpathSegments.length} segments from ${lines.length} G-code lines`);
+    //console.log(`[DEBUG PARSER] LineMap sample:`, lineMap.slice(0, 10), '...');
+    //console.log(`[DEBUG PARSER] Segment counts:`, segmentCounts);
 
     return {
       toolpathPoints,

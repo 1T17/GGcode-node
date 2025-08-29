@@ -1,0 +1,34 @@
+{
+    "teams": {
+        "default": {
+            "name": "GGcode Default",
+            "description": "Standard GGcode theme configuration",
+            "theme": "ggcode-dark",
+            "colors": "ggcode-dark-colors",
+            "settings": {
+                "customizable": true,
+                "shared": false
+            }
+        },
+        "light-team": {
+            "name": "GGcode Light Team",
+            "description": "Light theme optimized for bright environments",
+            "theme": "ggcode-light",
+            "colors": "ggcode-light-colors",
+            "settings": {
+                "customizable": true,
+                "shared": false
+            }
+        }
+    },
+    "teamDataSchema": {
+        "name": "string - Team display name",
+        "description": "string - Brief team description",
+        "theme": "string - Theme ID to use",
+        "colors": "string - Color palette ID to use",
+        "settings": {
+            "customizable": "boolean - Whether team members can customize",
+            "shared": "boolean - Whether theme is shared across all team members"
+        }
+    }
+}

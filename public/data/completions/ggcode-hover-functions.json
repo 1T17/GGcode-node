@@ -1,0 +1,235 @@
+{
+    "sin": {
+        "syntax": "sin(angle)",
+        "description": "Sine function",
+        "parameters": [
+            "angle in radians"
+        ],
+        "returns": "Value between -1 and 1"
+    },
+    "cos": {
+        "syntax": "cos(angle)",
+        "description": "Cosine function",
+        "parameters": [
+            "angle in radians"
+        ],
+        "returns": "Value between -1 and 1"
+    },
+    "tan": {
+        "syntax": "tan(angle)",
+        "description": "Tangent function",
+        "parameters": [
+            "angle in radians"
+        ],
+        "returns": "Tangent value"
+    },
+    "asin": {
+        "syntax": "asin(value)",
+        "description": "Arc sine function - returns radians",
+        "parameters": [
+            "value between -1 and 1"
+        ],
+        "returns": "Angle in radians"
+    },
+    "acos": {
+        "syntax": "acos(value)",
+        "description": "Arc cosine function - returns radians",
+        "parameters": [
+            "value between -1 and 1"
+        ],
+        "returns": "Angle in radians"
+    },
+    "atan": {
+        "syntax": "atan(value)",
+        "description": "Arc tangent function - returns radians",
+        "parameters": [
+            "any numeric value"
+        ],
+        "returns": "Angle in radians"
+    },
+    "atan2": {
+        "syntax": "atan2(y, x)",
+        "description": "Arc tangent of y/x - returns radians",
+        "parameters": [
+            "Y coordinate",
+            "X coordinate"
+        ],
+        "returns": "Angle in radians"
+    },
+    "sqrt": {
+        "syntax": "sqrt(value)",
+        "description": "Square root function",
+        "parameters": [
+            "value ≥ 0"
+        ],
+        "returns": "Square root of value"
+    },
+    "pow": {
+        "syntax": "pow(base, exponent)",
+        "description": "Power function",
+        "parameters": [
+            "base value",
+            "exponent"
+        ],
+        "returns": "Base raised to exponent"
+    },
+    "abs": {
+        "syntax": "abs(value)",
+        "description": "Absolute value function",
+        "parameters": [
+            "any numeric value"
+        ],
+        "returns": "Positive value of the input"
+    },
+    "min": {
+        "syntax": "min(a, b)",
+        "description": "Minimum of two values",
+        "parameters": [
+            "first value",
+            "second value"
+        ],
+        "returns": "Smaller of the two values"
+    },
+    "max": {
+        "syntax": "max(a, b)",
+        "description": "Maximum of two values",
+        "parameters": [
+            "first value",
+            "second value"
+        ],
+        "returns": "Larger of the two values"
+    },
+    "clamp": {
+        "syntax": "clamp(value, min, max)",
+        "description": "Clamp value between min and max",
+        "parameters": [
+            "value to clamp",
+            "minimum value",
+            "maximum value"
+        ],
+        "returns": "Clamped value"
+    },
+    "floor": {
+        "syntax": "floor(value)",
+        "description": "Round down to nearest integer",
+        "parameters": [
+            "value to round"
+        ],
+        "returns": "Largest integer less than or equal to value"
+    },
+    "ceil": {
+        "syntax": "ceil(value)",
+        "description": "Round up to nearest integer",
+        "parameters": [
+            "value to round"
+        ],
+        "returns": "Smallest integer greater than or equal to value"
+    },
+    "round": {
+        "syntax": "round(value)",
+        "description": "Round to nearest integer",
+        "parameters": [
+            "value to round"
+        ],
+        "returns": "Nearest integer"
+    },
+    "hypot": {
+        "syntax": "hypot(x, y)",
+        "description": "Hypotenuse (sqrt(x² + y²))",
+        "parameters": [
+            "X coordinate",
+            "Y coordinate"
+        ],
+        "returns": "Hypotenuse length"
+    },
+    "lerp": {
+        "syntax": "lerp(start, end, t)",
+        "description": "Linear interpolation between start and end",
+        "parameters": [
+            "start value",
+            "end value",
+            "interpolation factor (0-1)"
+        ],
+        "returns": "Interpolated value"
+    },
+    "map": {
+        "syntax": "map(value, in_min, in_max, out_min, out_max)",
+        "description": "Map value from one range to another",
+        "parameters": [
+            "value to map",
+            "input min",
+            "input max",
+            "output min",
+            "output max"
+        ],
+        "returns": "Mapped value"
+    },
+    "distance": {
+        "syntax": "distance(x1, y1, x2, y2)",
+        "description": "Distance between two points",
+        "parameters": [
+            "x1",
+            "y1",
+            "x2",
+            "y2"
+        ],
+        "returns": "Euclidean distance"
+    },
+    "sign": {
+        "syntax": "sign(value)",
+        "description": "Sign of value",
+        "parameters": [
+            "value to get sign of"
+        ],
+        "returns": "-1, 0, or 1"
+    },
+    "log": {
+        "syntax": "log(value)",
+        "description": "Natural logarithm",
+        "parameters": [
+            "value > 0"
+        ],
+        "returns": "Natural logarithm of value"
+    },
+    "exp": {
+        "syntax": "exp(power)",
+        "description": "e raised to power",
+        "parameters": [
+            "exponent"
+        ],
+        "returns": "e^power"
+    },
+    "noise": {
+        "syntax": "noise(value)",
+        "description": "Perlin noise",
+        "parameters": [
+            "input value"
+        ],
+        "returns": "Noise value between 0 and 1"
+    },
+    "deg": {
+        "syntax": "deg(radians)",
+        "description": "Convert radians to degrees",
+        "parameters": [
+            "angle in radians"
+        ],
+        "returns": "Angle in degrees"
+    },
+    "rad": {
+        "syntax": "rad(degrees)",
+        "description": "Convert degrees to radians",
+        "parameters": [
+            "angle in degrees"
+        ],
+        "returns": "Angle in radians"
+    },
+    "mod": {
+        "syntax": "mod(dividend, divisor)",
+        "description": "Modulo operation",
+        "parameters": [
+            "dividend",
+            "divisor"
+        ],
+        "returns": "Remainder of division"
+    }
+}

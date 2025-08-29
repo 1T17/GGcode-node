@@ -10,11 +10,6 @@ import { parseGcodeOptimized } from './parser.js';
 import { showGcodeViewer, closeGcodeViewer } from './modal.js';
 import { setupSimulationControls, ViewerControls } from './controls.js';
 
-// Import existing modern modules
-import { ToolpathPointDetector } from './pointDetector.js';
-import { TooltipManager } from './tooltipManager.js';
-import { PointDataExtractor } from './pointDataExtractor.js';
-
 // Export all modules for modern usage
 export {
   GcodeVisualizer,
@@ -23,288 +18,138 @@ export {
   closeGcodeViewer,
   setupSimulationControls,
   ViewerControls,
-  ToolpathPointDetector,
-  TooltipManager,
-  PointDataExtractor,
 };
 
-// Create a combined hover system that uses the existing modules
-export class ToolpathHoverSystem {
-  constructor() {
-    this.pointDetector = new ToolpathPointDetector();
-    this.tooltipManager = new TooltipManager();
-    this.isEnabled = true;
-    this.container = null;
-    this.lastMouseMove = 0;
-    this.debounceDelay = 100; // Increased debounce delay for large toolpaths
-    this.lastMouseX = null;
-    this.lastMouseY = null;
-    this.mouseMoveThreshold = 4; // Only run detection if mouse moves >4px
-    this.lastHoveredPosition = null;
-    this.isMouseDown = false;
-    this.controls = null;
-    this.scene = null;
-    this.pointIndicator = null; // Visual point indicator
-  }
-
-  initialize(scene, camera, container, controls = null) {
-    this.container = container;
-    this.controls = controls;
-    this.scene = scene;
-    this.camera = camera;
-
-    const detectorSuccess = this.pointDetector.initialize(
-      scene,
-      camera,
-      container
-    );
-    if (!detectorSuccess) return false;
-
-    this.tooltipManager.initialize(container);
-    this.createPointIndicator();
-    this.setupEventListeners();
-    return true;
-  }
-
-  setupEventListeners() {
-    if (!this.container) return;
-
-    // Track mouse down/up to disable hover during dragging
-    this.container.addEventListener('mousedown', () => {
-      this.isMouseDown = true;
-      this.tooltipManager.hideTooltip();
-      this.hidePointIndicator();
-    });
-
-    this.container.addEventListener('mouseup', () => {
-      this.isMouseDown = false;
-    });
-
-    // Debounced mouse move handler
-    this.container.addEventListener('mousemove', (event) => {
-      if (!this.isEnabled || this.isMouseDown) return;
-
-      // Throttle by mouse movement threshold
-      if (this.lastMouseX !== null && this.lastMouseY !== null) {
-        const dx = Math.abs(event.clientX - this.lastMouseX);
-        const dy = Math.abs(event.clientY - this.lastMouseY);
-        if (dx < this.mouseMoveThreshold && dy < this.mouseMoveThreshold)
-          return;
-      }
-      this.lastMouseX = event.clientX;
-      this.lastMouseY = event.clientY;
-
-      const now = Date.now();
-      if (now - this.lastMouseMove < this.debounceDelay) return;
-      this.lastMouseMove = now;
-
-      requestAnimationFrame(() => {
-        if (this.isMouseDown) return;
-        const pointData = this.pointDetector.detectPointAtMouse(
-          event.clientX,
-          event.clientY
-        );
-        let position = null;
-        if (pointData) {
-          position =
-            pointData.position ||
-            (pointData.coordinates
-              ? new THREE.Vector3(
-                  pointData.coordinates.x || 0,
-                  pointData.coordinates.y || 0,
-                  pointData.coordinates.z || 0
-                )
-              : null);
-        }
-        // Only update indicator if hovered point changes
-        const posChanged =
-          position &&
-          (!this.lastHoveredPosition ||
-            !position.equals(this.lastHoveredPosition));
-        if (posChanged) {
-          this.showPointIndicator(position);
-          this.lastHoveredPosition = position ? position.clone() : null;
-        } else if (!position) {
-          this.hidePointIndicator();
-          this.lastHoveredPosition = null;
-        }
-        // Tooltip logic unchanged
-        if (pointData) {
-          setTimeout(() => {
-            if (!this.isMouseDown) {
-              this.tooltipManager.showTooltip(
-                pointData,
-                event.clientX,
-                event.clientY
-              );
-            }
-          }, 100);
-        } else {
-          this.tooltipManager.hideTooltip();
-        }
-      });
-    });
-
-    this.container.addEventListener('mouseleave', () => {
-      this.tooltipManager.hideTooltip();
-      this.hidePointIndicator();
-      this.isMouseDown = false;
-    });
-  }
-
-  /**
-   * Create visual point indicator (red dot)
-   */
-  createPointIndicator() {
-    if (!this.scene) return;
-
-    // Create a small white sphere that stays clean at all zoom levels
-    const geometry = new THREE.SphereGeometry(0.2, 16, 12);
-    const material = new THREE.MeshBasicMaterial({
-      color: 0xffffff,
-      transparent: false,
-      opacity: 1.0,
-    });
-
-    this.pointIndicator = new THREE.Mesh(geometry, material);
-    this.pointIndicator.visible = false; // Hidden by default
-    this.scene.add(this.pointIndicator);
-  }
-
-  /**
-   * Update point indicator scale based on camera distance
-   */
-  updatePointIndicatorScale() {
-    if (!this.pointIndicator || !this.camera || !this.pointIndicator.visible)
-      return;
-
-    // Calculate distance from camera to point
-    const distance = this.camera.position.distanceTo(
-      this.pointIndicator.position
-    );
-
-    // Scale factor to keep consistent screen size (adjust 0.02 to change size)
-    const scaleFactor = distance * 0.02;
-
-    // Apply scale
-    this.pointIndicator.scale.set(scaleFactor, scaleFactor, scaleFactor);
-  }
-
-  /**
-   * Show point indicator at specific position
-   */
-  showPointIndicator(position) {
-    if (this.pointIndicator && position) {
-      this.pointIndicator.position.copy(position);
-      this.pointIndicator.visible = true;
-
-      // Update scale based on camera distance
-      this.updatePointIndicatorScale();
-    }
-  }
-
-  /**
-   * Hide point indicator
-   */
-  hidePointIndicator() {
-    if (this.pointIndicator) {
-      this.pointIndicator.visible = false;
-    }
-  }
-
-  updateToolpath(toolpathData) {
-    this.pointDetector.updateToolpath(toolpathData);
-  }
-
-  temporarilyDisable() {
-    this.isEnabled = false;
-    this.tooltipManager.hideTooltip();
-  }
-
-  temporarilyEnable() {
-    this.isEnabled = true;
-  }
-
-  /**
-   * Update method to be called in render loop
-   */
-  update() {
-    // Update point indicator scale if visible
-    this.updatePointIndicatorScale();
-  }
-
-  dispose() {
-    this.pointDetector.dispose();
-    this.tooltipManager.dispose();
-
-    // Clean up point indicator
-    if (this.pointIndicator && this.scene) {
-      this.scene.remove(this.pointIndicator);
-      if (this.pointIndicator.geometry) {
-        this.pointIndicator.geometry.dispose();
-      }
-      if (this.pointIndicator.material) {
-        this.pointIndicator.material.dispose();
-      }
-      this.pointIndicator = null;
-    }
-
-    this.container = null;
-    this.scene = null;
-  }
-}
-
 // Export modern modules to window for debugging/testing
-// --- Point Detector Toggle Button Logic ---
-document.addEventListener('DOMContentLoaded', function () {
-  const btn = document.getElementById('togglePointDetectorBtn');
-  if (!btn) return;
 
-  // Point detector starts as inactive (false), so button should reflect that
-  let pointDetectorEnabled = false;
-
-  // Set initial button appearance to show it's off
-  btn.style.background = 'transparent'; // Red background for off state
-  btn.title = 'Enable Point Detector';
-
-  btn.onclick = function () {
-    pointDetectorEnabled = !pointDetectorEnabled;
-    if (window.gcodeHoverSystem && window.gcodeHoverSystem.pointDetector) {
-      window.gcodeHoverSystem.pointDetector.setActive(pointDetectorEnabled);
-    }
-    btn.style.background = pointDetectorEnabled ? '#2ecc4096' : 'transparent';
-    btn.title = pointDetectorEnabled
-      ? 'Disable Point Detector'
-      : 'Enable Point Detector';
-  };
-});
-
-// --- G-code Stats Box Update ---
+// --- Enhanced G-code Stats Box Update with Live Performance Data ---
 function updateGcodeStats() {
   window.updateGcodeStats = updateGcodeStats;
   const statsContainer = document.getElementById('gcodeViewerStats');
   if (!statsContainer) {
-    console.log('[updateGcodeStats] gcodeViewerStats element not found');
     return;
   }
   statsContainer.style.display = 'block';
   statsContainer.style.opacity = '1';
   statsContainer.style.visibility = 'visible';
-  // Use old stats logic
+
+  // Get existing stats
   const perf = window.performanceStats || {};
   const segCounts = window.gcodeSegmentCounts || {};
-  statsContainer.innerHTML = `
-    <div style="color: #00ff00; padding: 10px 15px; border-radius: 5px; font-family: monospace; font-size: 14px; max-width: 300px;">
-      Parse: ${perf.parseTime?.toFixed(1) || 0}ms<br>
-      Render: ${perf.renderTime?.toFixed(1) || 0}ms<br>
-      Lines: ${perf.lineCount || 0}<br>
-      Segments: ${perf.segmentCount || 0}<br>
-      <div style="color: #FF8E37;">G0: ${segCounts.G0 || 0}</div>
-      <div style="color: #00ff99;">G1: ${segCounts.G1 || 0}</div>
-      <div style="color: #0074D9;">G2: ${segCounts.G2 || 0}</div>
-      <div style="color: #F012BE;">G3: ${segCounts.G3 || 0}</div>
-    </div>
-  `;
+
+  // Get live performance data (fallback to visualizer instance if available)
+  let performanceData = window.performanceData || {};
+  if (window.gcodeVisualizer && window.gcodeVisualizer.getPerformanceStats) {
+    try {
+      const vizStats = window.gcodeVisualizer.getPerformanceStats();
+      performanceData = { ...performanceData, ...vizStats };
+    } catch (error) {
+      console.warn('Error getting visualizer performance stats:', error);
+    }
+  }
+
+  // Build enhanced stats display
+  let statsHtml = `
+    <div class="stats-title">
+      <div class="metric-line">Lines: ${perf.lineCount || 0}</div>
+      <div class="metric-line">Segments: ${perf.segmentCount || 0}</div>
+      <div class="metric-line metric-good">G0: ${segCounts.G0 || 0}</div>
+      <div class="metric-line metric-good">G1: ${segCounts.G1 || 0}</div>
+      <div class="metric-line metric-info">G2: ${segCounts.G2 || 0}</div>
+      <div class="metric-line metric-info">G3: ${segCounts.G3 || 0}</div>`;
+
+  // Add FPS information
+  if (
+    performanceData.averageFPS !== undefined &&
+    performanceData.averageFPS > 0
+  ) {
+    const fpsClass =
+      performanceData.averageFPS >= 30
+        ? 'metric-good'
+        : performanceData.averageFPS >= 15
+          ? 'metric-warning'
+          : 'metric-error';
+    statsHtml += `<div class="metric-line ${fpsClass}">FPS: ${performanceData.averageFPS}</div>`;
+  } else {
+    statsHtml += `<div class="metric-line metric-info">FPS: Not active</div>`;
+  }
+
+  // Add file render time (show file render time instead of frame render time)
+  if (
+    performanceData.fileRenderTime !== undefined &&
+    performanceData.fileRenderTime > 0
+  ) {
+    const fileRenderTime =
+      typeof performanceData.fileRenderTime === 'number'
+        ? performanceData.fileRenderTime
+        : 0;
+    const renderClass =
+      fileRenderTime <= 1000
+        ? 'metric-good'
+        : fileRenderTime <= 3000
+          ? 'metric-warning'
+          : 'metric-error';
+    statsHtml += `<div class="metric-line ${renderClass}">File Render: ${fileRenderTime.toFixed(1)}ms</div>`;
+  } else if (perf.fileRenderTime !== undefined && perf.fileRenderTime > 0) {
+    const fileRenderTime =
+      typeof perf.fileRenderTime === 'number' ? perf.fileRenderTime : 0;
+    const renderClass =
+      fileRenderTime <= 1000
+        ? 'metric-good'
+        : fileRenderTime <= 3000
+          ? 'metric-warning'
+          : 'metric-error';
+    statsHtml += `<div class="metric-line ${renderClass}">File Render: ${fileRenderTime.toFixed(1)}ms</div>`;
+  } else {
+    statsHtml += `<div class="metric-line metric-info">File Render: No file loaded</div>`;
+  }
+
+  // Add object counts
+  if (performanceData.totalObjects !== undefined) {
+    statsHtml += `<div class="metric-line metric-info">Objects: ${performanceData.totalObjects}</div>`;
+  }
+  if (
+    performanceData.culledObjects !== undefined &&
+    performanceData.culledObjects > 0
+  ) {
+    statsHtml += `<div class="metric-line metric-info">Culled: ${performanceData.culledObjects}</div>`;
+  }
+
+  // Add canvas size
+  if (performanceData.canvasSize) {
+    statsHtml += `<div class="metric-line metric-info">Canvas: ${performanceData.canvasSize.width}×${performanceData.canvasSize.height}</div>`;
+  }
+
+  // Add memory information
+  if (performanceData.memoryInfo) {
+    const memUsage =
+      (performanceData.memoryInfo.used / performanceData.memoryInfo.total) *
+      100;
+    const memClass =
+      memUsage < 70
+        ? 'metric-good'
+        : memUsage < 85
+          ? 'metric-warning'
+          : 'metric-error';
+    statsHtml += `<div class="metric-line ${memClass}">Memory: ${performanceData.memoryInfo.used}/${performanceData.memoryInfo.total}MB</div>`;
+  }
+
+  // Add adaptive rendering status
+  if (performanceData.adaptiveRendering !== undefined) {
+    const adaptClass = performanceData.adaptiveRendering
+      ? 'metric-good'
+      : 'metric-info';
+    statsHtml += `<div class="metric-line ${adaptClass}">Adaptive: ${performanceData.adaptiveRendering ? 'ON' : 'OFF'}</div>`;
+  }
+
+  // Add last update time
+  if (performanceData.lastUpdate) {
+    statsHtml += `<div class="timestamp">Updated: ${performanceData.lastUpdate}</div>`;
+  }
+
+  statsHtml += `</div>`;
+
+  statsContainer.innerHTML = statsHtml;
 }
 
 // Patch: Always call updateGcodeStats after parsing/rendering, not just in gcodeRender
@@ -313,74 +158,35 @@ document.addEventListener('DOMContentLoaded', function () {
   updateGcodeStats();
 });
 
-// Also call after each render, regardless of canvas
+// Single, unified gcodeRender function with performance optimization
 window.gcodeRender = (function (orig) {
-  window.gcodeCurrentLineIdx = window.gcodeCurrentLineIdx || 0;
-  return function () {
-    if (typeof orig === 'function') orig();
-    updateGcodeStats();
-    updateGcodeLineInfo(window.gcodeCurrentLineIdx);
-    console.log('[gcodeRender] Stats and info updated after render');
-  };
-})(window.gcodeRender);
+  let lastStatsUpdate = 0;
+  const statsUpdateInterval = 1000; // Update stats only once per second during animation
 
-// --- G-code Line Info Box Update ---
-function updateGcodeLineInfo(currentLineIdx) {
-  window.updateGcodeLineInfo = updateGcodeLineInfo;
-  const infoContainer = document.getElementById('gcodeLineInfo');
-  if (!infoContainer) {
-    console.log('[updateGcodeLineInfo] No infoContainer found');
-    return;
-  }
-  let infoHtml = '';
-  let lineLog = '';
-  if (Array.isArray(window.gcodeLines)) {
-    if (
-      currentLineIdx != null &&
-      currentLineIdx >= 0 &&
-      currentLineIdx < window.gcodeLines.length
-    ) {
-      const line = window.gcodeLines[currentLineIdx];
-      infoHtml += `<br><b>Current Line:</b> #${currentLineIdx + 1} ${line}`;
-      lineLog = `[updateGcodeLineInfo] Showing line ${currentLineIdx + 1}: ${line}`;
-    } else {
-      lineLog = `[updateGcodeLineInfo] Invalid line index: ${currentLineIdx}`;
-    }
-  } else {
-    lineLog = '[updateGcodeLineInfo] window.gcodeLines is not an array';
-  }
-  infoContainer.style.display = 'block';
-  infoContainer.innerHTML = infoHtml;
-  //console.log(`[updateGcodeLineInfo] Updated info box.`, { currentLineIdx, showStats, infoHtml });
-  if (lineLog) console.log(lineLog);
-}
-// Update stats on load and after each render
-window.gcodeRender = (function (orig) {
-  // Track current simulation line index globally
-  window.gcodeCurrentLineIdx = window.gcodeCurrentLineIdx || 0;
   return function () {
     if (typeof orig === 'function') orig();
-    // Only update stats/info if canvas is present
+
+    // Only update stats if canvas is present and enough time has passed
     const canvas = document.querySelector('#gcodeViewerContainer canvas');
     if (canvas) {
-      updateGcodeStats();
-      updateGcodeLineInfo(window.gcodeCurrentLineIdx);
-      console.log('[gcodeRender] Stats and info updated after canvas render');
-    } else {
-      console.log('[gcodeRender] Canvas not found, skipping stats/info update');
+      const now = performance.now();
+      if (now - lastStatsUpdate > statsUpdateInterval) {
+        updateGcodeStats();
+        lastStatsUpdate = now;
+      }
+      // Don't call line display updates here - it's handled by simulation controls
+      // This prevents conflicts and spam updates during animation
     }
   };
 })(window.gcodeRender);
 document.addEventListener('DOMContentLoaded', function () {
-  // Show initial stats when visualizer opens
-  updateGcodeLineInfo(window.gcodeCurrentLineIdx || 0, true);
+  // Show initial line info when visualizer opens
+  if (window.updateCurrentLineDisplay) {
+    window.updateCurrentLineDisplay(window.gcodeCurrentLineIdx || 0);
+  }
 });
 window.GcodeVisualizer = GcodeVisualizer;
-window.ToolpathPointDetector = ToolpathPointDetector;
-window.TooltipManager = TooltipManager;
-window.PointDataExtractor = PointDataExtractor;
 window.ViewerControls = ViewerControls;
-window.ToolpathHoverSystem = ToolpathHoverSystem;
 
 // Initialize global batched rendering objects for compatibility
 if (!window.gcodeBatchedLines) {
@@ -392,3 +198,101 @@ if (!window.gcodeBatchedGeometries) {
 if (!window.gcodeBatchedCounts) {
   window.gcodeBatchedCounts = { G0: 0, G1: 0, G2: 0, G3: 0 };
 }
+
+// Initialize gcodeLines array to prevent errors
+if (!window.gcodeLines) {
+  window.gcodeLines = [];
+}
+
+// Initialize other gcode-related global variables
+if (!window.gcodeCurrentLineIdx) {
+  window.gcodeCurrentLineIdx = 1; // Line indices should start at 1, not 0
+}
+if (!window.gcodeSegmentCounts) {
+  window.gcodeSegmentCounts = { G0: 0, G1: 0, G2: 0, G3: 0 };
+}
+if (!window.performanceStats) {
+  window.performanceStats = {};
+}
+if (!window.performanceData) {
+  window.performanceData = {};
+}
+
+// Test function to verify line mapping works correctly
+window.testLineMappingFix = function () {
+  //console.log('=== Testing G-code Line Mapping Fix ===');
+
+  if (!window.gcodeLineMap || !window.gcodeLines) {
+    //console.log('No G-code data loaded for testing');
+    return;
+  }
+
+  //console.log(`Total G-code lines: ${window.gcodeLines.length}`);
+  //console.log(`Total segments: ${window.gcodeLineMap.length}`);
+
+  // Show mappings for arc commands specifically
+  let arcSegments = [];
+  for (let i = 0; i < window.gcodeLineMap.length; i++) {
+    const lineNum = window.gcodeLineMap[i];
+    if (lineNum >= 0 && lineNum < window.gcodeLines.length) {
+      const gcodeLine = window.gcodeLines[lineNum];
+      if (gcodeLine.includes('G2') || gcodeLine.includes('G3')) {
+        arcSegments.push({ segment: i, line: lineNum, gcode: gcodeLine });
+      }
+    }
+  }
+
+  if (arcSegments.length > 0) {
+    //console.log('Arc command mappings:');
+    arcSegments.forEach((arc) => {
+      console.log(
+        `  Segment ${arc.segment} -> Line ${arc.line + 1}: ${arc.gcode}`
+      );
+    });
+  } else {
+    //console.log('No arc commands found in current G-code');
+  }
+
+  //console.log('=== Test Complete ===');
+};
+
+// Global handler for camera mode switching
+window.switchCameraMode = function () {
+  if (
+    window.gcodeVisualizer &&
+    typeof window.gcodeVisualizer.switchCameraMode === 'function'
+  ) {
+    const newMode =
+      window.gcodeVisualizer.cameraMode === 'perspective'
+        ? 'orthographic'
+        : 'perspective';
+    window.gcodeVisualizer.switchCameraMode(newMode);
+  } else {
+    console.warn(
+      'Visualizer not available or switchCameraMode method not found'
+    );
+  }
+};
+
+// Global handler for exporting visualization image
+window.exportVisualizerImage = function () {
+  if (
+    window.gcodeVisualizer &&
+    typeof window.gcodeVisualizer.exportImage === 'function'
+  ) {
+    window.gcodeVisualizer.exportImage();
+  } else {
+    console.warn('Visualizer not available or exportImage method not found');
+  }
+};
+
+// Simple debug function to check current line display
+window.debugCurrentLine = function () {
+  const currentSeg = window.gcodeCurrentLineIdx || 0;
+  const lineNum = window.gcodeLineMap ? window.gcodeLineMap[currentSeg] : -1;
+  const gcodeLine =
+    lineNum >= 0 && window.gcodeLines ? window.gcodeLines[lineNum] : 'N/A';
+  console.log(
+    `Current: Segment ${currentSeg} -> Line ${lineNum + 1}: ${gcodeLine}`
+  );
+};

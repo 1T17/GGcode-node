@@ -1,0 +1,29 @@
+{
+    "constants": [
+        {
+            "name": "PI",
+            "description": "π (3.14159...)",
+            "detail": "PI ≈ 3.14159265359"
+        },
+        {
+            "name": "TAU",
+            "description": "τ (2π)",
+            "detail": "TAU ≈ 6.28318530718"
+        },
+        {
+            "name": "E",
+            "description": "Euler's number",
+            "detail": "E ≈ 2.71828182846"
+        },
+        {
+            "name": "DEG_TO_RAD",
+            "description": "Degrees to radians conversion",
+            "detail": "DEG_TO_RAD ≈ 0.01745329252"
+        },
+        {
+            "name": "RAD_TO_DEG",
+            "description": "Radians to degrees conversion",
+            "detail": "RAD_TO_DEG ≈ 57.2957795131"
+        }
+    ]
+}

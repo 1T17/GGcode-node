@@ -1,0 +1,88 @@
+/* Button Components */
+
+.control-bar button {
+    background: transparent;
+    color: #cccccc;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 400;
+    transition: background-color 0.1s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 70px;
+    justify-content: center;
+}
+
+.control-bar button:hover {
+    background: #2a2d2e;
+    color: #ffffff;
+}
+
+.control-bar button:active {
+    background: #37373d;
+}
+
+.control-bar button.primary {
+    color: #ffffff;
+}
+
+.control-bar button.primary:hover {
+    background: #7a7a7a23;
+    color: #ffffff;
+}
+
+.control-bar button.danger {
+    color: #ffffff;
+}
+
+.control-bar button.danger:hover {
+    background: #7070705d;
+    color: #ffffff;
+}
+
+.control-bar button.success {
+    color: #ffffff;
+}
+
+.control-bar button.success:hover {
+    background: #7272723a;
+    color: #ffffff;
+}
+
+/* G-code Header Buttons */
+.gcode-header button {
+    background: transparent;
+    color: #cccccc;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 400;
+    transition: background-color 0.1s ease;
+}
+
+.gcode-header button:hover {
+    background: #2a2d2e;
+    color: #ffffff;
+}
+
+.gcode-header button:last-child {
+    color: #365235;
+}
+
+.gcode-header button:last-child:hover {
+    background: #8585853d;
+    color: #ffffff;
+}
+
+#aiModeSelector option {
+    background-color: #222;
+    /* dropdown background */
+    color: white;
+    /* text color */
+}

@@ -24,7 +24,7 @@ export class ChunkLoader {
    */
   async loadGcodeProgressive(gcode, options = {}) {
     const {
-      chunkSize = 10,
+      chunkSize = 1000,
       onProgress = null,
       onChunkProcessed = null,
       onCancel = null,
@@ -42,10 +42,11 @@ export class ChunkLoader {
       let accumulatedSegments = [];
       let accumulatedModes = [];
       let accumulatedPoints = [];
+      let accumulatedLineMap = []; // MISSING: Accumulate line maps!
 
-      console.log(
-        `[CHUNK] Loading ${lines.length} lines in ${totalChunks} chunks`
-      );
+      // console.log(
+      //   `[CHUNK] Loading ${lines.length} lines in ${totalChunks} chunks`
+      // );
 
       // Process chunks progressively
       // Initialize with proper G-code defaults - this ensures first chunk has valid starting state
@@ -99,6 +100,16 @@ export class ChunkLoader {
             accumulatedSegments.push(...chunkResult.segments);
             accumulatedModes.push(...chunkResult.modes);
             accumulatedPoints.push(...chunkResult.points);
+
+            // MISSING: Accumulate line maps with proper offset!
+            if (chunkResult.lineMap) {
+              // For multi-chunk files, we need to offset line numbers by the chunk's starting line
+              const chunkStartLine = chunkIndex * chunkSize;
+              const offsetLineMap = chunkResult.lineMap.map((lineNum) =>
+                lineNum >= 0 ? lineNum + chunkStartLine : lineNum
+              );
+              accumulatedLineMap.push(...offsetLineMap);
+            }
           }
 
           // Track chunk metadata for debugging - always track, even for empty chunks
@@ -138,13 +149,14 @@ export class ChunkLoader {
         // Update state for next chunk (use final state from this chunk)
         if (chunkResult && chunkResult.finalState) {
           currentState = chunkResult.finalState;
-          // Only log state changes if they actually change (reduce noise)
-          if (processedChunks % totalChunks === 0) {
-            // Log only on final batch
-            console.log(
-              `[CHUNK] Final state: ${currentState.currentMotionMode} at (${currentState.x.toFixed(1)}, ${currentState.y.toFixed(1)}, ${currentState.z.toFixed(1)})`
-            );
-          }
+
+          // // Only log state changes if they actually change (reduce noise)
+          // if (processedChunks % totalChunks === 0) {
+          //   // Log only on final batch
+          //   console.log(
+          //     `[CHUNK] Final state: ${currentState.currentMotionMode} at (${currentState.x.toFixed(1)}, ${currentState.y.toFixed(1)}, ${currentState.z.toFixed(1)})`
+          //   );
+          // }
         } else {
           console.warn(
             `[CHUNK] No final state from chunk ${chunkResult?.chunkIndex || 'unknown'}`
@@ -166,13 +178,17 @@ export class ChunkLoader {
         segments: accumulatedSegments,
         modes: accumulatedModes,
         points: accumulatedPoints,
+        lineMap: accumulatedLineMap, // MISSING: Include accumulated line map!
         lineCount: lines.length,
         chunkCount: totalChunks,
       };
 
-      console.log(
-        `[CHUNK] Completed: ${accumulatedSegments.length} segments from ${totalChunks} chunks`
-      );
+      //console.log(`[DEBUG CHUNK] Final result: ${accumulatedSegments.length} segments, ${accumulatedLineMap.length} line mappings`);
+
+      // console.log(
+      //   `[CHUNK] Completed: ${accumulatedSegments.length} segments from ${totalChunks} chunks`
+      // );
+
       return result;
     } catch (error) {
       console.error('[CHUNK] Loading failed:', error.message);
@@ -239,12 +255,15 @@ export class ChunkLoader {
     // Parse the chunk with initial state to maintain G-code continuity
     const parseResult = parser(chunkGcode, initialState);
 
+    //console.log(`[DEBUG CHUNK] Chunk ${chunkIndex} parser returned lineMap:`, parseResult.lineMap ? parseResult.lineMap.slice(0, 10) : 'MISSING');
+
     return {
       success: true,
       chunkIndex,
       segments: parseResult.toolpathSegments || [],
       modes: parseResult.toolpathModes || [],
       points: parseResult.toolpathPoints || [],
+      lineMap: parseResult.lineMap || [], // MISSING: Include the line map from parser!
       segmentCounts: parseResult.segmentCounts || {
         G0: 0,
         G1: 0,
@@ -254,8 +273,12 @@ export class ChunkLoader {
       finalState: parseResult.finalState || {},
       // Include metadata for proper chunk connection
       metaData: {
-        startIndex: parseResult.lineMap ? Math.min(...parseResult.lineMap) : 0,
-        endIndex: parseResult.lineMap ? Math.max(...parseResult.lineMap) : 0,
+        startIndex: parseResult.lineMap
+          ? Math.min(...parseResult.lineMap.filter((idx) => idx >= 0))
+          : 0,
+        endIndex: parseResult.lineMap
+          ? Math.max(...parseResult.lineMap.filter((idx) => idx >= 0))
+          : 0,
         initialState: initialState,
         finalState: parseResult.finalState || {},
       },
@@ -281,7 +304,7 @@ export class ChunkLoader {
    */
   cancel() {
     this.isCancelled = true;
-    console.log('[CHUNK] Loading cancelled');
+    //console.log('[CHUNK] Loading cancelled');
   }
 
   /**

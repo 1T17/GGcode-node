@@ -1,0 +1,21 @@
+/* Header Components */
+
+.gcode-header {
+    background: #252526;
+    border-bottom: 1px solid #3c3c3c;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: static;
+    width: 100%;
+    z-index: 1;
+    flex: 0 0 auto;
+}
+
+.gcode-title {
+    color: #cccccc;
+    font-size: 12px;
+    font-weight: 500;
+    margin-right: auto;
+}

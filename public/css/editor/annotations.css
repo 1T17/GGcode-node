@@ -1,0 +1,34 @@
+/* Annotations Panel */
+
+#annotations {
+    padding: 6px 4px 8px 4px;
+    background: #272727ee;
+    border-left: 6px solid rgba(49, 49, 49, 0.66);
+    border-top: 1px solid rgba(49, 49, 49, 0.66);
+    color: #d4d4d4;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 13px;
+    line-height: 1.4;
+    overflow-y: auto;
+    max-height: 270px;
+}
+
+/* Collapsed state */
+#annotations.is-collapsed {
+    border-top: 1px solid rgba(49, 49, 49, 0.66);
+    height: 33px;
+    max-height: 33px;
+    overflow: hidden;
+}
+
+/* Container collapsed state */
+#annotations-container.collapsed {
+    max-height: 40px !important;
+    overflow: hidden;
+}
+
+#annotations:empty::before {
+    content: "Click on a line in the G-code output to see detailed annotations";
+    color: #666;
+    font-style: italic;
+}

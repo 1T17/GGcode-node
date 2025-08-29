@@ -2,6 +2,7 @@
 const compilerRoutes = require('./compiler');
 const examplesRoutes = require('./examples');
 const helpRoutes = require('./help');
+const aiRoutes = require('./ai');
 
 /**
  * Register all route modules with the Express app
@@ -17,6 +18,7 @@ function registerRoutes(app) {
   app.use('/', compilerRoutes);
   app.use('/', examplesRoutes);
   app.use('/', helpRoutes);
+  app.use('/', aiRoutes);
 
   // Health check endpoint
   app.get('/api/health', (req, res) => {

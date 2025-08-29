@@ -11,6 +11,14 @@ class StorageManager {
       LAST_FILENAME: 'ggcode_last_filename',
       AUTO_COMPILE: 'ggcode_auto_compile',
       SELECTED_LANGUAGE: 'ggcode_selected_language',
+      AI_AUTO_APPROVE: 'aiAutoApprove',
+      AI_MODE: 'aiMode',
+      AI_CHAT_MESSAGES: 'aiChatMessages',
+      ANNOTATION_TOGGLE: 'ggcode_annotation_toggle',
+      SELECTED_TEAM: 'ggcode_selected_team',
+      SELECTED_THEME: 'ggcode_theme',
+      EDITOR_BACKGROUND: 'ggcode_editor_background',
+      OUTPUT_BACKGROUND: 'ggcode_output_background',
     };
 
     this.DEFAULTS = {
@@ -19,6 +27,14 @@ class StorageManager {
       LAST_FILENAME: '',
       AUTO_COMPILE: false,
       SELECTED_LANGUAGE: 'en',
+      AI_AUTO_APPROVE: false,
+      AI_MODE: 'assistant',
+      AI_CHAT_MESSAGES: [],
+      ANNOTATION_TOGGLE: true, // Default to expanded (true)
+      SELECTED_TEAM: 'default',
+      SELECTED_THEME: null, // No direct theme preference by default
+      EDITOR_BACKGROUND: 'none', // Default editor background
+      OUTPUT_BACKGROUND: 'none', // Default output background
     };
   }
 
@@ -74,7 +90,7 @@ class StorageManager {
     try {
       localStorage.setItem(this.STORAGE_KEYS.OUTPUT_CONTENT, content);
     } catch (error) {
-      console.warn('Failed to save output content to storage:', error);
+      console.warn('Failed to save output content to storage:');
     }
   }
 
@@ -167,6 +183,241 @@ class StorageManager {
   }
 
   /**
+   * Get selected team from storage
+   * @returns {string} Selected team name
+   */
+  getSelectedTeam() {
+    try {
+      return (
+        localStorage.getItem(this.STORAGE_KEYS.SELECTED_TEAM) ||
+        this.DEFAULTS.SELECTED_TEAM
+      );
+    } catch (error) {
+      console.warn('Failed to retrieve selected team from storage:', error);
+      return this.DEFAULTS.SELECTED_TEAM;
+    }
+  }
+
+  /**
+   * Save selected team to storage
+   * @param {string} team - Team name to save
+   */
+  setSelectedTeam(team) {
+    try {
+      localStorage.setItem(this.STORAGE_KEYS.SELECTED_TEAM, team);
+    } catch (error) {
+      console.warn('Failed to save selected team to storage:', error);
+    }
+  }
+
+  /**
+   * Get selected theme from storage
+   * @returns {string} Selected theme name
+   */
+  getSelectedTheme() {
+    try {
+      return (
+        localStorage.getItem(this.STORAGE_KEYS.SELECTED_THEME) ||
+        this.DEFAULTS.SELECTED_THEME
+      );
+    } catch (error) {
+      console.warn('Failed to retrieve selected theme from storage:', error);
+      return this.DEFAULTS.SELECTED_THEME;
+    }
+  }
+
+  /**
+   * Save selected theme to storage
+   * @param {string} theme - Theme name to save
+   */
+  setSelectedTheme(theme) {
+    try {
+      localStorage.setItem(this.STORAGE_KEYS.SELECTED_THEME, theme);
+    } catch (error) {
+      console.warn('Failed to save selected theme to storage:', error);
+    }
+  }
+
+  /**
+   * Get editor background setting
+   * @returns {string} Editor background class name or default 'none'
+   */
+  getEditorBackground() {
+    try {
+      return (
+        localStorage.getItem(this.STORAGE_KEYS.EDITOR_BACKGROUND) ||
+        this.DEFAULTS.EDITOR_BACKGROUND
+      );
+    } catch (error) {
+      console.warn('Failed to retrieve editor background setting:', error);
+      return this.DEFAULTS.EDITOR_BACKGROUND;
+    }
+  }
+
+  /**
+   * Set editor background setting
+   * @param {string} background - Background class name ('none', 'bg-space', etc.)
+   */
+  setEditorBackground(background = 'none') {
+    try {
+      localStorage.setItem(this.STORAGE_KEYS.EDITOR_BACKGROUND, background);
+    } catch (error) {
+      console.warn('Failed to save editor background setting:', error);
+    }
+  }
+
+  /**
+   * Get output background setting
+   * @returns {string} Output background class name or default 'none'
+   */
+  getOutputBackground() {
+    try {
+      return (
+        localStorage.getItem(this.STORAGE_KEYS.OUTPUT_BACKGROUND) ||
+        this.DEFAULTS.OUTPUT_BACKGROUND
+      );
+    } catch (error) {
+      console.warn('Failed to retrieve output background setting:', error);
+      return this.DEFAULTS.OUTPUT_BACKGROUND;
+    }
+  }
+
+  /**
+   * Set output background setting
+   * @param {string} background - Background class name ('none', 'bg-space', etc.)
+   */
+  setOutputBackground(background = 'none') {
+    try {
+      localStorage.setItem(this.STORAGE_KEYS.OUTPUT_BACKGROUND, background);
+    } catch (error) {
+      console.warn('Failed to save output background setting:', error);
+    }
+  }
+
+  /**
+   * Get AI auto-approve setting
+   * @returns {boolean} AI auto-approve state
+   */
+  getAiAutoApprove() {
+    try {
+      const stored = localStorage.getItem(this.STORAGE_KEYS.AI_AUTO_APPROVE);
+      return stored !== null
+        ? JSON.parse(stored)
+        : this.DEFAULTS.AI_AUTO_APPROVE;
+    } catch (error) {
+      console.warn('Failed to retrieve AI auto-approve from storage:', error);
+      return this.DEFAULTS.AI_AUTO_APPROVE;
+    }
+  }
+
+  /**
+   * Save AI auto-approve setting
+   * @param {boolean} enabled - AI auto-approve enabled state
+   */
+  setAiAutoApprove(enabled) {
+    try {
+      localStorage.setItem(
+        this.STORAGE_KEYS.AI_AUTO_APPROVE,
+        JSON.stringify(enabled)
+      );
+    } catch (error) {
+      console.warn('Failed to save AI auto-approve to storage:', error);
+    }
+  }
+
+  /**
+   * Get AI mode
+   * @returns {string} AI mode (assistant, editor, optimizer, teacher)
+   */
+  getAiMode() {
+    try {
+      return (
+        localStorage.getItem(this.STORAGE_KEYS.AI_MODE) || this.DEFAULTS.AI_MODE
+      );
+    } catch (error) {
+      console.warn('Failed to retrieve AI mode from storage:', error);
+      return this.DEFAULTS.AI_MODE;
+    }
+  }
+
+  /**
+   * Save AI mode
+   * @param {string} mode - AI mode to save
+   */
+  setAiMode(mode) {
+    try {
+      localStorage.setItem(this.STORAGE_KEYS.AI_MODE, mode);
+    } catch (error) {
+      console.warn('Failed to save AI mode to storage:', error);
+    }
+  }
+
+  /**
+   * Get annotation toggle state from storage
+   * @returns {boolean} Annotation toggle state (true = expanded, false = collapsed)
+   */
+  getAnnotationToggleState() {
+    try {
+      const stored = localStorage.getItem(this.STORAGE_KEYS.ANNOTATION_TOGGLE);
+      return stored !== null
+        ? JSON.parse(stored)
+        : this.DEFAULTS.ANNOTATION_TOGGLE;
+    } catch (error) {
+      console.warn(
+        'Failed to retrieve annotation toggle state from storage:',
+        error
+      );
+      return this.DEFAULTS.ANNOTATION_TOGGLE;
+    }
+  }
+
+  /**
+   * Save annotation toggle state to storage
+   * @param {boolean} expanded - Annotation toggle state (true = expanded, false = collapsed)
+   */
+  setAnnotationToggleState(expanded) {
+    try {
+      localStorage.setItem(
+        this.STORAGE_KEYS.ANNOTATION_TOGGLE,
+        JSON.stringify(expanded)
+      );
+    } catch (error) {
+      console.warn('Failed to save annotation toggle state to storage:', error);
+    }
+  }
+
+  /**
+   * Get AI chat messages
+   * @returns {Array} Array of AI chat messages
+   */
+  getAiChatMessages() {
+    try {
+      const stored = localStorage.getItem(this.STORAGE_KEYS.AI_CHAT_MESSAGES);
+      return stored !== null
+        ? JSON.parse(stored)
+        : this.DEFAULTS.AI_CHAT_MESSAGES;
+    } catch (error) {
+      console.warn('Failed to retrieve AI chat messages from storage:', error);
+      return this.DEFAULTS.AI_CHAT_MESSAGES;
+    }
+  }
+
+  /**
+   * Save AI chat messages
+   * @param {Array} messages - Array of messages to save
+   */
+  setAiChatMessages(messages) {
+    try {
+      localStorage.setItem(
+        this.STORAGE_KEYS.AI_CHAT_MESSAGES,
+        JSON.stringify(messages)
+      );
+    } catch (error) {
+      console.warn('Failed to save AI chat messages to storage:', error);
+    }
+  }
+
+  /**
    * Clear all stored data
    */
   clearAll() {
@@ -174,7 +425,6 @@ class StorageManager {
       Object.values(this.STORAGE_KEYS).forEach((key) => {
         localStorage.removeItem(key);
       });
-      console.log('All stored data cleared successfully');
     } catch (error) {
       console.warn('Failed to clear stored data:', error);
     }
@@ -192,6 +442,14 @@ class StorageManager {
         lastFilename: this.getLastFilename(),
         autoCompile: this.getAutoCompileState(),
         selectedLanguage: this.getSelectedLanguage(),
+        aiAutoApprove: this.getAiAutoApprove(),
+        aiMode: this.getAiMode(),
+        aiChatMessages: this.getAiChatMessages(),
+        annotationToggle: this.getAnnotationToggleState(),
+        selectedTeam: this.getSelectedTeam(),
+        selectedTheme: this.getSelectedTheme(),
+        editorBackground: this.getEditorBackground(),
+        outputBackground: this.getOutputBackground(),
       };
     } catch (error) {
       console.warn('Failed to retrieve all stored data:', error);
@@ -219,6 +477,30 @@ class StorageManager {
       }
       if (data.selectedLanguage !== undefined) {
         this.setSelectedLanguage(data.selectedLanguage);
+      }
+      if (data.aiAutoApprove !== undefined) {
+        this.setAiAutoApprove(data.aiAutoApprove);
+      }
+      if (data.aiMode !== undefined) {
+        this.setAiMode(data.aiMode);
+      }
+      if (data.aiChatMessages !== undefined) {
+        this.setAiChatMessages(data.aiChatMessages);
+      }
+      if (data.annotationToggle !== undefined) {
+        this.setAnnotationToggleState(data.annotationToggle);
+      }
+      if (data.selectedTeam !== undefined) {
+        this.setSelectedTeam(data.selectedTeam);
+      }
+      if (data.selectedTheme !== undefined) {
+        this.setSelectedTheme(data.selectedTheme);
+      }
+      if (data.editorBackground !== undefined) {
+        this.setEditorBackground(data.editorBackground);
+      }
+      if (data.outputBackground !== undefined) {
+        this.setOutputBackground(data.outputBackground);
       }
     } catch (error) {
       console.warn('Failed to save all data to storage:', error);

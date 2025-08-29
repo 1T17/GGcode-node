@@ -3,6 +3,9 @@
  * Initializes and starts the application with proper error handling
  */
 
+// Load environment variables from .env file
+require('dotenv').config();
+
 const Application = require('./app');
 
 async function startServer() {

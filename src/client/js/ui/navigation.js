@@ -1,6 +1,7 @@
 /**
  * Navigation Loading States Manager
  * Handles loading indicators for page navigation and actions
+ * Uses pre-existing HTML elements for better performance and maintainability
  */
 
 class NavigationManager {
@@ -11,56 +12,18 @@ class NavigationManager {
   }
 
   init() {
-    this.createGlobalLoader();
+    this.setupElements();
     this.setupEventListeners();
   }
 
-  createGlobalLoader() {
-    // Create global loading overlay
-    const loader = document.createElement('div');
-    loader.id = 'globalLoader';
-    loader.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            color: white;
-            font-size: 16px;
-        `;
-
-    loader.innerHTML = `
-            <div style="text-align: center;">
-                <div class="loading-spinner" style="
-                    width: 40px;
-                    height: 40px;
-                    border: 4px solid rgba(255, 255, 255, 0.3);
-                    border-top: 4px solid #ffffff;
-                    border-radius: 50%;
-                    animation: spin 1s linear infinite;
-                    margin: 0 auto 20px;
-                "></div>
-                <div class="loading-text">Loading...</div>
-            </div>
-        `;
-
-    // Add CSS animation
-    const style = document.createElement('style');
-    style.textContent = `
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-        `;
-    document.head.appendChild(style);
-
-    document.body.appendChild(loader);
-    this.globalLoader = loader;
+  setupElements() {
+    // Get existing HTML elements instead of creating them dynamically
+    this.globalLoader = document.getElementById('globalLoader');
+    if (!this.globalLoader) {
+      console.warn(
+        'Global loader element not found. Navigation loading may not work properly.'
+      );
+    }
   }
 
   setupEventListeners() {
@@ -68,8 +31,17 @@ class NavigationManager {
     document.addEventListener('click', (_e) => {
       const link = _e.target.closest('a[href]');
       if (link && !link.hasAttribute('data-no-loading')) {
+        // Don't intercept blob URLs (file downloads) or external links
+        const href = link.href;
+        if (
+          href.startsWith('blob:') ||
+          href.startsWith('http://') ||
+          href.startsWith('https://')
+        ) {
+          return; // Let the browser handle these normally
+        }
         _e.preventDefault();
-        this.navigateTo(link.href, link.textContent);
+        this.navigateTo(href, link.textContent);
       }
     });
 
@@ -108,7 +80,7 @@ class NavigationManager {
 
   showGlobalLoader(message) {
     if (this.globalLoader) {
-      const textElement = this.globalLoader.querySelector('.loading-text');
+      const textElement = this.globalLoader.querySelector('.navigation-text');
       if (textElement) {
         textElement.textContent = message;
       }
@@ -126,33 +98,19 @@ class NavigationManager {
     const rect = element.getBoundingClientRect();
     const loader = document.createElement('div');
     loader.className = 'element-loader';
-    loader.style.cssText = `
-            position: absolute;
-            top: ${rect.top}px;
-            left: ${rect.left}px;
-            width: ${rect.width}px;
-            height: ${rect.height}px;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            color: white;
-            font-size: 14px;
-        `;
+
+    // Set position and size using CSS classes and inline positioning only
+    Object.assign(loader.style, {
+      top: `${rect.top}px`,
+      left: `${rect.left}px`,
+      width: `${rect.width}px`,
+      height: `${rect.height}px`,
+    });
 
     loader.innerHTML = `
-            <div class="loading-spinner" style="
-                width: 20px;
-                height: 20px;
-                border: 2px solid rgba(255, 255, 255, 0.3);
-                border-top: 2px solid #ffffff;
-                border-radius: 50%;
-                animation: spin 1s linear infinite;
-                margin-right: 10px;
-            "></div>
-            <span>${message}</span>
-        `;
+      <div class="navigation-spinner"></div>
+      <span>${message}</span>
+    `;
 
     document.body.appendChild(loader);
     this.loadingStates.set(element, loader);
@@ -177,25 +135,19 @@ class NavigationManager {
 
   // Utility methods for common actions
   showButtonLoading(button, message = 'Loading...') {
-    const originalText = button.textContent;
+    const originalHTML = button.innerHTML;
     button.disabled = true;
+    button.classList.add('button-loading');
+
     button.innerHTML = `
-            <span class="loading-spinner" style="
-                width: 12px;
-                height: 12px;
-                border: 1px solid rgba(255, 255, 255, 0.3);
-                border-top: 1px solid currentColor;
-                border-radius: 50%;
-                animation: spin 1s linear infinite;
-                margin-right: 5px;
-                display: inline-block;
-            "></span>
-            ${message}
-        `;
+      <span class="navigation-spinner"></span>
+      ${message}
+    `;
 
     return () => {
       button.disabled = false;
-      button.textContent = originalText;
+      button.classList.remove('button-loading');
+      button.innerHTML = originalHTML;
     };
   }
 

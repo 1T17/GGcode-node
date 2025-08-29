@@ -46,19 +46,16 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 │   ├── Flower of Life.ggcode
 │   ├── Flower Pattern with Arcs.ggcode
 │   ├── function_example.ggcode
-│   ├── Gear Teeth 2.ggcode
 │   ├── Gear Teeth.ggcode
 │   ├── Inverted Spiral - Downward.ggcode
 │   ├── math_functions.ggcode
 │   ├── Mind-Blowing Gear Generator.ggcode
 │   ├── operators_and_logic.ggcode
 │   ├── Rose Pattern.ggcode
-│   ├── Simple Gear Generator.ggcode
 │   ├── simple_spiral.ggcode
 │   ├── Spiral Function Circle Grid.ggcode
 │   ├── Spiral Function Grid.ggcode
 │   ├── Spiral Function Multi-Ring Circular Grid.ggcode
-│   ├── spiral.ggcode
 │   ├── Spiral.ggcode
 │   ├── square.ggcode
 │   ├── Stair Stringer.ggcode
@@ -71,6 +68,7 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 │   │   │   ├── buttons.css
 │   │   │   ├── controls.css
 │   │   │   ├── headers.css
+│   │   │   ├── navigation.css
 │   │   │   └── tooltips.css
 │   │   ├── editor/
 │   │   │   ├── annotation-content.css
@@ -85,11 +83,13 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 │   │   │   ├── base.css
 │   │   │   ├── code-blocks.css
 │   │   │   ├── collapsible.css
+│   │   │   ├── dropdowns.css
 │   │   │   ├── examples.css
 │   │   │   ├── help-system.css
 │   │   │   ├── language-selector.css
 │   │   │   ├── rtl-support.css
 │   │   │   ├── search.css
+│   │   │   ├── settings.css
 │   │   │   └── states.css
 │   │   ├── base.css
 │   │   ├── components.css
@@ -98,31 +98,63 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 │   │   ├── modals.css
 │   │   └── README.md
 │   ├── data/
-│   │   └── help-content/
-│   │       ├── ar.json
-│   │       ├── de.json
-│   │       ├── en.json
-│   │       ├── es.json
-│   │       ├── fr.json
-│   │       ├── he.json
-│   │       ├── it.json
-│   │       ├── ja.json
-│   │       ├── ko.json
-│   │       ├── metadata.json
-│   │       ├── MULTILANGUAGE_GUIDE.md
-│   │       ├── nl.json
-│   │       ├── pl.json
-│   │       ├── pt.json
-│   │       ├── README.md
-│   │       ├── ru.json
-│   │       ├── tr.json
-│   │       └── zh.json
+│   │   ├── completions/
+│   │   │   ├── ggcode-axes.json
+│   │   │   ├── ggcode-brackets.json
+│   │   │   ├── ggcode-constants.json
+│   │   │   ├── ggcode-functions.json
+│   │   │   ├── ggcode-hover-constants.json
+│   │   │   ├── ggcode-hover-functions.json
+│   │   │   ├── ggcode-hover-gcodes.json
+│   │   │   ├── ggcode-hover-keywords.json
+│   │   │   ├── ggcode-hover-mcodes.json
+│   │   │   ├── ggcode-keywords.json
+│   │   │   ├── ggcode-language-config.json
+│   │   │   ├── ggcode-operators.json
+│   │   │   ├── ggcode-param-mappings.json
+│   │   │   ├── ggcode-signatures.json
+│   │   │   └── ggcode-tokenizer.json
+│   │   ├── help-content/
+│   │   │   ├── ar.json
+│   │   │   ├── de.json
+│   │   │   ├── en.json
+│   │   │   ├── es.json
+│   │   │   ├── fr.json
+│   │   │   ├── he.json
+│   │   │   ├── it.json
+│   │   │   ├── ja.json
+│   │   │   ├── ko.json
+│   │   │   ├── metadata.json
+│   │   │   ├── MULTILANGUAGE_GUIDE.md
+│   │   │   ├── nl.json
+│   │   │   ├── pl.json
+│   │   │   ├── pt.json
+│   │   │   ├── README.md
+│   │   │   ├── ru.json
+│   │   │   ├── tr.json
+│   │   │   └── zh.json
+│   │   ├── themes/
+│   │   │   ├── ggcode-dark-colors.json
+│   │   │   └── ggcode-light-colors.json
+│   │   └── team-themes.json
 │   ├── js/
 │   │   ├── main.js
+│   │   ├── main.js.LICENSE.txt
 │   │   ├── main.js.map
 │   │   ├── navigation.js
-│   │   └── navigation.js.map
+│   │   ├── navigation.js.map
+│   │   ├── src_client_js_core_applicationManager_js.js
+│   │   ├── src_client_js_core_applicationManager_js.js.map
+│   │   ├── src_client_js_editor_settings_js.js
+│   │   ├── src_client_js_editor_settings_js.js.map
+│   │   ├── src_client_js_editor_theme-loader_js.js
+│   │   ├── src_client_js_editor_theme-loader_js.js.map
+│   │   ├── src_client_js_editor_themes_js.js
+│   │   ├── src_client_js_editor_themes_js.js.map
+│   │   ├── src_client_js_ui_aiCommands_js.js
+│   │   └── src_client_js_ui_aiCommands_js.js.map
 │   ├── flags.css
+│   ├── GGcode.ico
 │   ├── logo.png
 │   ├── mill-annotations.json
 │   ├── mill-dictionary.json
@@ -141,7 +173,9 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 │   ├── client/ # Client-side code (ES6 modules)
 │   │   └── js/
 │   │       ├── api/
+│   │       ├── config/
 │   │       ├── configurator/
+│   │       ├── core/
 │   │       ├── editor/
 │   │       ├── ui/
 │   │       ├── utils/
@@ -156,6 +190,7 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 │       │   ├── index.js
 │       │   └── security.js
 │       ├── routes/
+│       │   ├── ai.js
 │       │   ├── compiler.js
 │       │   ├── examples.js
 │       │   ├── help.js
@@ -179,18 +214,18 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 │   │       ├── frustum-culling.test.js
 │   │       ├── geometry-manager.test.js
 │   │       ├── geometry-optimization.test.js
-│   │       ├── integration.test.js
 │   │       ├── lod-system.test.js
 │   │       ├── matrix-calculations.test.js
 │   │       ├── parser-simple.test.js
-│   │       ├── pointDataExtractor.test.js
-│   │       ├── pointDataIntegration.test.js
-│   │       ├── pointDetector.test.js
+│   │       ├── PERFORMANCE_VALIDATION_SUMMARY.md
+│   │       ├── performance-test-report.md
+│   │       ├── progress-bar-benchmark.js
+│   │       ├── progress-bar-integration.test.js
+│   │       ├── progress-bar-validation.js
 │   │       ├── render-queue.test.js
 │   │       ├── renderer-optimization.test.js
 │   │       ├── renderer.test.js
-│   │       ├── tooltipIntegration.test.js
-│   │       └── tooltipManager.test.js
+│   │       └── tooltipIntegration.test.js
 │   ├── config/
 │   │   └── testConfig.js
 │   ├── fixtures/
@@ -209,7 +244,14 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 │   │   ├── mocks.js
 │   │   ├── testHelpers.js
 │   │   └── testRunner.js
-│   └── setup.js
+│   ├── AI_TESTING_README.md
+│   ├── ai-commands-test.js
+│   ├── ai-integration-results.json
+│   ├── ai-integration-test.js
+│   ├── ai-test-cases.json
+│   ├── run-ai-tests.js
+│   ├── setup.js
+│   └── smoke-tests.json
 ├── views/ # EJS templates
 │   ├── layouts/
 │   │   └── main.ejs
@@ -220,35 +262,33 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 │   │   ├── modals.ejs
 │   │   ├── scripts.ejs
 │   │   └── viewer.ejs
-│   ├── app.ejs.backup
 │   ├── help-template.ejs
 │   ├── helpExamples.ejs
-│   ├── index.ejs
-│   ├── view.ejs.old js
-│   └── view.ejs.old.backup
+│   └── index.ejs
 ├── .eslintrc.js
 ├── .gitignore
 ├── .jsdoc.json
 ├── .prettierrc
+├── AI_AGENT_DOCUMENTATION.md
+├── BUILD_DOCUMENTATION.md
 ├── CHANGELOG.md
+├── COMMANDS.md
 ├── CONTRIBUTING.md
 ├── ggcode.js
 ├── libggcode.so
+├── LOCALSTORAGE_LOGIC.md
 ├── MAINTENANCE.md
-├── MODERNIZATION_COMPLETE.md
 ├── nodemon.json
 ├── nohup.out
 ├── package-lock.json
 ├── package.json
-├── PROJECT_ORGANIZATION_SUMMARY.md
 ├── README.md
 ├── server.log
-├── test-gcode-regex.js
-├── test-parser-simple.js
-├── test-visualization.html
+├── test_dictionary_integration.ggcode
+├── test_functions.ggcode
+├── test_r_f_colcoding.txt
 ├── update.sh
-├── VISUALIZER_OPTIMIZATION_CHECKLIST.md
-├── VISUALIZER_OPTIMIZATION_PLAN.md
+├── USAGE.md
 └── webpack.config.js
 ```
 

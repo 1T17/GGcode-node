@@ -1,0 +1,13 @@
+/* Modals - Imports all modal modules */
+
+@import url('./modals/base.css');
+@import url('./modals/search.css');
+@import url('./modals/help-system.css');
+@import url('./modals/code-blocks.css');
+@import url('./modals/examples.css');
+@import url('./modals/language-selector.css');
+@import url('./modals/dropdowns.css');
+@import url('./modals/collapsible.css');
+@import url('./modals/states.css');
+@import url('./modals/rtl-support.css');
+@import url('./modals/app-usage.css');

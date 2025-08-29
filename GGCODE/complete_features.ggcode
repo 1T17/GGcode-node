@@ -8,155 +8,236 @@ note {
   Version: 2.1
 }
 
-// ── G-code File Variables ──
-let id = 4453            // File ID
-let nline = 1            // Line numbering: 1 = enabled, 0 = disabled
-let decimalpoint = 3     // Number of decimal places (range: 0–6)
+/* ──────────────────────────────────────────────────────────────────────
+   G-CODE FILE CONFIGURATION VARIABLES
+   ─────────────────────────────────────────────────────────────────-----
+
+   These variables control the output format of compiled G-code files.
+   They are special GGcode system variables that affect code generation. */
+
+let id = 4453                           // File ID: Unique identifier for this G-code file
+let nline = 1                           // Line numbering: 1 = enabled (adds N-line numbers), 0 = disabled
+let decimalpoint = 3                    // Decimal places: Controls precision (0-6 significant digits)
 
 
-let center_x = 0 /// @number -50 50 // Center X coordinate
-let center_y = 0 /// @number -50 50 // Center Y coordinate
+/* ──────────────────────────────────────────────────────────────────────
+   CONFIGURATOR VARIABLES
+   ─────────────────────────────────────────────────────────────────-----
 
-// Move to starting position
-G0 X[center_x] Y[center_y]
+   These variables use configurator annotations (/// @something) to create
+   interactive UI controls in the GGcode Configurator panel. The @number
+   annotation creates a slider input for numeric values. */
 
-// ===== ARRAY LITERALS =====
-let points = [10, 20, 30, 40, 50]
-let grid = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
-let matrix = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]
+let center_x = 0 /// @number -50 50 // Center X coordinate: Interactive slider (-50 to +50 mm)
+let center_y = 0 /// @number -50 50 // Center Y coordinate: Interactive slider (-50 to +50 mm)
 
-// ===== ARRAY ACCESS =====
-let first_point = points[0]
-let grid_value = grid[1][2]  // Should be 5
-let matrix_value = matrix[0][1][0]  // Should be 3
+/* ──────────────────────────────────────────────────────────────────────
+   RAPID POSITIONING COMMAND
+   ─────────────────────────────────────────────────────────────────-----
 
-// ===== ALL MATH FUNCTIONS =====
-let abs_val = abs(-15)
-let mod_val = mod(17, 5)
-let floor_val = floor(3.7)
-let ceil_val = ceil(3.2)
-let round_val = round(3.6)
-let min_val = min(5, 10)
-let max_val = max(5, 10)
-let clamp_val = clamp(15, 0, 10)
+   G0: Rapid traverse (jog movement) - Moves to position as fast as possible
+   High-speed positioning without cutting. X and Y specify coordinates in mm. */
 
-let sin_val = sin(45 * DEG_TO_RAD)
-let cos_val = cos(30 * DEG_TO_RAD)
-let tan_val = tan(60 * DEG_TO_RAD)
-let asin_val = asin(0.5)
-let acos_val = acos(0.5)
-let atan_val = atan(1)
-let atan2_val = atan2(1, 1)
+G0 X[center_x] Y[center_y]     // Rapid move to center position (no cutting operation)
 
-let sqrt_val = sqrt(25)
-let pow_val = pow(2, 8)
-let hypot_val = hypot(3, 4)
-let lerp_val = lerp(0, 100, 0.5)
-let map_val = map(50, 0, 100, 0, 200)
-let distance_val = distance(0, 0, 3, 4)
-let sign_val = sign(-5)
-let log_val = log(10)
-let exp_val = exp(1)
-let noise_val = noise(1.5)
+/* ──────────────────────────────────────────────────────────────────────
+   ARRAY LITERALS - Creating Multi-dimensional Arrays
+   ─────────────────────────────────────────────────────────────────-----
 
-let deg_val = deg(PI)
-let rad_val = rad(180)
+   GGcode supports flexible array creation with different dimensionalities:
+   1D arrays: [a, b, c] - Simple list of values
+   2D arrays: [[a,b,c],[d,e,f]] - Grid-like structures
+   3D arrays: [[[a,b],[c,d]],[[e,f],[g,h]]] - Complex data structures */
 
-// ===== ALL OPERATORS =====
-let a = 10
-let b = 5
-let c = 10
+let points = [10, 20, 30, 40, 50]     // 1D array: Five numbers in a linear sequence
+let grid = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]     // 2D array: 3x3 grid (3 rows, 3 columns each)
+let matrix = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]  // 3D array: 2x2x2 structure
 
-let eq_test = a == c
-let ne_test = a != b
-let lt_test = b < a
-let le_test = b <= a
-let gt_test = a > b
-let ge_test = a >= b
+/* ──────────────────────────────────────────────────────────────────────
+   ARRAY ACCESS - Retrieving Values from Arrays
+   ─────────────────────────────────────────────────────────────────-----
 
-let and_test = (a > b) && (c == a)
-let or_test = (a < b) || (c != b)
-let not_test = !(a < b)
-let bit_test = 5 & 3
+   Access elements using [index] notation:
+   - Single brackets for 1D access: array[index]
+   - Multiple brackets for multi-dimensional access: array[row][column]
+   - Zero-based indexing (first element is index 0) */
 
-// ===== FUNCTIONS WITH RETURN =====
-function calculate_area(radius) {
-    let area = PI * radius * radius
-    return area
+let first_point = points[0]              // Get first element (index 0) = 10
+let grid_value = grid[1][2]             // Get row 1, column 2 = grid[1][2] = 5
+let matrix_value = matrix[0][1][0]      // Get 3D array [layer][row][column] = matrix[0][1][0] = 3
+
+// ===== BASIC MATH FUNCTIONS =====
+let abs_val = abs(-15)          // abs(x): Returns absolute value | get positive value of any number (removes negative sign)
+let mod_val = mod(17, 5)        // mod(a,b): Modular arithmetic | remainder of 17÷5 = 2
+let floor_val = floor(3.7)      // floor(x): Floor function | rounds down to nearest integer (3.7 → 3)
+let ceil_val = ceil(3.2)        // ceil(x): Ceiling function | rounds up to nearest integer (3.2 → 4)
+let round_val = round(3.6)      // round(x): Round to nearest | standard rounding (3.6 → 4, 3.4 → 3)
+let min_val = min(5, 10)        // min(a,b): Minimum value | returns smaller of two numbers = 5
+let max_val = max(5, 10)        // max(a,b): Maximum value | returns larger of two numbers = 10
+let clamp_val = clamp(15, 0, 10) // clamp(x,min,max): Constrain value | keeps 15 between 0-10 range = 10
+
+// ===== TRIGONOMETRIC FUNCTIONS =====
+let sin_val = sin(45 * DEG_TO_RAD)    // sin(radians): Sine function | sin(45° * π/180) ≈ 0.707
+let cos_val = cos(30 * DEG_TO_RAD)    // cos(radians): Cosine function | cos(30° * π/180) ≈ 0.866
+let tan_val = tan(60 * DEG_TO_RAD)    // tan(radians): Tangent function | tan(60°) ≈ 1.732
+let asin_val = asin(0.5)              // asin(ratio): Arc sine | returns angle in radians where sin(θ) = 0.5 ≈ 30°
+let acos_val = acos(0.5)              // acos(ratio): Arc cosine | returns angle where cos(θ) = 0.5 ≈ 60°
+let atan_val = atan(1)                // atan(slope): Arc tangent | returns angle where tan(θ) = 1 = 45°
+let atan2_val = atan2(1, 1)           // atan2(y,x): Arc tangent (2 arguments) | handles all quadrants = 45°
+
+// ===== ADVANCED MATH FUNCTIONS =====
+let sqrt_val = sqrt(25)                // sqrt(x): Square root | √25 = 5.0
+let pow_val = pow(2, 8)               // pow(base,exp): Power function | 2⁸ = 256
+let hypot_val = hypot(3, 4)           // hypot(a,b): Hypotenuse of right triangle | √(3² + 4²) = 5.0
+let lerp_val = lerp(0, 100, 0.5)      // lerp(start,end,t): Linear interpolation | halfway between 0 and 100 = 50
+let map_val = map(50, 0, 100, 0, 200) // map(val,in_min,in_max,out_min,out_max): Map value to new range
+let distance_val = distance(0, 0, 3, 4) // distance(x1,y1,x2,y2): Euclidean distance between 2 points
+let sign_val = sign(-5)               // sign(x): Sign function | returns -1, 0, or +1 based on sign
+let log_val = log(10)                 // log(x): Natural logarithm | e ≈ 2.718281828 (natural log base)
+let exp_val = exp(1)                  // exp(x): Exponential function | e¹ = 2.718281828 (raises e to power)
+let noise_val = noise(1.5)            // noise(x): Perlin noise function | smooth random values for procedural shapes
+
+let deg_val = deg(PI)                  // deg(radians): Convert radians to degrees | π radians = 180°
+let rad_val = rad(180)                 // rad(degrees): Convert degrees to radians | 180° = π radians
+
+// ===== COMPARISON OPERATORS =====
+let a = 10                                         // Test value A: 10
+let b = 5                                          // Test value B: 5
+let c = 10                                         // Test value C: 10
+
+let eq_test = a == c                               // == : Equal to | a equals c (10 == 10) = true
+let ne_test = a != b                               // != : Not equal to | a ≠ b (10 != 5) = true
+let lt_test = b < a                                // < : Less than | b < a (5 < 10) = true
+let le_test = b <= a                               // <= : Less than or equal | b ≤ a (5 ≤ 10) = true
+let gt_test = a > b                                // > : Greater than | a > b (10 > 5) = true
+let ge_test = a >= b                               // >= : Greater than or equal | a ≥ b (10 ≥ 5) = true
+
+// ===== LOGICAL OPERATORS =====
+let and_test = (a > b) && (c == a)                 // && : Logical AND | both conditions must be true
+let or_test = (a < b) || (c != b)                  // || : Logical OR | at least one condition must be true
+let not_test = !(a < b)                            // ! : Logical NOT | negates (flips) the result = true
+let bit_test = 5 & 3                               // & : Bitwise AND | binary operation: 0101 & 0011 = 0001 = 1
+
+// Note: GGcode supports standard order of operations:
+// 1. Parentheses
+// 2. Arithmetic (* / % before + -)
+// 3. Comparison operators
+// 4. Logical operators
+
+// ===== USER-DEFINED FUNCTIONS WITH RETURN VALUES =====
+
+// Functions encapsulate reusable calculations and return results using 'return' statement
+function calculate_area(radius) {                // Function definition: calculate_area(parameter)
+    let area = PI * radius * radius             // Calculate circle area formula: πr²
+    return area                                 // Return the computed area value
 }
 
-function get_feed_rate(speed) {
-    if (speed > 100) {
-        return 300
-    } else if (speed > 50) {
-        return 200
-    } else {
-        return 100
+// Conditional return: Different values based on input - demonstrates decision making
+function get_feed_rate(speed) {                 // Function to calculate feed rate based on speed
+    if (speed > 100) {                          // High speed → fast feed rate
+        return 300                             // Return 300 mm/min for high speeds
+    } else if (speed > 50) {                   // Medium speed → medium feed rate
+        return 200                             // Return 200 mm/min for medium speeds
+    } else {                                   // Low speed → slow, precise feed rate
+        return 100                             // Return 100 mm/min for precise operations
     }
 }
 
-// ===== CONTROL STRUCTURES =====
-// For loops with step
-for i = 0..<11 step 2 {
-    let area = calculate_area(i)
-    let feed = get_feed_rate(i)
-    G1 X[center_x + i] Y[center_y + area/10] F[feed]
+// Functions can be called anywhere: let result = calculate_area(25)
+// Functions receive parameters and return computed values
+
+// ===== CONTROL STRUCTURES - REPETITION AND DECISIONS =====
+
+// FOR LOOPS: Execute code repeatedly with a counter variable
+// Syntax: for variable = start..<end step increment { code }
+// 0..<11 means: start at 0, go up to BUT NOT including 11 (so 0, 2, 4, 6, 8, 10)
+
+for i = 0..<11 step 2 {                        // Loop: i = 0, 2, 4, 6, 8, 10 (6 iterations)
+    let area = calculate_area(i)              // Calculate circle area for radius 'i'
+    let feed = get_feed_rate(i)               // Get appropriate feed rate for speed 'i'
+    G1 X[center_x + i] Y[center_y + area/10] F[feed]  // Move using function results
 }
 
-// For loops with exclusive range
-for j = 0..<10 step 3 {
-    G1 X[center_x - j] Y[center_y - j] F[150]
+// More FOR loop examples with different ranges:
+// for counter = start..<end step step_value { ... }
+// No 'step' means default step of 1
+
+for j = 0..<10 step 3 {                        // Loop: j = 0, 3, 6, 9 (4 iterations)
+    G1 X[center_x - j] Y[center_y - j] F[150] // Move in diagonal line pattern
 }
 
-// While loops with complex conditions
-let k = 0
-while (k < 8 && k >= 0) {
-    if (mod(k, 2) == 0) {
-        G1 X[center_x + k] Y[center_y + 5] F[100]
-    } else {
-        G1 X[center_x + k] Y[center_y - 5] F[100]
+// WHILE LOOPS: Execute while a condition remains true
+let k = 0                                       // Initialize counter variable
+while (k < 8 && k >= 0) {                      // Continue while k < 8 AND k is not negative
+    if (mod(k, 2) == 0) {                      // Check if k is even (even: k modulus 2 = 0)
+        G1 X[center_x + k] Y[center_y + 5] F[100]  // Even k: move above center line
+    } else {                                   // Odd numbers go here
+        G1 X[center_x + k] Y[center_y - 5] F[100]  // Odd k: move below center line
     }
-    k = k + 1
+    k = k + 1                                  // Increment counter (VERY IMPORTANT!)
 }
 
-// Nested control structures
-for x = 0..<5 {
-    for y = 0..<5 {
-        if (x == y) {
-            G1 X[center_x + x * 2] Y[center_y + y * 2] F[200]
-        } else if (x > y) {
-            G1 X[center_x + x * 2] Y[center_y - y * 2] F[150]
-        } else {
-            G1 X[center_x - x * 2] Y[center_y + y * 2] F[100]
+// Important: Always ensure the condition will eventually become false, or you'll have an infinite loop!
+
+// NESTED LOOPS: Loops inside loops create patterns and grids
+for x = 0..<5 {                                  // Outer loop: x = 0, 1, 2, 3, 4 (5 iterations)
+    for y = 0..<5 {                              // Inner loop: y = 0, 1, 2, 3, 4 for each x (25 total movements)
+
+        if (x == y) {                             // Move diagonally when coordinates equal
+            G1 X[center_x + x * 2] Y[center_y + y * 2] F[200]  // Pattern: center + (x,y) * spacing
+        } else if (x > y) {                       // Move above diagonal
+            G1 X[center_x + x * 2] Y[center_y - y * 2] F[150]  // Negative Y direction
+        } else {                                  // Move below diagonal (x < y)
+            G1 X[center_x - x * 2] Y[center_y + y * 2] F[100]  // Negative X direction
         }
-    }
-}
+    }                                             // End inner loop (y)
+}                                                 // End outer loop (x)
 
-// ===== ARRAY ASSIGNMENT =====
-let maze = [[1, 2], [3, 4]]
-maze[1][0] = 0  // Array index assignment
+// This creates a 5x5 grid pattern with different movements based on diagonal positioning
 
-// ===== IMPLICIT ASSIGNMENT =====
-// If you write just an identifier, it becomes an assignment with 0
-// Note: This feature is demonstrated in comments to avoid compilation issues
-// unexpected_token  // This becomes: unexpected_token = 0
+// ===== ARRAY ELEMENT MODIFICATION =====
+let maze = [[1, 2], [3, 4]]                  // Create a 2x2 game-like grid
+maze[1][0] = 0                               // Modify element at [row 1][column 0] from 3 → 0
+// Result: maze is now [[1, 2], [0, 4]]
 
-// ===== IMPLICIT G1 =====
-// G-code without explicit G1 becomes G1
-// Note: This feature is demonstrated in comments to avoid compilation issues
-// X[10] Y[20]  // This becomes: G1 X[10] Y[20]
+/* ──────────────────────────────────────────────────────────────────────
+   SPECIAL GGCode FEATURES - Advanced Language Capabilities
+   ────────────────────────────────────────────────────────────────────── */
 
-// ===== UNARY OPERATORS =====
-let negative = -5
-let logical_not = !0
-let double_not = !!1
+// ===== SYNTAX SHORTCUTS (Demonstrated in comments to avoid issues) =====
+// Let variables: If you just write an identifier, GGcode creates a variable with value 0
+// let my_var = 7  // ← Normal explicit declaration
+// automatic_var    // ← This becomes: automatic_var = 0 (implicit assignment)
 
-// ===== COMPLEX EXPRESSIONS =====
-let d = 2
-let e = 3
-let f = 4
-let complex_expr = (a + b) * (c - d) / (e + f)
-let nested_func = sin(cos(tan(45 * DEG_TO_RAD)))
+// G-code shorthand: If you omit the G-word, GGcode assumes G1 (linear interpolation)
+// G1 X[10] Y[20] F[100]  // ← Explicit G1 command
+// X[10] Y[20] F[100]     // ← This becomes: G1 X[10] Y[20] F[100] (implicit G1)
+
+// These shortcuts save typing while maintaining unambiguous G-code meaning
+
+// ===== UNARY OPERATORS - Single-value operations =====
+let negative = -5                                // - : Negative sign | makes number negative (-5)
+let logical_not = !0                             // ! : Logical NOT | flips true(1) to false(0)
+let double_not = !!1                             // !! : Double negation | ensures boolean conversion
+
+// ===== CONSTANTS =====
+let pi_val = PI                                   // PI: ≈3.14159265359 (π)
+let tau_val = TAU                                 // TAU: ≈6.28318530718 (τ = 2π)
+let eu_val = EU                                   // EU: ≈2.71828182846 (Euler's number - base of natural log)
+let deg_to_rad_val = DEG_TO_RAD                   // DEG_TO_RAD: π/180 (conversion factor)
+let rad_to_deg_val = RAD_TO_DEG                   // RAD_TO_DEG: 180/π (conversion factor)
+
+// ===== COMPLEX MATHEMATICAL EXPRESSIONS =====
+let d = 2                                         // Additional test value D: 2
+let e = 3                                         // Additional test value E: 3
+let f = 4                                         // Additional test value F: 4
+
+// Order of operations: Parentheses first, then multiply/divide, then add/subtract
+let complex_expr = (a + b) * (c - d) / (e + f)   // Mixed operators: (10+5)*(10-2)/(3+4) = 15*8/7 ≈ 17.14
+
+// Function composition: Functions can call other functions as arguments
+let nested_func = sin(cos(tan(45 * DEG_TO_RAD)))  // Chain: tan(45°) → cos(of result) → sin(of result)
+// Function order: innerm → outer; tan → cos → sin
 
 // ===== ALL CONSTANTS =====
 let pi_val = PI
@@ -165,22 +246,28 @@ let eu_val = EU
 let deg_to_rad_val = DEG_TO_RAD
 let rad_to_deg_val = RAD_TO_DEG
 
-// ===== DEMONSTRATE FEATURES WITH G-CODE =====
-// Use calculated values in G-code
-G1 X[center_x + first_point] Y[center_y + grid_value] F[get_feed_rate(75)]
-G1 X[center_x + abs_val] Y[center_y + mod_val] F[get_feed_rate(150)]
-G1 X[center_x + sin_val * 10] Y[center_y + cos_val * 10] F[get_feed_rate(200)]
+/* ──────────────────────────────────────────────────────────────────────
+   INTEGRATED G-CODE EXAMPLES - Using All GGcode Features Together
+   ──────────────────────────────────────────────────────────────────────
 
-// Use array values
-G1 X[center_x + points[2]] Y[center_y + points[4]] F[100]
-G1 X[center_x + grid[0][1]] Y[center_y + grid[2][0]] F[150]
+   These G1 commands demonstrate integrating mathematical functions,
+   array access, constants, and calculated values into CNC movement commands. */
 
-// Use mathematical expressions
-G1 X[center_x + sqrt_val] Y[center_y + pow_val/100] F[get_feed_rate(50)]
-G1 X[center_x + distance_val] Y[center_y + lerp_val/10] F[get_feed_rate(100)]
+G1 X[center_x + first_point] Y[center_y + grid_value] F[get_feed_rate(75)]  // Array values + function call
+G1 X[center_x + abs_val] Y[center_y + mod_val] F[get_feed_rate(150)]        // Math functions - abs/mod
+G1 X[center_x + sin_val * 10] Y[center_y + cos_val * 10] F[get_feed_rate(200)]  // Trigonometric values
 
-// Use constants
-G1 X[center_x + pi_val * 5] Y[center_y + tau_val * 2] F[get_feed_rate(125)]
+// ===== ARRAY-BASED MOVEMENTS =====
+G1 X[center_x + points[2]] Y[center_y + points[4]] F[100]                  // Using array elements [2] and [4]
+G1 X[center_x + grid[0][1]] Y[center_y + grid[2][0]] F[150]               // 2D array access [0][1] and [2][0]
 
-// Return to center
-G0 X[center_x] Y[center_y] 
+// ===== ADVANCED MATH IN MOVEMENTS =====
+G1 X[center_x + sqrt_val] Y[center_y + pow_val/100] F[get_feed_rate(50)]   // sqrt(25) + pow(2,8)/100
+G1 X[center_x + distance_val] Y[center_y + lerp_val/10] F[get_feed_rate(100)]  // distance + interpolation
+
+// ===== CONSTANT-BASED MOVEMENTS =====
+G1 X[center_x + pi_val * 5] Y[center_y + tau_val * 2] F[get_feed_rate(125)]  // π*5 and τ*2
+
+// ===== G-CODE COMMENT =====
+// Final position reset - return to starting center point
+G0 X[center_x] Y[center_y]     // G0: Rapid move back to origin (fast positioning, no cutting)

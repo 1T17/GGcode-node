@@ -1,0 +1,15 @@
+/* Main application styles - imports all CSS modules */
+
+/* Import all CSS modules in order of dependency */
+@import url('./base.css');
+/* Base layout and global styles */
+@import url('./components.css');
+/* UI components (buttons, controls, headers) */
+@import url('./components/tooltips.css');
+/* Tooltip components for toolpath point display */
+@import url('./editor.css');
+/* Editor and annotations */
+@import url('./modals.css');
+/* Modals, help system, and overlays */
+
+/* Monaco editor styling is now controlled by settings - no hardcoded overrides */

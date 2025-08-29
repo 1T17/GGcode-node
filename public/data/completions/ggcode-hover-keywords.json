@@ -1,0 +1,47 @@
+{
+    "let": {
+        "description": "Variable declaration",
+        "usage": "let variable = value;",
+        "example": "Declares a variable with the given value"
+    },
+    "if": {
+        "description": "Conditional statement",
+        "usage": "if (condition) { code }",
+        "example": "Executes code if condition is true"
+    },
+    "else": {
+        "description": "Alternative conditional",
+        "usage": "else { code }",
+        "example": "Executes code when if condition is false"
+    },
+    "for": {
+        "description": "For loop",
+        "usage": "for variable = start..end { code }",
+        "example": "Executes code for each value in the range"
+    },
+    "while": {
+        "description": "While loop",
+        "usage": "while (condition) { code }",
+        "example": "Executes code while condition is true"
+    },
+    "function": {
+        "description": "Function definition",
+        "usage": "function name(parameters) { code }",
+        "example": "Defines a reusable function"
+    },
+    "return": {
+        "description": "Return value",
+        "usage": "return value;",
+        "example": "Returns value from function"
+    },
+    "note": {
+        "description": "Code documentation",
+        "usage": "note { documentation }",
+        "example": "Adds documentation comment"
+    },
+    "mod": {
+        "description": "Modulo operation",
+        "usage": "mod(dividend, divisor)",
+        "example": "Returns remainder of division"
+    }
+}

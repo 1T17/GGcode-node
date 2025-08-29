@@ -24,6 +24,11 @@ const environments = {
       helpContent: path.resolve(__dirname, '../../../public/data/help-content'),
       views: path.resolve(__dirname, '../../../views'),
     },
+    ai: {
+      endpoint: process.env.AI_ENDPOINT || 'http://localhost:11434',
+      model: process.env.OLLAMA_MODEL || 'deepseek-coder-v2:16b',
+      timeout: 60000,
+    },
   },
 
   production: {
@@ -45,6 +50,11 @@ const environments = {
       helpContent: path.resolve(__dirname, '../../../public/data/help-content'),
       views: path.resolve(__dirname, '../../../views'),
     },
+    ai: {
+      endpoint: process.env.AI_ENDPOINT || 'http://localhost:11434',
+      model: process.env.OLLAMA_MODEL || 'deepseek-coder-v2:16b',
+      timeout: 60000,
+    },
   },
 
   test: {
@@ -65,6 +75,11 @@ const environments = {
       examples: path.resolve(__dirname, '../../../GGCODE'),
       helpContent: path.resolve(__dirname, '../../../public/data/help-content'),
       views: path.resolve(__dirname, '../../../views'),
+    },
+    ai: {
+      endpoint: process.env.AI_ENDPOINT || 'http://localhost:11434',
+      model: process.env.OLLAMA_MODEL || 'deepseek-coder-v2:16b',
+      timeout: 60000,
     },
   },
 };

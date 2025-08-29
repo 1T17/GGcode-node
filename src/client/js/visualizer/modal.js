@@ -30,6 +30,8 @@ export class GcodeViewerModal {
     }
 
     this.visualizer = new GcodeVisualizer();
+    // Make visualizer globally accessible for button handlers
+    window.gcodeVisualizer = this.visualizer;
     return true;
   }
 
@@ -71,6 +73,9 @@ export class GcodeViewerModal {
    * Hide the modal
    */
   hide() {
+    // Stop any running simulation before closing
+    this.stopSimulation();
+
     if (this.modal) {
       this.modal.style.display = 'none';
       this.isVisible = false;
@@ -88,6 +93,16 @@ export class GcodeViewerModal {
   }
 
   /**
+   * Stop any running simulation
+   */
+  stopSimulation() {
+    // Use the global stopSimulation function from controls.js
+    if (window.stopSimulation && typeof window.stopSimulation === 'function') {
+      window.stopSimulation();
+    }
+  }
+
+  /**
    * Render G-code in the modal
    */
   async renderGcode(gcode) {
@@ -95,12 +110,12 @@ export class GcodeViewerModal {
 
     // Check container dimensions
     if (this.container.offsetWidth === 0 || this.container.offsetHeight === 0) {
-      console.log('Container not ready, retrying...');
+      //console.log('Container not ready, retrying...');
       this.renderGcode(gcode);
       return;
     }
 
-    console.log('Starting G-code rendering...');
+    //console.log('Starting G-code rendering...');
 
     // Initialize visualizer directly - no loading screen
     try {
@@ -109,7 +124,7 @@ export class GcodeViewerModal {
         return;
       }
 
-      console.log('Visualizer initialized, rendering G-code...');
+      //console.log('Visualizer initialized, rendering G-code...');
 
       const result = await this.visualizer.renderGcode(gcode);
 
@@ -118,7 +133,7 @@ export class GcodeViewerModal {
         return;
       }
 
-      console.log('G-code rendering completed successfully');
+      //console.log('G-code rendering completed successfully');
 
       // Update stats and info boxes after successful render
 
@@ -129,9 +144,9 @@ export class GcodeViewerModal {
       //else {
       //   console.log('[modal.js] updateGcodeStats not found (delayed)');
       // }
-      if (window.updateGcodeLineInfo) {
-        //  console.log('[modal.js] Calling updateGcodeLineInfo after render (delayed)');
-        window.updateGcodeLineInfo(0, true);
+      if (window.updateCurrentLineDisplay) {
+        //  console.log('[modal.js] Calling updateCurrentLineDisplay after render (delayed)');
+        window.updateCurrentLineDisplay(0);
       }
       //else {
       //console.log('[modal.js] updateGcodeLineInfo not found (delayed)');

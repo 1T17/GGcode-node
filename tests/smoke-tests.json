@@ -1,0 +1,14 @@
+{
+  "testSuite": "Smoke Tests",
+  "description": "Critical path tests only",
+  "version": "1.0.0",
+  "testCases": [
+    {
+      "type": "command",
+      "name": "Server Health Check",
+      "command": "help",
+      "params": "",
+      "expected": "commands"
+    }
+  ]
+}

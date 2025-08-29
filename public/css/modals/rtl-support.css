@@ -1,0 +1,29 @@
+/* RTL Support for Arabic and Hebrew */
+
+[data-lang="ar"] .help-content,
+[data-lang="ar"] .help-section-content,
+[data-lang="ar"] .help-section-card,
+[data-lang="he"] .help-content,
+[data-lang="he"] .help-section-content,
+[data-lang="he"] .help-section-card {
+    direction: rtl;
+    text-align: right;
+}
+
+[data-lang="ar"] .help-section-title,
+[data-lang="he"] .help-section-title {
+    text-align: right;
+}
+
+[data-lang="ar"] .help-section-content p,
+[data-lang="ar"] .help-section-content li,
+[data-lang="he"] .help-section-content p,
+[data-lang="he"] .help-section-content li {
+    text-align: right;
+}
+
+[data-lang="ar"] pre,
+[data-lang="he"] pre {
+    direction: ltr;
+    text-align: left;
+}

@@ -1,0 +1,170 @@
+/* Language Selector */
+
+.language-selector {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+}
+
+.language-select {
+    background: #2d2d30;
+    border: 1px solid #3c3c3c;
+    border-radius: 4px;
+    color: #cccccc;
+    padding: 6px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', 'Android Emoji', 'EmojiSymbols', 'EmojiOne Mozilla', 'Twemoji Mozilla', 'Segoe UI Symbol', Arial, sans-serif;
+}
+
+.language-select:hover {
+    border-color: #007acc;
+    background: #3c3c3c;
+}
+
+.language-select:focus {
+    outline: none;
+    border-color: #007acc;
+    box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.2);
+}
+
+.language-select option {
+    background: #2d2d30;
+    color: #cccccc;
+}
+
+/* Custom Select Dropdown - Using AI Dropdown System */
+.custom-select {
+    position: relative;
+    display: inline-block;
+}
+
+.select-selected {
+    background: transparent;
+    border: 1px solid #3c3c3c;
+    border-radius: 4px;
+    padding: 6px 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #cccccc;
+    transition: all 0.2s ease;
+    min-height: 32px;
+    /* Button-specific styles to match AI dropdowns */
+    font-family: inherit;
+    outline: none;
+}
+
+.select-selected:hover {
+    border-color: #007acc;
+    background: #3c3c3c;
+}
+
+.select-selected:focus {
+    outline: none;
+    border-color: #007acc;
+    box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.2);
+}
+
+.select-selected.active {
+    border-color: #007acc;
+    background: #3c3c3c;
+}
+
+/* SVG arrow styling (matches AI dropdowns) */
+.select-selected svg {
+    margin-left: auto;
+    transition: transform 0.2s;
+    pointer-events: none;
+    flex-shrink: 0;
+}
+
+.select-selected.active svg {
+    transform: rotate(180deg);
+}
+
+.select-items {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background-color: #2d2d30;
+    border: 1px solid #3c3c3c;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    max-height: 300px;
+    overflow-y: auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.2s, transform 0.2s;
+    display: none;
+}
+
+/* Show dropdown only when .show class is present (like AI dropdowns) */
+.select-items.show {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.select-items.hide {
+    display: none;
+}
+
+.select-option {
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #cccccc;
+    transition: background-color 0.2s;
+    position: relative;
+}
+
+.select-option:hover {
+    background-color: #3c3c3c;
+}
+
+.select-option.selected {
+    background-color: #007acc;
+    color: #ffffff;
+}
+
+.select-option.active {
+    background-color: #007acc;
+    color: #ffffff;
+}
+
+.select-option:focus {
+    outline: none;
+    background-color: #3c3c3c;
+}
+
+.language-name {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Flag icon styling */
+.select-option .flag-icon,
+.select-selected .flag-icon {
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', 'Android Emoji', 'EmojiSymbols', 'EmojiOne Mozilla', 'Twemoji Mozilla', 'Segoe UI Symbol', Arial, sans-serif;
+    font-size: 12px;
+    line-height: 1;
+}

@@ -1,5 +1,5 @@
 <div id="gcodeViewerModal"
-  style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0, 0, 0, 0.548); z-index:2000; align-items:center; justify-content:center;">
+  style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0, 0, 0, 0.548); z-index:3500; align-items:center; justify-content:center;">
   <div id="gcodeViewerContainer" class="gcodeViewerContainer">
 
 
@@ -41,8 +41,26 @@
           <polygon points="8,2 18,8 8,14" fill="#fff" />
         </svg>
       </button>
+
+      <div class="separator"></div>
+
+      <button onclick="switchCameraMode()" title="Switch Camera Mode (Perspective/Orthographic)"
+        class="sim-btn sim-camera">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M8 4C6.9 4 6 4.9 6 6C6 7.1 6.9 8 8 8C9.1 8 10 7.1 10 6C10 4.9 9.1 4 8 4ZM8 2C10.2 2 12 3.8 12 6C12 8.2 10.2 10 8 10C5.8 10 4 8.2 4 6C4 3.8 5.8 2 8 2ZM13 12C13 11.4 12.6 11 12 11H4C3.4 11 3 11.4 3 12V14C3 14.6 3.4 15 4 15H12C12.6 15 13 14.6 13 14V12Z"
+            fill="#fff" />
+        </svg>
+      </button>
+
+      <button onclick="exportVisualizerImage()" title="Export Image" class="sim-btn sim-export">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 14V10H0V16H6V14H2ZM4 12H14V2H4V12Z" fill="#fff" />
+        </svg>
+      </button>
+
       <label class="sim-speed-label">
-        <span>Speed: hhhh</span>
+        <span>Speed:</span>
         <input id="simSpeedSlider" type="range" min="0.0001" max="100" value="100" step="0.1"
           style="vertical-align:middle; width:300px;">
 
@@ -50,12 +68,6 @@
 
         <span id="simSpeedValue">50</span> <span id="simSpeedUnit">ms/step</span>
       </label>
-      <button id="togglePointDetectorBtn" class="sim-btn" style="margin-left:10px;" title="Toggle Point Detector">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="8" cy="8" r="7" stroke="#fff" stroke-width="2" fill="none" />
-          <circle cx="8" cy="8" r="3" fill="#fff" />
-        </svg>
-      </button>
     </div>
     <input id="simProgressBar" type="range" min="0" max="1000" value="0" step="1"
       style="position:absolute; bottom:40px; left:10px; width:calc(100% - 20px); z-index:10;">

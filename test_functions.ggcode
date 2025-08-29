@@ -1,0 +1,40 @@
+note { Calculates the area of a circle given its radius }
+function circleArea(radius) {
+  return PI * radius * radius;
+}
+
+note { Calculates the circumference of a circle }
+function circleCircumference(radius) {
+  return 2 * PI * radius;
+}
+
+note { Calculates distance between two points in 2D space }
+function distance2d(x1, y1, x2, y2) {
+  return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+}
+
+note { Simple helper function for debugging }
+function debug(value) {
+  note { This function just returns the input value for debugging purposes }
+  return value;
+}
+
+note { Example of using multiple parameters - polar to cartesian conversion }
+function polarToCartesian(radius, angle) {
+  return [radius * cos(angle), radius * sin(angle)];
+}
+
+// Example usage of the functions
+let radius = 10;
+let area = circleArea(radius);
+let circ = circleCircumference(radius);
+
+note { Test function calls with auto-completion }
+let dist = distance2d(0, 0, 3, 4);
+
+// You should see auto-completion for:
+// - circleArea
+// - circleCircumference
+// - distance2d
+// - debug
+// - polarToCartesian

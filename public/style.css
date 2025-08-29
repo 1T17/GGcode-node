@@ -1,0 +1,8 @@
+/* 
+ * GGcode Compiler - Main Stylesheet
+ * 
+ * This file imports the organized CSS modules from css/
+ * All styles are now organized by responsibility for better maintainability
+ */
+
+@import url('./css/main.css');

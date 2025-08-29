@@ -1,0 +1,79 @@
+{
+    "operators": [
+        {
+            "op": "..",
+            "description": "Inclusive range",
+            "detail": "start..end"
+        },
+        {
+            "op": "..<",
+            "description": "Exclusive range",
+            "detail": "start..<end"
+        },
+        {
+            "op": "==",
+            "description": "Equal to",
+            "detail": "a == b"
+        },
+        {
+            "op": "!=",
+            "description": "Not equal to",
+            "detail": "a != b"
+        },
+        {
+            "op": "<",
+            "description": "Less than",
+            "detail": "a < b"
+        },
+        {
+            "op": "<=",
+            "description": "Less than or equal",
+            "detail": "a <= b"
+        },
+        {
+            "op": ">",
+            "description": "Greater than",
+            "detail": "a > b"
+        },
+        {
+            "op": ">=",
+            "description": "Greater than or equal",
+            "detail": "a >= b"
+        },
+        {
+            "op": "&&",
+            "description": "Logical AND",
+            "detail": "condition1 && condition2"
+        },
+        {
+            "op": "||",
+            "description": "Logical OR",
+            "detail": "condition1 || condition2"
+        },
+        {
+            "op": "!",
+            "description": "Logical NOT",
+            "detail": "!condition"
+        },
+        {
+            "op": "&",
+            "description": "Bitwise AND",
+            "detail": "a & b"
+        },
+        {
+            "op": "|",
+            "description": "Bitwise OR",
+            "detail": "a | b"
+        },
+        {
+            "op": "^",
+            "description": "Bitwise XOR",
+            "detail": "a ^ b"
+        },
+        {
+            "op": "~",
+            "description": "Bitwise NOT",
+            "detail": "~value"
+        }
+    ]
+}

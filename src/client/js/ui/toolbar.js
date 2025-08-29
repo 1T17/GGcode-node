@@ -19,9 +19,13 @@ class ToolbarManager {
    * Load saved filename from localStorage
    */
   loadSavedFilename() {
-    const savedFilename = localStorage.getItem('ggcode_last_filename');
-    if (savedFilename) {
-      this.lastOpenedFilename = savedFilename;
+    try {
+      const savedFilename = localStorage.getItem('ggcode_last_filename');
+      if (savedFilename) {
+        this.lastOpenedFilename = savedFilename;
+      }
+    } catch (error) {
+      console.warn('Failed to load saved filename from storage:', error);
     }
   }
 
@@ -118,7 +122,11 @@ class ToolbarManager {
 
       // Remember filename
       this.lastOpenedFilename = file.name || '';
-      localStorage.setItem('ggcode_last_filename', this.lastOpenedFilename);
+      try {
+        localStorage.setItem('ggcode_last_filename', this.lastOpenedFilename);
+      } catch (error) {
+        console.warn('Failed to save filename to storage:', error);
+      }
 
       this.showNotification(`Loaded file: ${file.name}`, 'success');
     };

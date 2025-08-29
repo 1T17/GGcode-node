@@ -28,13 +28,32 @@ module.exports = {
     resolve: {
         extensions: ['.js'],
         fallback: {
-            // Ignore Monaco editor modules for now since they use AMD loading
+            // Monaco editor modules use AMD loading
             'vs/editor/editor.main': false
         }
     },
     externals: {
         // Treat Monaco as external since it's loaded via CDN
-        'monaco-editor': 'monaco'
+        'monaco-editor': 'monaco',
+        // Exclude Node.js native modules
+        'ffi-napi': 'commonjs ffi-napi',
+        'ref-napi': 'commonjs ref-napi',
+        'fs': 'commonjs fs',
+        'path': 'commonjs path',
+        'os': 'commonjs os',
+        'crypto': 'commonjs crypto',
+        'stream': 'commonjs stream',
+        'buffer': 'commonjs buffer',
+        'events': 'commonjs events',
+        'util': 'commonjs util',
+        'http': 'commonjs http',
+        'https': 'commonjs https',
+        'url': 'commonjs url',
+        'querystring': 'commonjs querystring',
+        'zlib': 'commonjs zlib',
+        'net': 'commonjs net',
+        'tls': 'commonjs tls',
+        'dgram': 'commonjs dgram'
     },
     devtool: 'source-map', // Generate source maps for debugging
     stats: {

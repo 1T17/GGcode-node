@@ -1,0 +1,160 @@
+{
+    "functions": [
+        {
+            "name": "abs",
+            "description": "Absolute value",
+            "detail": "abs(value)",
+            "snippet": "abs(${1:value})"
+        },
+        {
+            "name": "floor",
+            "description": "Round down to nearest integer",
+            "detail": "floor(value)",
+            "snippet": "floor(${1:value})"
+        },
+        {
+            "name": "ceil",
+            "description": "Round up to nearest integer",
+            "detail": "ceil(value)",
+            "snippet": "ceil(${1:value})"
+        },
+        {
+            "name": "round",
+            "description": "Round to nearest integer",
+            "detail": "round(value)",
+            "snippet": "round(${1:value})"
+        },
+        {
+            "name": "min",
+            "description": "Minimum of values",
+            "detail": "min(a, b)",
+            "snippet": "min(${1:a}, ${2:b})"
+        },
+        {
+            "name": "max",
+            "description": "Maximum of values",
+            "detail": "max(a, b)",
+            "snippet": "max(${1:a}, ${2:b})"
+        },
+        {
+            "name": "clamp",
+            "description": "Clamp value between min and max",
+            "detail": "clamp(value, min, max)",
+            "snippet": "clamp(${1:value}, ${2:min}, ${3:max})"
+        },
+        {
+            "name": "sin",
+            "description": "Sine (input in radians)",
+            "detail": "sin(angle)",
+            "snippet": "sin(${1:angle})"
+        },
+        {
+            "name": "cos",
+            "description": "Cosine (input in radians)",
+            "detail": "cos(angle)",
+            "snippet": "cos(${1:angle})"
+        },
+        {
+            "name": "tan",
+            "description": "Tangent (input in radians)",
+            "detail": "tan(angle)",
+            "snippet": "tan(${1:angle})"
+        },
+        {
+            "name": "asin",
+            "description": "Arc sine in radians",
+            "detail": "asin(value)",
+            "snippet": "asin(${1:value})"
+        },
+        {
+            "name": "acos",
+            "description": "Arc cosine in radians",
+            "detail": "acos(value)",
+            "snippet": "acos(${1:value})"
+        },
+        {
+            "name": "atan",
+            "description": "Arc tangent in radians",
+            "detail": "atan(value)",
+            "snippet": "atan(${1:value})"
+        },
+        {
+            "name": "atan2",
+            "description": "Arc tangent of y/x in radians",
+            "detail": "atan2(y, x)",
+            "snippet": "atan2(${1:y}, ${2:x})"
+        },
+        {
+            "name": "sqrt",
+            "description": "Square root",
+            "detail": "sqrt(value)",
+            "snippet": "sqrt(${1:value})"
+        },
+        {
+            "name": "pow",
+            "description": "Power function",
+            "detail": "pow(base, exponent)",
+            "snippet": "pow(${1:base}, ${2:exponent})"
+        },
+        {
+            "name": "hypot",
+            "description": "Hypotenuse (sqrt(x² + y²))",
+            "detail": "hypot(x, y)",
+            "snippet": "hypot(${1:x}, ${2:y})"
+        },
+        {
+            "name": "lerp",
+            "description": "Linear interpolation",
+            "detail": "lerp(start, end, t)",
+            "snippet": "lerp(${1:start}, ${2:end}, ${3:t})"
+        },
+        {
+            "name": "map",
+            "description": "Map value from range to range",
+            "detail": "map(value, in_min, in_max, out_min, out_max)",
+            "snippet": "map(${1:value}, ${2:in_min}, ${3:in_max}, ${4:out_min}, ${5:out_max})"
+        },
+        {
+            "name": "distance",
+            "description": "Distance between two points",
+            "detail": "distance(x1, y1, x2, y2)",
+            "snippet": "distance(${1:x1}, ${2:y1}, ${3:x2}, ${4:y2})"
+        },
+        {
+            "name": "sign",
+            "description": "Sign of value (-1, 0, or 1)",
+            "detail": "sign(value)",
+            "snippet": "sign(${1:value})"
+        },
+        {
+            "name": "log",
+            "description": "Natural logarithm",
+            "detail": "log(value)",
+            "snippet": "log(${1:value})"
+        },
+        {
+            "name": "exp",
+            "description": "e raised to power",
+            "detail": "exp(power)",
+            "snippet": "exp(${1:power})"
+        },
+        {
+            "name": "noise",
+            "description": "Perlin noise",
+            "detail": "noise(value)",
+            "snippet": "noise(${1:value})"
+        },
+        {
+            "name": "deg",
+            "description": "Convert radians to degrees",
+            "detail": "deg(radians)",
+            "snippet": "deg(${1:radians})"
+        },
+        {
+            "name": "rad",
+            "description": "Convert degrees to radians",
+            "detail": "rad(degrees)",
+            "snippet": "rad(${1:degrees})"
+        }
+    ]
+}

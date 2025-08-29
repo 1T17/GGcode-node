@@ -1,0 +1,910 @@
+/* Standardized Dropdown System
+ * Provides consistent dropdown functionality across the application
+ * Based on the reference implementation from fix drop down.md
+ */
+
+/* Base Dropdown Styles */
+.dropdown-container {
+    position: relative;
+    display: inline-block;
+    min-width: 200px;
+}
+
+.dropdown-trigger {
+    background-color: #2d2d30;
+    border: 1px solid #3c3c3c;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #cccccc;
+    transition: border-color 0.2s, background-color 0.2s;
+    position: relative;
+    min-height: 20px;
+}
+
+.dropdown-trigger:hover {
+    border-color: #007acc;
+    background: #3c3c3c;
+}
+
+.dropdown-trigger:focus {
+    outline: none;
+    border-color: #007acc;
+    box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.2);
+}
+
+.dropdown-trigger.active {
+    border-color: #007acc;
+    background: #3c3c3c;
+}
+
+.dropdown-arrow {
+    margin-left: auto;
+    font-size: 12px;
+    color: #666;
+    transition: transform 0.2s;
+    pointer-events: none;
+}
+
+.dropdown-trigger.active .dropdown-arrow {
+    transform: rotate(180deg);
+    color: #cccccc;
+}
+
+/* Dropdown Content */
+.dropdown-content {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background-color: #2d2d30;
+    border: 1px solid #3c3c3c;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    max-height: 300px;
+    overflow-y: auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.dropdown-content.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.dropdown-content.hide {
+    display: none;
+}
+
+/* Dropdown Items */
+.dropdown-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #cccccc;
+    transition: background-color 0.2s;
+    position: relative;
+}
+
+.dropdown-item:hover {
+    background-color: #3c3c3c;
+}
+
+.dropdown-item.selected {
+    background-color: #007acc;
+    color: #ffffff;
+}
+
+.dropdown-item.active {
+    background-color: #007acc;
+    color: #ffffff;
+}
+
+.dropdown-item:focus {
+    outline: none;
+    background-color: #3c3c3c;
+}
+
+/* Dropdown Item Icons */
+.dropdown-item svg.errow,
+.dropdown-item .dropdown-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.dropdown-item .flag-icon {
+    width: 20px;
+    height: 15px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+/* Dropdown Text */
+.dropdown-text {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Dropdown Sections */
+.dropdown-section {
+    border-bottom: 1px solid #3c3c3c;
+    padding: 4px 0;
+}
+
+.dropdown-section:last-child {
+    border-bottom: none;
+}
+
+.dropdown-section-title {
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #8c8c8c;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* AI Mode Dropdown Specific Styles */
+.ai-mode-dropdown {
+    margin-right: 10px;
+}
+
+.ai-mode-dropdown-btn {
+    background: transparent;
+    border: 1px solid #3c3c3c;
+    border-radius: 4px;
+    color: #cccccc;
+    padding: 6px 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    transition: all 0.2s ease;
+    min-height: 32px;
+}
+
+.ai-mode-dropdown-btn svg.errow {
+    margin-left: auto;
+    transition: transform 0.2s;
+    pointer-events: none;
+    flex-shrink: 0;
+    width: 12px !important;
+    height: 12px !important;
+}
+
+.ai-mode-dropdown-btn.active svg.errow {
+    transform: rotate(180deg);
+}
+
+.ai-mode-dropdown-btn:hover {
+    border-color: #007acc;
+    background: #3c3c3c;
+}
+
+.ai-mode-dropdown-btn:focus {
+    outline: none;
+    border-color: #007acc;
+    box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.2);
+}
+
+.ai-mode-dropdown-content {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background-color: #2d2d30;
+    border: 1px solid #3c3c3c;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.ai-mode-dropdown-content.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.ai-mode-dropdown-content.hide {
+    display: none;
+}
+
+.ai-mode-option {
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #cccccc;
+    transition: background-color 0.2s;
+}
+
+.ai-mode-option:hover {
+    background-color: #3c3c3c;
+}
+
+.ai-mode-option.active {
+    background-color: #007acc;
+    color: #ffffff;
+}
+
+.ai-mode-option svg.errow {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+/* AI Quick Actions Dropdown Specific Styles */
+.ai-actions-dropdown {
+    position: relative;
+}
+
+.ai-actions-dropdown-btn {
+    background: transparent;
+    border: 1px solid #3c3c3c;
+    border-radius: 4px;
+    color: #cccccc;
+    padding: 6px 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    transition: all 0.2s ease;
+    min-height: 32px;
+}
+
+.ai-actions-dropdown-btn svg.errow {
+    margin-left: auto;
+    transition: transform 0.2s;
+    pointer-events: none;
+    flex-shrink: 0;
+    width: 12px !important;
+    height: 12px !important;
+}
+
+.ai-actions-dropdown-btn.active svg.errow {
+    transform: rotate(180deg);
+}
+
+.ai-actions-dropdown-btn:hover {
+    border-color: #007acc;
+    background: #3c3c3c;
+}
+
+.ai-actions-dropdown-btn:focus {
+    outline: none;
+    border-color: #007acc;
+    box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.2);
+}
+
+.ai-quick-actions-content {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background-color: #2d2d30;
+    border: 1px solid #3c3c3c;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    max-height: 250px;
+    overflow-y: auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.ai-quick-actions-content.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.ai-quick-actions-content.hide {
+    display: none;
+}
+
+.ai-quick-action {
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #cccccc;
+    transition: background-color 0.2s;
+}
+
+.ai-quick-action:hover {
+    background-color: #3c3c3c;
+}
+
+.ai-quick-action svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+/* Help Language Selector Specific Styles */
+.help-language-selector {
+    margin-right: 20px;
+}
+
+.select-selected {
+    background: transparent;
+    border: 1px solid #3c3c3c;
+    border-radius: 4px;
+    padding: 6px 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #cccccc;
+    transition: all 0.2s ease;
+    min-height: 32px;
+}
+
+.select-selected svg.errow {
+    width: 12px !important;
+    height: 12px !important;
+    margin-left: auto;
+    transition: transform 0.2s;
+    pointer-events: none;
+    flex-shrink: 0;
+}
+
+.select-selected.active svg.errow {
+    transform: rotate(180deg);
+}
+
+.select-selected:hover {
+    border-color: #007acc;
+    background: #3c3c3c;
+}
+
+.select-selected.active {
+    border-color: #007acc;
+    background: #3c3c3c;
+}
+
+.select-items {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background-color: #2d2d30;
+    border: 1px solid #3c3c3c;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    max-height: 300px;
+    overflow-y: auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.select-items.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.select-items.hide {
+    display: none;
+}
+
+.select-option {
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #cccccc;
+    transition: background-color 0.2s;
+}
+
+.select-option:hover {
+    background-color: #3c3c3c;
+}
+
+.select-option.selected {
+    background-color: #007acc;
+    color: #ffffff;
+}
+
+.flag-icon {
+    width: 20px;
+    height: 15px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dropdown-container {
+        min-width: 150px;
+    }
+
+    .dropdown-trigger {
+        padding: 6px 10px;
+        font-size: 13px;
+    }
+
+    .dropdown-content,
+    .ai-mode-dropdown-content,
+    .ai-quick-actions-content,
+    .select-items {
+        max-height: 200px;
+        font-size: 13px;
+    }
+
+    .dropdown-item,
+    .ai-mode-option,
+    .ai-quick-action,
+    .select-option {
+        padding: 6px 10px;
+        font-size: 13px;
+    }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    .dropdown-trigger {
+        border-width: 2px;
+    }
+
+    .dropdown-item:hover,
+    .ai-mode-option:hover,
+    .ai-quick-action:hover,
+    .select-option:hover {
+        background-color: #007acc;
+        color: #ffffff;
+    }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+
+    .dropdown-arrow,
+    .select-arrow {
+        transition: none;
+    }
+
+    .dropdown-content,
+    .ai-mode-dropdown-content,
+    .ai-quick-actions-content,
+    .select-items {
+        transition: none;
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* Focus Management */
+.dropdown-content:focus-within,
+.ai-mode-dropdown-content:focus-within,
+.ai-quick-actions-content:focus-within,
+.select-items:focus-within {
+    border-color: #007acc;
+    box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.2);
+}
+
+/* Loading States */
+.dropdown-loading {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.dropdown-loading::after {
+    content: '';
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    width: 12px;
+    height: 12px;
+    margin-top: -6px;
+    border: 2px solid #007acc;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: dropdown-spin 1s linear infinite;
+}
+
+@keyframes dropdown-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Error States */
+.dropdown-error {
+    border-color: #f44747;
+}
+
+.dropdown-error .dropdown-trigger {
+    color: #f44747;
+}
+
+.dropdown-error .dropdown-content {
+    border-color: #f44747;
+}
+
+/* Success States */
+.dropdown-success {
+    border-color: #28a745;
+}
+
+.dropdown-success .dropdown-trigger {
+    color: #28a745;
+}
+
+/* Disabled States */
+.dropdown-disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.dropdown-disabled .dropdown-trigger {
+    cursor: not-allowed;
+}
+
+/* Accessibility Improvements */
+.dropdown-item[aria-selected="true"],
+.select-option.selected {
+    background-color: #007acc;
+    color: #ffffff;
+}
+
+.dropdown-item[aria-disabled="true"],
+.select-option[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.dropdown-item[aria-disabled="true"]:hover,
+.select-option[aria-disabled="true"]:hover {
+    background-color: transparent;
+}
+
+/* Screen Reader Support */
+.dropdown-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Configurator Panel Specific Styles */
+.configurator-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 50vw;
+    height: 100vh;
+    z-index: 999;
+    display: none;
+    /* Hidden by default, shown when opened */
+}
+
+.configurator-content {
+    background: #1e1e1e;
+    border-right: 1px solid #3c3c3c;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+}
+
+.configurator-modal {
+    border: none;
+    border-radius: 0;
+    max-width: 100%;
+    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    box-shadow: none;
+    position: static;
+    transform: none;
+}
+
+.configurator-modal .modal-header {
+    background: #2d2d30;
+    padding: 16px 20px;
+    border-bottom: 1px solid #3c3c3c;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.configurator-modal .modal-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.configurator-modal .modal-title {
+    color: #cccccc;
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.configurator-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.configurator-status {
+    background: #28a745;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.configurator-modal .modal-header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.configurator-modal .modal-close {
+    background: transparent;
+    color: #cccccc;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 3px;
+    transition: background-color 0.1s ease;
+}
+
+.configurator-modal .modal-close:hover {
+    background: #3c3c3c;
+    color: #ffffff;
+}
+
+/* Override configurator-modal full screen styles when used in AI chat modal */
+.ai-chat-modal .configurator-modal {
+    border: 1px solid #3c3c3c !important;
+    border-radius: 6px !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    width: 100% !important;
+    height: auto !important;
+    box-shadow: none !important;
+    position: static !important;
+}
+
+
+
+
+
+
+
+
+
+/* Match AI chat modal padding and border styles */
+.configurator-modal .modal-header {
+    background: #2d2d30 !important;
+    padding: 16px 20px !important;
+    border-bottom: 1px solid #3c3c3c !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+.configurator-modal .modal-body {
+    padding: 20px !important;
+    flex: 1 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.configurator-modal {
+    border: 1px solid #3c3c3c !important;
+    border-radius: 6px !important;
+    background: #252526 !important;
+}
+
+.configurator-modal .modal-body {
+    padding: 0;
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.configurator-content {
+    flex: 1;
+    overflow: hidden;
+    padding: 16px;
+    background: #1e1e1e;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    max-height: 60vh;
+}
+
+/* Enable scrolling only for the inner configurator content div */
+#configuratorContent.configurator-content {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.configurator-footer {
+    background: #2d2d30;
+    border-top: 1px solid #3c3c3c;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+}
+
+
+
+
+.configurator-action-btn {
+    background: transparent;
+    border: 1px solid #3c3c3c;
+    border-radius: 4px;
+    color: #cccccc;
+    padding: 12px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    min-height: 44px;
+    width: 100%;
+}
+
+.configurator-action-btn:hover {
+    border-color: #007acc;
+    background: #3c3c3c;
+    color: #ffffff;
+}
+
+.configurator-action-btn:active {
+    background: #007acc;
+    border-color: #007acc;
+}
+
+/* Configurator Panel Responsive Design */
+@media (max-width: 1200px) {
+    .configurator-panel {
+        width: 60vw;
+    }
+}
+
+@media (max-width: 768px) {
+    .configurator-panel {
+        width: 100vw;
+        height: auto;
+        position: relative;
+        z-index: auto;
+    }
+
+    .configurator-content {
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .configurator-modal .modal-header {
+        padding: 12px 16px;
+    }
+
+    .configurator-content {
+        padding: 16px;
+    }
+
+    .configurator-footer {
+        padding: 16px;
+        gap: 8px;
+    }
+
+    .configurator-action-btn {
+        padding: 10px 12px;
+        font-size: 13px;
+        min-height: 40px;
+    }
+}
+
+/* Configurator Modal Animation */
+.configurator-modal {
+    animation: configuratorSlideIn 0.3s ease-out;
+}
+
+@keyframes configuratorSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Configurator Header Button Styles - Match AI Chat Modal */
+.configurator-header-btn {
+    background: transparent;
+    border: 1px solid #3c3c3c;
+    border-radius: 4px;
+    color: #cccccc;
+    padding: 6px 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    transition: all 0.2s ease;
+    min-height: 32px;
+    white-space: nowrap;
+}
+
+.configurator-header-btn:hover {
+    border-color: #007acc;
+    background: #3c3c3c;
+    color: #ffffff;
+}
+
+.configurator-header-btn:active {
+    background: #007acc;
+    border-color: #007acc;
+    color: #ffffff;
+}
+
+.configurator-header-btn svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+/* Responsive adjustments for configurator header buttons */
+@media (max-width: 768px) {
+    .configurator-header-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+        min-height: 30px;
+    }
+
+    .configurator-header-btn span {
+        display: none;
+    }
+
+    .configurator-header-btn svg {
+        width: 14px;
+        height: 14px;
+    }
+}

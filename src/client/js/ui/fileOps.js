@@ -350,29 +350,53 @@ class FileOperations {
    * Copy output G-code to clipboard
    */
   copyOutput() {
+    // Find the copy button for visual feedback
+    const copyButton = document.querySelector(
+      'button[onclick*="copyOutput"], button[title*="Copy output"]'
+    );
+
     if (
-      window.outputEditor &&
-      typeof window.outputEditor.getValue === 'function'
+      !window.outputEditor ||
+      typeof window.outputEditor.getValue !== 'function'
     ) {
-      const content = window.outputEditor.getValue();
-      navigator.clipboard
-        .writeText(content)
-        .then(() => {
-          console.log('Output copied to clipboard');
-        })
-        .catch((err) => {
-          console.error('Failed to copy output:', err);
-          alert('Failed to copy: ' + err.message);
-        });
-    } else {
       alert('No output content available to copy');
+      return;
     }
+
+    const content = window.outputEditor.getValue();
+    if (!content.trim()) {
+      alert('No output content to copy');
+      return;
+    }
+
+    navigator.clipboard
+      .writeText(content)
+      .then(() => {
+        //console.log('Output copied to clipboard');
+
+        // Show success feedback on the button
+        if (copyButton) {
+          copyButton.classList.add('copy-success');
+          setTimeout(() => {
+            copyButton.classList.remove('copy-success');
+          }, 800);
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to copy output:', err);
+        alert('Failed to copy: ' + err.message);
+      });
   }
 
   /**
    * Save output G-code to file
    */
   saveOutput() {
+    // Find the export/save button to show loading on it
+    const exportButton = document.querySelector(
+      'button[onclick*="saveOutput"], button[title*="Save output"]'
+    );
+
     if (
       !window.outputEditor ||
       typeof window.outputEditor.getValue !== 'function'
@@ -387,8 +411,22 @@ class FileOperations {
       return;
     }
 
+    // Show loading on the export button
+    let restoreButton = null;
+    if (exportButton && window.navigationManager) {
+      restoreButton = window.navigationManager.showButtonLoading(
+        exportButton,
+        'Exporting...'
+      );
+    }
+
     // Get last opened filename for suggestion
-    const lastFilename = localStorage.getItem('ggcode_last_filename') || '';
+    let lastFilename = '';
+    try {
+      lastFilename = localStorage.getItem('ggcode_last_filename') || '';
+    } catch (error) {
+      console.warn('Failed to get filename from storage:', error);
+    }
 
     // Generate suggested filename
     let suggestedFilename = '';
@@ -405,7 +443,10 @@ class FileOperations {
 
     // Prompt user for filename
     const userFilename = window.prompt('Save G-code as:', suggestedFilename);
-    if (!userFilename) return; // User cancelled
+    if (!userFilename) {
+      if (restoreButton) restoreButton();
+      return; // User cancelled
+    }
 
     try {
       // Create and download file
@@ -423,6 +464,9 @@ class FileOperations {
     } catch (error) {
       console.error('Failed to save output:', error);
       alert('Failed to save file: ' + error.message);
+    } finally {
+      // Always restore the button state
+      if (restoreButton) restoreButton();
     }
   }
 
@@ -430,6 +474,11 @@ class FileOperations {
    * Save GGcode input to file
    */
   saveGGcode() {
+    // Find the save button to show loading on it
+    const saveButton = document.querySelector(
+      'button[onclick*="saveGGcode"], button[title*="Save GGcode input"]'
+    );
+
     if (!window.editor || typeof window.editor.getValue !== 'function') {
       alert('No input content available to save');
       return;
@@ -441,24 +490,41 @@ class FileOperations {
       return;
     }
 
-    // Get last opened filename for suggestion
-    const lastFilename = localStorage.getItem('ggcode_last_filename') || '';
-
-    // Generate suggested filename
-    let suggestedFilename =
-      lastFilename && lastFilename.endsWith('.ggcode') ? lastFilename : '';
-    if (!suggestedFilename && lastFilename) {
-      const dot = lastFilename.lastIndexOf('.');
-      suggestedFilename =
-        (dot > 0 ? lastFilename.slice(0, dot) : lastFilename) + '.ggcode';
+    // Show loading on the save button
+    let restoreButton = null;
+    if (saveButton && window.navigationManager) {
+      restoreButton = window.navigationManager.showButtonLoading(
+        saveButton,
+        'Saving...'
+      );
     }
-    if (!suggestedFilename) suggestedFilename = 'input.ggcode';
-
-    // Prompt user for filename
-    const userFilename = window.prompt('Save GGcode as:', suggestedFilename);
-    if (!userFilename) return; // User cancelled
 
     try {
+      // Get last opened filename for suggestion
+      let lastFilename = '';
+      try {
+        lastFilename = localStorage.getItem('ggcode_last_filename') || '';
+      } catch (error) {
+        console.warn('Failed to get filename from storage:', error);
+      }
+
+      // Generate suggested filename
+      let suggestedFilename =
+        lastFilename && lastFilename.endsWith('.ggcode') ? lastFilename : '';
+      if (!suggestedFilename && lastFilename) {
+        const dot = lastFilename.lastIndexOf('.');
+        suggestedFilename =
+          (dot > 0 ? lastFilename.slice(0, dot) : lastFilename) + '.ggcode';
+      }
+      if (!suggestedFilename) suggestedFilename = 'input.ggcode';
+
+      // Prompt user for filename
+      const userFilename = window.prompt('Save GGcode as:', suggestedFilename);
+      if (!userFilename) {
+        if (restoreButton) restoreButton();
+        return; // User cancelled
+      }
+
       // Create and download file
       const blob = new Blob([content], { type: 'text/plain' });
       const a = document.createElement('a');
@@ -473,6 +539,9 @@ class FileOperations {
     } catch (error) {
       console.error('Failed to save GGcode:', error);
       alert('Failed to save file: ' + error.message);
+    } finally {
+      // Always restore the button state
+      if (restoreButton) restoreButton();
     }
   }
 

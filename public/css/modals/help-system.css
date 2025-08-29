@@ -1,0 +1,335 @@
+/* ======= CLEAN TWO-SECTION HELP SYSTEM ======= */
+
+/* ===== MODAL LAYOUT ===== */
+.help-modal-layout,
+.ai-chat-main {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===== TOP CONTROLS (ALWAYS VISIBLE) ===== */
+.simple-controls {
+    display: flex;
+    gap: 8px;
+    padding: 8px 16px;
+    background: #2d2d30;
+    border-bottom: 1px solid #3c3c3c;
+    flex-shrink: 0;
+    z-index: 10;
+}
+
+.control-btn {
+    padding: 6px 12px;
+    background: #007acc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+.control-btn:hover {
+    background: #0056b3;
+    transform: translateY(-1px);
+}
+
+.control-btn:active {
+    transform: translateY(0);
+}
+
+/* ===== PANELS LAYOUT CONTAINER ===== */
+.help-panels-container {
+    display: flex;
+    height: calc(100% - 45px);
+    /* Subtract controls height */
+    overflow: hidden;
+}
+
+/* ===== FILE TREE PANEL ===== */
+.file-tree-panel {
+    width: 320px;
+    background: #1e1e1e;
+    border-right: 1px solid #3c3c3c;
+    display: none;
+    flex-shrink: 0;
+    height: 100%;
+}
+
+.file-tree-panel.open {
+    display: block;
+}
+
+.file-tree-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.file-tree-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid #3c3c3c;
+    background: #2d2d30;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.file-tree-header h3 {
+    margin: 0;
+    font-size: 14px;
+    color: #cccccc;
+    font-weight: 600;
+}
+
+.tree-controls .tree-btn {
+    background: transparent;
+    border: 1px solid #3c3c3c;
+    padding: 4px 8px;
+    color: #cccccc;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+.tree-controls .tree-btn:hover {
+    color: #ffffff;
+    border-color: #007acc;
+    background: rgba(0, 122, 204, 0.1);
+}
+
+.file-tree-content {
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* ===== TREE NODES ===== */
+.tree-node {
+    user-select: none;
+    cursor: pointer;
+}
+
+.tree-node:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.tree-node.active {
+    background: rgba(0, 122, 204, 0.1);
+    border-left: 2px solid #007acc;
+}
+
+.tree-node.active .file-name {
+    color: #007acc;
+    font-weight: 500;
+}
+
+.node-content {
+    display: flex;
+    align-items: center;
+    padding: 6px 16px;
+    transition: all 0.2s ease;
+}
+
+.tree-node-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* ===== ICONS ===== */
+.file-icon,
+.folder-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+.folder-name,
+.file-name {
+    font-size: 13px;
+    color: #cccccc;
+    margin-right: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ===== MAIN CONTENT PANEL ===== */
+.help-content-panel {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===== SEARCH ===== */
+.search-container {
+    padding: 12px 16px;
+    background: #2d2d30;
+    border-bottom: 1px solid #3c3c3c;
+}
+
+.search-input {
+    width: 100%;
+    padding: 8px 12px;
+    background: #1e1e1e;
+    border: 1px solid #3c3c3c;
+    border-radius: 4px;
+    color: #cccccc;
+    font-size: 13px;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #007acc;
+}
+
+/* ===== CONTENT AREAS ===== */
+.help-content,
+.md-file-viewer {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+}
+
+.help-content {
+    display: block;
+}
+
+.md-file-viewer {
+    display: none;
+}
+
+/* When in MD viewer mode */
+.help-content-panel.md-mode .help-content {
+    display: none;
+}
+
+.help-content-panel.md-mode .search-container {
+    display: none;
+}
+
+.help-content-panel.md-mode .md-file-viewer {
+    display: block;
+}
+
+/* ===== HELP CONTENT STYLING ===== */
+.help-content {
+    color: #cccccc;
+    line-height: 1.6;
+}
+
+.help-content h3 {
+    color: #007acc;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.help-section-card {
+    background: #2d2d30;
+    border: 1px solid #3c3c3c;
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: all 0.2s ease;
+}
+
+.help-section-card:hover {
+    background: #3c3c3c;
+    border-color: #007acc;
+}
+
+.help-section-title {
+    color: #007acc;
+    font-weight: 600;
+    font-size: 18px;
+    margin: 0 0 16px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #3c3c3c;
+}
+
+.help-section-content {
+    color: #cccccc;
+    line-height: 1.6;
+}
+
+.help-section-content h4 {
+    color: #007acc;
+    font-weight: 500;
+    margin: 20px 0 8px 0;
+    font-size: 16px;
+}
+
+.help-section-content p,
+.help-section-content ul,
+.help-section-content li {
+    margin: 12px 0;
+    line-height: 1.5;
+}
+
+/* ===== MD FILE VIEWER ===== */
+.md-file-viewer .md-file-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #3c3c3c;
+}
+
+.md-file-viewer .md-file-header h4 {
+    margin: 0;
+    color: #007acc;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.md-file-viewer #fileName {
+    color: #ffffff;
+    font-weight: 500;
+}
+
+.md-file-viewer .copy-btn {
+    padding: 4px 8px;
+    background: #007acc;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+.md-file-viewer .copy-btn:hover {
+    background: #0056b3;
+}
+
+.md-file-viewer .md-content-body {
+    line-height: 1.6;
+    color: #cccccc;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .file-tree-overlay {
+        width: 280px;
+        top: 42px;
+        /* Account for sticky controls */
+        height: calc(100% - 42px);
+        transform: translateX(calc(-100% - 10px));
+    }
+
+    .file-tree-overlay.open {
+        transform: translateX(0);
+    }
+}

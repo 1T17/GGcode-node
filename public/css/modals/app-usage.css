@@ -1,0 +1,25 @@
+/* Special Styling for App Usage Section */
+
+.help-section-card[data-section="appUsage"] .list-toggle {
+    background: #4CAF50;
+}
+
+.help-section-card[data-section="appUsage"] .list-toggle:hover {
+    background: #45a049;
+}
+
+.help-section-card[data-section="appUsage"] .list-content {
+    border-left-color: #4CAF50;
+    background: rgba(76, 175, 80, 0.05);
+}
+
+/* Compact Spacing for App Usage Section */
+.help-section-card[data-section="appUsage"] .help-section-content h4 {
+    margin: 16px 0 6px 0;
+    font-size: 15px;
+}
+
+.help-section-card[data-section="appUsage"] .help-section-content p {
+    margin: 8px 0;
+    font-size: 14px;
+}

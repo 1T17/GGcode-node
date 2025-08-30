@@ -36,6 +36,8 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 │   ├── Arc Spiral Pattern.ggcode
 │   ├── array_example.ggcode
 │   ├── array_literals.ggcode
+│   ├── Base10_Dice.ggcode
+│   ├── base10_Digits.ggcode
 │   ├── Basic Arc Commands.ggcode
 │   ├── Basic Square Pocket.ggcode
 │   ├── basic_circle.ggcode

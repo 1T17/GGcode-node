@@ -57,7 +57,7 @@ let dist_val = distance(0, 0, 3, 4)
 let noise_val = noise(1.5)
 
 // Draw a pattern using all the calculated values
-G1 X[center_x + value1] Y[center_y] F1[00]
+G1 X[center_x + value1] Y[center_y] F[100]
 G1 X[center_x + value2] Y[center_y + value3] F[100]
 G1 X[center_x + value4] Y[center_y + value5] F[100]
 G1 X[center_x + value6] Y[center_y + value7] F[100]

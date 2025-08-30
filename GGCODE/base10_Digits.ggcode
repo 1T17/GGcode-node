@@ -1,0 +1,207 @@
+// Seven-Segment Digits Example
+// Creates seven-segment LCD-style digit representations for numbers
+
+note {
+  Seven-Segment Digits Example
+  Creates seven-segment digit representations
+  Demonstrates: Bitwise segment control for each digit
+  Author: GGcode Examples
+  Version: 1.0
+}
+
+// ── G-code File Variables ──
+let id = 5001
+let nline = 1
+let decimalpoint = 4
+
+// Configurable parameters
+let center_x = 0 /// @number -50 50 // Center X coordinate
+let center_y = 0 /// @number -50 50 // Center Y coordinate
+
+// ── Seven-Segment Digits ──
+// Each digit uses size as height; width = size/2
+// Segments: top, mid, bottom, left-top, left-bottom, right-top, right-bottom
+let safe_z = 1 /// @number 1 5 // Safe retract height
+
+let size = 1 /// @number 1 10 // Digit size
+let printme = 12345678910111214 /// @string // Number to print
+let space = 1 /// @number 0.5 3 // Spacing between digits
+
+function seg_top(size) {
+    let w = size/2
+    G0 Z[safe_z] X[center_x - w] Y[center_y + size/2]
+    G0 Z[0]
+    G1 X[center_x + w] Y[center_y + size/2]
+    G0 Z[safe_z]
+}
+
+function seg_mid(size) {
+    let w = size/2
+    G0 Z[safe_z] X[center_x - w] Y[center_y]
+    G0 Z[0]
+    G1 X[center_x + w] Y[center_y]
+    G0 Z[safe_z]
+}
+
+function seg_bottom(size) {
+    let w = size/2
+    G0 Z[safe_z] X[center_x - w] Y[center_y - size/2]
+    G0 Z[0]
+    G1 X[center_x + w] Y[center_y - size/2]
+    G0 Z[safe_z]
+}
+
+function seg_left_top(size) {
+    let h = size/2
+    G0 Z[safe_z] X[center_x - size/2] Y[center_y]
+    G0 Z[0]
+    G1 X[center_x - size/2] Y[center_y + h]
+    G0 Z[safe_z]
+}
+
+function seg_left_bottom(size) {
+    let h = size/2
+    G0 Z[safe_z] X[center_x - size/2] Y[center_y - h]
+    G0 Z[0]
+    G1 X[center_x - size/2] Y[center_y]
+    G0 Z[safe_z]
+}
+
+function seg_right_top(size) {
+    let h = size/2
+    G0 Z[safe_z] X[center_x + size/2] Y[center_y]
+    G0 Z[0]
+    G1 X[center_x + size/2] Y[center_y + h]
+    G0 Z[safe_z]
+}
+
+function seg_right_bottom(size) {
+    let h = size/2
+    
+    G0 Z[safe_z] X[center_x + size/2] Y[center_y - h]
+    G0 Z[0]
+    G1 X[center_x + size/2] Y[center_y]
+    G0 Z[safe_z]
+}
+
+
+
+function print(num, size) {
+    let str = num
+    // Count digits
+    let temp = str
+    let count = 0
+    while temp > 0 {
+
+        temp = floor(temp / 10)
+        count = count + 1
+      //  note {Count digits = [count]}
+    }
+        let newcount = count-1
+    // Extract digits left → right
+    for i = 0..count-1 {
+        let divisor = pow(10, newcount)
+        let digit = floor(str / divisor)
+        digit = digit - floor(digit / 10) * 10   // simulate % 10
+        // Offset per digit
+        let dx = (count - newcount - 1) * (size + space)
+        center_x = dx
+        //note { center_x = [center_x] }
+
+        if digit == 0 { 
+            note { print 0 }
+            seg_top(size)
+            seg_bottom(size)
+            seg_left_top(size)
+            seg_left_bottom(size)
+            seg_right_top(size)
+            seg_right_bottom(size)  }
+
+        if digit == 1 { 
+            note { print 1 }
+            seg_right_top(size)
+            seg_right_bottom(size)  }
+      
+
+        if digit == 2 { 
+            note { print 2 }
+            seg_top(size)
+            seg_mid(size)
+            seg_bottom(size)
+            seg_right_top(size)
+            seg_left_bottom(size) }
+
+
+        if digit == 3 { 
+            note { print 3 }
+            seg_top(size)
+            seg_mid(size)
+            seg_bottom(size)
+            seg_right_top(size)
+            seg_right_bottom(size)  }
+
+
+        if digit == 4 { 
+            note { print 4 }
+            seg_mid(size)
+            seg_left_top(size)
+            seg_right_top(size)
+            seg_right_bottom(size)  }
+
+
+        if digit == 5 { 
+            note { print 5 }
+            seg_top(size)
+            seg_mid(size)
+            seg_bottom(size)
+            seg_left_top(size)
+            seg_right_bottom(size)  }
+
+
+        if digit == 6 { 
+            note { print 6 }
+            seg_top(size)
+            seg_mid(size)
+            seg_bottom(size)
+            seg_left_top(size)
+            seg_left_bottom(size)
+            seg_right_bottom(size)  }
+
+
+        if digit == 7 { 
+            note { print 7 }
+            seg_top(size)
+            seg_right_top(size)
+            seg_right_bottom(size)  }
+
+
+        if digit == 8 { 
+            note { print 8 }
+            seg_top(size)
+            seg_mid(size)
+            seg_bottom(size)
+            seg_left_top(size)
+            seg_left_bottom(size)
+            seg_right_top(size)
+            seg_right_bottom(size)  }
+
+
+        if digit == 9 { 
+            note { print 9 }
+            seg_top(size)
+            seg_mid(size)
+            seg_bottom(size)
+            seg_left_top(size)
+            seg_right_top(size)
+            seg_right_bottom(size)  }
+
+
+        newcount = newcount-1
+    }
+}
+
+print(printme, size)
+// Return to origin
+center_x = 0
+center_y = 0
+G0 X[center_x] Y[center_y]

@@ -154,39 +154,6 @@ fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
 git add package.json
 echo -e "${GREEN}✅ Version: v$CURRENT_VERSION → v$NEW_VERSION${NC}"
 
-# Create version backup zip
-echo "Creating version backup..."
-VERSIONS_DIR="versions"
-mkdir -p "$VERSIONS_DIR"
-
-# Create zip filename with timestamp
-TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-ZIP_NAME="ggcode-v${NEW_VERSION}_${TIMESTAMP}.zip"
-ZIP_PATH="$VERSIONS_DIR/$ZIP_NAME"
-
-# Create zip excluding unnecessary files
-zip -r "$ZIP_PATH" . \
-  -x "node_modules/*" \
-  -x ".git/*" \
-  -x "coverage/*" \
-  -x ".nyc_output/*" \
-  -x "versions/*" \
-  -x "*.log" \
-  -x ".DS_Store" \
-  -x "*.tmp" \
-  >/dev/null 2>&1
-
-if [ -f "$ZIP_PATH" ]; then
-    ZIP_SIZE=$(du -h "$ZIP_PATH" | cut -f1)
-    echo -e "${GREEN}✅ Version backup: $ZIP_NAME ($ZIP_SIZE)${NC}"
-    
-    # Add versions folder to git (but not the zip files themselves)
-    echo "versions/" >> .gitignore 2>/dev/null || true
-    git add .gitignore 2>/dev/null || true
-else
-    echo -e "${YELLOW}⚠️  Failed to create version backup${NC}"
-fi
-
 # Quick documentation updates (optional)
 echo -e "${BLUE}📚 Quick Updates${NC}"
 read -p "Update docs? (Y/n): " UPDATE_DOCS
@@ -270,7 +237,45 @@ if [[ ! $PUSH_CHANGES =~ ^[Nn]$ ]]; then
 fi
 
 echo ""
+# Create version backup zip AFTER everything is committed
+echo -e "${BLUE}📦 Creating version backup...${NC}"
+VERSIONS_DIR="versions"
+mkdir -p "$VERSIONS_DIR"
+
+# Create zip filename with timestamp
+TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+ZIP_NAME="ggcode-v${NEW_VERSION}_${TIMESTAMP}.zip"
+ZIP_PATH="$VERSIONS_DIR/$ZIP_NAME"
+
+# Create zip excluding unnecessary files
+zip -r "$ZIP_PATH" . \
+  -x "node_modules/*" \
+  -x ".git/*" \
+  -x "coverage/*" \
+  -x ".nyc_output/*" \
+  -x "versions/*" \
+  -x "*.log" \
+  -x ".DS_Store" \
+  -x "*.tmp" \
+  >/dev/null 2>&1
+
+if [ -f "$ZIP_PATH" ]; then
+    ZIP_SIZE=$(du -h "$ZIP_PATH" | cut -f1)
+    echo -e "${GREEN}✅ Version backup: $ZIP_NAME ($ZIP_SIZE)${NC}"
+    
+    # Add versions folder to gitignore if not already there
+    if ! grep -q "^versions/" .gitignore 2>/dev/null; then
+        echo "versions/" >> .gitignore
+        echo -e "${GREEN}✅ Added versions/ to .gitignore${NC}"
+    fi
+else
+    echo -e "${YELLOW}⚠️  Failed to create version backup${NC}"
+fi
+
+echo ""
 echo -e "${GREEN}🎉 Smart commit workflow completed!${NC}"
 echo "Commit: $COMMIT_HASH"
 echo "Branch: $CURRENT_BRANCH"
+echo "Version: v$NEW_VERSION"
 echo "Message: $COMMIT_MSG"
+echo "Backup: $ZIP_NAME"

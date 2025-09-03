@@ -1,6 +1,6 @@
 {
   "name": "ggcode-compiler",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "GGcode Compiler - A web-based compiler for GGcode to G-code conversion",
   "main": "src/server/index.js",
   "scripts": {

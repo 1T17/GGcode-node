@@ -263,8 +263,6 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 │   ├── setup.js
 │   └── smoke-tests.json
 ├── versions/
-│   ├── ggcode-v1.0.3_20250903_011432.zip
-│   └── ggcode-v1.0.4_20250903_011626.zip
 ├── views/ # EJS templates
 │   ├── layouts/
 │   │   └── main.ejs

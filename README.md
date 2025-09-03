@@ -262,6 +262,8 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 │   ├── run-ai-tests.js
 │   ├── setup.js
 │   └── smoke-tests.json
+├── versions/
+│   └── ggcode-v1.0.3_20250903_011432.zip
 ├── views/ # EJS templates
 │   ├── layouts/
 │   │   └── main.ejs
@@ -291,7 +293,6 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 ├── README.md
 ├── server.log
 ├── setup.sh
-├── syntax-test.ggcode
 ├── USAGE.md
 └── webpack.config.js
 ```

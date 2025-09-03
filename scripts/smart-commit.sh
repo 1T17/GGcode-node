@@ -239,7 +239,7 @@ fi
 echo ""
 # Create version backup zip AFTER everything is committed
 echo -e "${BLUE}📦 Creating version backup...${NC}"
-VERSIONS_DIR="versions"
+VERSIONS_DIR="VERSIONS"
 mkdir -p "$VERSIONS_DIR"
 
 # Create zip filename with timestamp
@@ -253,7 +253,7 @@ zip -r "$ZIP_PATH" . \
   -x ".git/*" \
   -x "coverage/*" \
   -x ".nyc_output/*" \
-  -x "versions/*" \
+  -x "VERSIONS/*" \
   -x "*.log" \
   -x ".DS_Store" \
   -x "*.tmp" \
@@ -263,10 +263,10 @@ if [ -f "$ZIP_PATH" ]; then
     ZIP_SIZE=$(du -h "$ZIP_PATH" | cut -f1)
     echo -e "${GREEN}✅ Version backup: $ZIP_NAME ($ZIP_SIZE)${NC}"
     
-    # Add versions folder to gitignore if not already there
-    if ! grep -q "^versions/" .gitignore 2>/dev/null; then
-        echo "versions/" >> .gitignore
-        echo -e "${GREEN}✅ Added versions/ to .gitignore${NC}"
+    # Add VERSIONS folder to gitignore if not already there
+    if ! grep -q "^VERSIONS/" .gitignore 2>/dev/null; then
+        echo "VERSIONS/" >> .gitignore
+        echo -e "${GREEN}✅ Added VERSIONS/ to .gitignore${NC}"
     fi
 else
     echo -e "${YELLOW}⚠️  Failed to create version backup${NC}"

@@ -1,4 +1,5 @@
 # Dependencies
+
 node_modules/
 npm-debug.log*
 yarn-debug.log*
@@ -16,7 +17,7 @@ coverage/
 
 .kiro/
 
-
+versions/
 
 # Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
@@ -171,3 +172,4 @@ Desktop.ini
 # Temporary test files
 test-*.txt
 *.tmpversions/
+versions/

@@ -1,34 +1,38 @@
-// Professional Gear Generator
+// Gear Generator
 // Creates gears with proper involute tooth profiles and configurable parameters
 
 note {
-  Professional Gear Generator
+  Gear Generator
   Creates gears with proper involute tooth profiles and configurable parameters
   Demonstrates: Advanced gear design with involute curves and tool compensation
   Author: GGcode Examples
-  Version: 1.0
+  Version: 1.1
 }
 
 // ── G-code File Variables ──
-let id = 4453            // File ID
-let nline = 1            // Line numbering: 1 = enabled, 0 = disabled
-let decimalpoint = 3     // Number of decimal places (range: 0–6)
+let id = 4453                 // File ID
+let nline = 1                 // Line numbering: 1 = enabled, 0 = disabled
+let decimalpoint = 3          // Number of decimal places (range: 0–6)
+
+   
+// === Configurable Parameters === 
+let center_x = 0              /// @number -50 50   // Center X coordinate
+let center_y = 0              /// @number -50 50   // Center Y coordinate
+let teeth_count = 64          /// @768678 8 128    // Number of teeth
+let module_size = 1.5         /// @number 0.5 5    // Module size (tooth size)
+let pressure_angle_deg = 10   /// @number 14.5 25  // Pressure angle (degrees)
+let feed_rate = 150           /// @number 50 300   // Feed rate in mm/min
+let z_depth = -0.2            /// @number -5 0     // Z cutting depth
+let z_safe = 1                /// @number 1 5      // Safe Z height
+let passes = 5                /// @number 1 1000   // Number of depth passes
+let flank_steps = 20          /// @number 10 50    // Steps per tooth flank
+let arc_steps = 17            /// @number 10 30    // Steps per root arc
+
+// === Cut shaft hole first (simple circle with G1) ===
+let shaft_radius = 40         /// @number 1 300    // shaft radius 
+let shaft_steps = 100         /// @number 1 300    // shaft steps 
 
 
-// === Configurable Parameters ===
-let center_x = 0 /// @number -50 50 // Center X coordinate
-let center_y = 0 /// @number -50 50 // Center Y coordinate
-let teeth_count = 64 /// @number 8 128 // Number of teeth
-let module_size = 1.5 /// @number 0.5 5 // Module size (tooth size)
-let pressure_angle_deg = 10 /// @number 14.5 25 // Pressure angle (degrees)
-let feed_rate = 150 /// @number 50 300 // Feed rate in mm/min
-let z_depth = -0.2 /// @number -5 0 // Z cutting depth
-let z_safe = 1 /// @number 1 5 // Safe Z height
-
-let passes = 40 /// @number 1 1000 // Number of depth passes
-
-let flank_steps = 20 /// @number 10 50 // Steps per tooth flank
-let arc_steps = 17 /// @number 10 30 // Steps per root arc
 
 // === Calculated Gear Dimensions ===
 let pressure_angle = pressure_angle_deg * DEG_TO_RAD
@@ -39,9 +43,7 @@ let dedendum = 1.25 * module_size
 let outer_radius = pitch_radius + addendum
 let root_radius = pitch_radius - dedendum
 
-// === Cut shaft hole first (simple circle with G1) ===
-let shaft_radius = 40 /// @number 1 300 // shaft radius 
-let shaft_steps = 100 
+
 
 // === Move to safe height and center ===
 G0 Z[z_safe]
@@ -67,10 +69,7 @@ for i = 0..shaft_steps {
 
 G0 Z[z_safe]
 
-
-
-
-    let start = 0
+let start = 0
 // === Generate Gear Teeth with Multiple Passes ===
 for pass = 0..passes {
     let current_z = z_depth * (pass)
@@ -97,12 +96,12 @@ for pass = 0..passes {
             let x_start = center_x + x0 * cos(rot) - y0 * sin(rot)
             let y_start = center_y + x0 * sin(rot) + y0 * cos(rot)
             
-if start == 0 {
-            G0 X[x_start] Y[y_start]
-            start = 1
-let root_x_start = x_start
-let root_y_start = y_start
-}
+            if start == 0 {
+                G0 X[x_start] Y[y_start]
+                start = 1
+                let root_x_start = x_start
+                let root_y_start = y_start
+            }
             // Move to tooth start
             G1 X[x_start] Y[y_start]
             G1 Z[current_z] F[feed_rate]
@@ -144,7 +143,6 @@ let root_y_start = y_start
     }
    G1 X[root_x_start] Y[root_y_start]
 }
-
 
 // === Return to safe height and center ===
 G0 Z[z_safe]

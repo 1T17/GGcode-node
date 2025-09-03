@@ -328,6 +328,34 @@ class ThemeLoader {
         foreground: this.extractHex(colors.comment),
         fontStyle: 'italic',
       },
+
+      // Triple-slash configurator comments
+      {
+        token: 'comment.configurator.triple-slash',
+        foreground: this.extractHex(colors.configuratorTripleSlash),
+        fontStyle: 'bold',
+      },
+      {
+        token: 'keyword.annotation.configurator',
+        foreground: this.extractHex(colors.configuratorAnnotation),
+        fontStyle: 'bold',
+      },
+      {
+        token: 'constant.numeric.range.configurator',
+        foreground: this.extractHex(colors.configuratorRange),
+      },
+      {
+        token: 'comment.description.configurator',
+        foreground: this.extractHex(colors.configuratorDescription),
+        fontStyle: 'italic',
+      },
+
+      // Note content
+      {
+        token: 'note-content',
+        foreground: this.extractHex(colors.noteContent),
+      },
+
       { token: 'variable', foreground: this.extractHex(colors.variable) },
       {
         token: 'variable-declaration',

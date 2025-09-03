@@ -350,6 +350,9 @@ class MonacoEditorManager {
     // Other M-codes - Default M-code color
     tokenizerRules.push([/\bM\d+\b/, 'mcode']);
 
+    // Note blocks - handle note keyword and content within braces (BEFORE general keywords)
+    tokenizerRules.push([/\bnote\s*\{/, 'keyword', '@noteBlock']);
+
     // Dynamic patterns using loaded JSON data (keywords come after G-codes)
     tokenizerRules.push([keywordPattern, 'keyword']);
     tokenizerRules.push([constantPattern, 'constant']);
@@ -385,11 +388,15 @@ class MonacoEditorManager {
       'number',
     ]);
 
-    // Comments using JSON comment patterns
+    // Triple-slash configurator comments - use simple approach
     tokenizerRules.push([
-      new RegExp(`${tokenizerConfig.commentPatterns.lineComment}.*$`),
-      'comment',
-    ]);
+      /\/\/\/\s*/,
+      'comment.configurator.triple-slash',
+      '@configuratorComment',
+    ]); // eslint-disable-line no-useless-escape
+
+    // Regular double-slash comments (not triple)
+    tokenizerRules.push([/\/\/(?!\/)/, 'comment', '@lineComment']); // eslint-disable-line no-useless-escape
     tokenizerRules.push([
       new RegExp(`${tokenizerConfig.commentPatterns.blockCommentStart}.*$`),
       'comment',
@@ -428,6 +435,24 @@ class MonacoEditorManager {
           [new RegExp(`.*${blockEndPattern}`), 'comment', '@pop'],
           [/.*$/, 'comment'],
         ],
+
+        configuratorComment: [
+          [/@\w+/, 'keyword.annotation.configurator'],
+          [
+            /[-+]?\d*\.?\d+(?:\s+[-+]?\d*\.?\d+)*/,
+            'constant.numeric.range.configurator',
+          ], // Match numeric ranges like "-50 50" or "8 128"
+          [/[^/\s]+/, 'constant.numeric.range.configurator'], // Match other non-whitespace tokens
+          [/\/\/.*$/, 'comment.description.configurator', '@pop'], // eslint-disable-line no-useless-escape
+          [/$/, '', '@pop'],
+        ],
+
+        noteBlock: [
+          [/\}/, 'keyword', '@pop'], // Closing brace exits note block
+          [/.*$/, 'note-content'], // Each line inside note block gets note-content color
+        ],
+
+        lineComment: [[/.*$/, 'comment', '@pop']],
       },
     });
   }

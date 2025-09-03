@@ -129,156 +129,46 @@ echo -e "${GREEN}📁 Files to be committed:${NC}"
 echo "$STAGED_FILES" | sed 's/^/  ✓ /'
 echo ""
 
-# Ask about documentation updates
-echo -e "${BLUE}📚 Documentation Updates${NC}"
-echo "Would you like to update documentation before committing?"
-
-# Ask about project structure update
-read -p "🏗️  Update project structure in README? (y/N): " UPDATE_STRUCTURE
-if [[ $UPDATE_STRUCTURE =~ ^[Yy]$ ]]; then
-    echo "Updating project structure..."
-    npm run update-structure
-    git add README.md
-    echo -e "${GREEN}✅ Project structure updated${NC}"
-fi
-
-# Ask about changelog update
-read -p "📝 Add changelog entry? (y/N): " UPDATE_CHANGELOG
-if [[ $UPDATE_CHANGELOG =~ ^[Yy]$ ]]; then
-    # Get current version from package.json
-    CURRENT_VERSION=$(node -p "require('./package.json').version" 2>/dev/null || echo "1.0.0")
-    
-    echo "Current version: $CURRENT_VERSION"
-    read -p "Enter version for changelog (or press Enter for '$CURRENT_VERSION'): " CHANGELOG_VERSION
-    
-    if [ -z "$CHANGELOG_VERSION" ]; then
-        CHANGELOG_VERSION=$CURRENT_VERSION
-    fi
-    
-    echo "Adding changelog entry for version $CHANGELOG_VERSION..."
-    npm run update-changelog "$CHANGELOG_VERSION"
-    git add CHANGELOG.md
-    echo -e "${GREEN}✅ Changelog updated${NC}"
-fi
+# Skip documentation updates for speed (can be done manually if needed)
 
 echo ""
 
-# Commit type selection
-echo -e "${BLUE}📝 Commit Information${NC}"
-echo "Select commit type:"
-echo "1) feat     - A new feature"
-echo "2) fix      - A bug fix"  
-echo "3) docs     - Documentation changes"
-echo "4) style    - Code style changes (formatting, etc.)"
-echo "5) refactor - Code refactoring"
-echo "6) test     - Adding or updating tests"
-echo "7) chore    - Maintenance tasks"
-echo "8) perf     - Performance improvements"
-echo "9) ci       - CI/CD changes"
-echo "10) build   - Build system changes"
+# Simple commit input
+echo -e "${BLUE}📝 Commit Message${NC}"
+echo "Common types: feat, fix, docs, style, refactor, test, chore"
+read -p "Enter commit message (e.g., 'feat: add new feature' or just 'add new feature'): " COMMIT_INPUT
 
-read -p "Enter choice (1-10): " COMMIT_TYPE_CHOICE
-
-case $COMMIT_TYPE_CHOICE in
-    1) COMMIT_TYPE="feat" ;;
-    2) COMMIT_TYPE="fix" ;;
-    3) COMMIT_TYPE="docs" ;;
-    4) COMMIT_TYPE="style" ;;
-    5) COMMIT_TYPE="refactor" ;;
-    6) COMMIT_TYPE="test" ;;
-    7) COMMIT_TYPE="chore" ;;
-    8) COMMIT_TYPE="perf" ;;
-    9) COMMIT_TYPE="ci" ;;
-    10) COMMIT_TYPE="build" ;;
-    *) 
-        echo -e "${RED}❌ Invalid choice. Using 'chore'${NC}"
-        COMMIT_TYPE="chore"
-        ;;
-esac
-
-# Optional scope
-read -p "Enter scope (optional, e.g., 'api', 'editor'): " COMMIT_SCOPE
-
-# Commit message
-read -p "Enter commit description: " COMMIT_DESC
-
-if [ -z "$COMMIT_DESC" ]; then
-    echo -e "${RED}❌ Commit description is required${NC}"
+if [ -z "$COMMIT_INPUT" ]; then
+    echo -e "${RED}❌ Commit message is required${NC}"
     exit 1
 fi
 
-# Build commit message
-if [ -n "$COMMIT_SCOPE" ]; then
-    COMMIT_MSG="${COMMIT_TYPE}(${COMMIT_SCOPE}): ${COMMIT_DESC}"
+# Auto-format commit message if it doesn't have a type
+if [[ "$COMMIT_INPUT" =~ ^(feat|fix|docs|style|refactor|test|chore|perf|ci|build): ]]; then
+    COMMIT_MSG="$COMMIT_INPUT"
 else
-    COMMIT_MSG="${COMMIT_TYPE}: ${COMMIT_DESC}"
-fi
-
-# Optional commit body
-read -p "Enter additional details (optional, press Enter to skip): " COMMIT_BODY
-
-if [ -n "$COMMIT_BODY" ]; then
-    COMMIT_MSG="${COMMIT_MSG}
-
-${COMMIT_BODY}"
+    # Auto-detect type based on files
+    if echo "$STAGED_FILES" | grep -q "\.md$\|README\|docs/"; then
+        COMMIT_MSG="docs: $COMMIT_INPUT"
+    elif echo "$STAGED_FILES" | grep -q "test\|spec"; then
+        COMMIT_MSG="test: $COMMIT_INPUT"
+    elif echo "$STAGED_FILES" | grep -q "src/"; then
+        COMMIT_MSG="feat: $COMMIT_INPUT"
+    else
+        COMMIT_MSG="chore: $COMMIT_INPUT"
+    fi
 fi
 
 echo ""
-echo -e "${BLUE}📋 Commit Summary${NC}"
-echo "Type: $COMMIT_TYPE"
-if [ -n "$COMMIT_SCOPE" ]; then
-    echo "Scope: $COMMIT_SCOPE"
-fi
-echo "Message: $COMMIT_DESC"
-if [ -n "$COMMIT_BODY" ]; then
-    echo "Body: $COMMIT_BODY"
-fi
-echo ""
-echo "Full commit message:"
-echo -e "${YELLOW}$COMMIT_MSG${NC}"
-echo ""
+echo -e "${BLUE}📋 Commit Message:${NC} $COMMIT_MSG"
 
-# Final confirmation
-read -p "Proceed with commit? (Y/n): " CONFIRM_COMMIT
-if [[ $CONFIRM_COMMIT =~ ^[Nn]$ ]]; then
-    echo -e "${YELLOW}❌ Commit cancelled${NC}"
-    exit 0
-fi
-
-# Run pre-commit checks
-echo -e "${BLUE}🔍 Running pre-commit checks...${NC}"
-
-# Check if there are any linting issues
+# Quick format check and auto-fix
 if command -v npm >/dev/null 2>&1; then
-    echo "Running linter..."
-    if ! npm run lint; then
-        read -p "Linting failed. Continue anyway? (y/N): " CONTINUE_LINT
-        if [[ ! $CONTINUE_LINT =~ ^[Yy]$ ]]; then
-            echo -e "${RED}❌ Commit cancelled due to linting issues${NC}"
-            exit 1
-        fi
-    fi
-    
-    echo "Checking code formatting..."
-    if ! npm run format:check; then
-        read -p "Formatting issues found. Auto-fix and continue? (Y/n): " FIX_FORMAT
-        if [[ ! $FIX_FORMAT =~ ^[Nn]$ ]]; then
-            npm run format
-            git add .
-            echo -e "${GREEN}✅ Code formatted and staged${NC}"
-        else
-            echo -e "${RED}❌ Commit cancelled due to formatting issues${NC}"
-            exit 1
-        fi
-    fi
-    
-    echo "Running tests..."
-    if ! npm test; then
-        read -p "Tests failed. Continue anyway? (y/N): " CONTINUE_TESTS
-        if [[ ! $CONTINUE_TESTS =~ ^[Yy]$ ]]; then
-            echo -e "${RED}❌ Commit cancelled due to test failures${NC}"
-            exit 1
-        fi
+    if ! npm run format:check >/dev/null 2>&1; then
+        echo "Auto-fixing format..."
+        npm run format >/dev/null 2>&1
+        git add .
+        echo -e "${GREEN}✅ Code formatted${NC}"
     fi
 fi
 

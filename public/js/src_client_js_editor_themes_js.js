@@ -330,6 +330,23 @@ var ThemeManager = /*#__PURE__*/function () {
             token: 'comment',
             foreground: '#577834',
             fontStyle: 'italic'
+          },
+          // Triple-slash configurator comments
+          {
+            token: 'comment.configurator.triple-slash',
+            foreground: '569CD6',
+            fontStyle: 'bold'
+          }, {
+            token: 'keyword.annotation.configurator',
+            foreground: 'C586C0',
+            fontStyle: 'bold'
+          }, {
+            token: 'constant.numeric.range.configurator',
+            foreground: 'B5CEA8'
+          }, {
+            token: 'comment.description.configurator',
+            foreground: '6A9955',
+            fontStyle: 'italic'
           }, {
             token: 'variable',
             foreground: 'ffaa00'

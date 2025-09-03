@@ -61,7 +61,7 @@ class Application {
       const helpContentPath = config.get('paths.helpContent');
       this.services.helpContent = new HelpContentService(helpContentPath);
 
-      console.log('Services initialized successfully');
+      //console.log('Services initialized successfully');
     } catch (error) {
       console.error('Failed to initialize services:', error);
       throw error;
@@ -156,15 +156,12 @@ class Application {
           return;
         }
 
-        console.log(`
- _____ _____           _                  _        __ _____ 
-|   __|   __|___ ___ _| |___    ___ ___ _| |___ __|  |   __|
-|  |  |  |  |  _| . | . | -_|  |   | . | . | -_|  |  |__   |
-|_____|_____|___|___|___|___|  |_|_|___|___|___|_____|_____|                                                                                                  
-        `);
-        console.log(`Server running at http://${host}:${port}`);
-        console.log(`Environment: ${config.getEnvironment()}`);
-
+        console.log(` \x1b[96m\x1b[1m░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+ \x1b[92m\x1b[1m░░█▀▀░█▀▀░█▀▀░█▀█░█▀▄░█▀▀░░░\x1b[93m\x1b[1m█▀█░█▀█░█▀▄░█▀▀░▀▀█░█▀▀░░
+ \x1b[92m\x1b[1m░░█░█░█░█░█░░░█░█░█░█░█▀▀░░░\x1b[93m\x1b[1m█░█░█░█░█░█░█▀▀░░░█░▀▀█░░
+ \x1b[92m\x1b[1m░░▀▀▀░▀▀▀░▀▀▀░▀▀▀░▀▀░░▀▀▀░░░\x1b[93m\x1b[1m▀░▀░▀▀▀░▀▀░░▀▀▀░▀▀░░▀▀▀░░\x1b[0m
+ \x1b[93m\x1b[1m░░ Server running at : \x1b[95m\x1b[1m\x1b[4mhttp://${host}:${port}/\x1b[0m\x1b[96m\x1b[1m░░░░░░░░░░
+ \x1b[93m\x1b[1m░░ Environment: \x1b[91m\x1b[1m\x1b[3m${config.getEnvironment()}\x1b[0m\x1b[96m\x1b[1m░░░░░░░░░░░░░░░░░░░░\x1b[97m\x1b[1mv1.1.1\x1b[96m\x1b[1m░\x1b[0m`);
         resolve();
       });
     });

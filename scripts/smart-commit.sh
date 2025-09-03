@@ -129,7 +129,27 @@ echo -e "${GREEN}📁 Files to be committed:${NC}"
 echo "$STAGED_FILES" | sed 's/^/  ✓ /'
 echo ""
 
-# Skip documentation updates for speed (can be done manually if needed)
+# Quick documentation updates (optional)
+echo -e "${BLUE}📚 Quick Updates${NC}"
+read -p "Update docs? (Y/n): " UPDATE_DOCS
+if [[ ! $UPDATE_DOCS =~ ^[Nn]$ ]]; then
+    # Update project structure
+    if [ -f "scripts/update-readme-structure.js" ]; then
+        echo "Updating README structure..."
+        npm run update-structure >/dev/null 2>&1
+        git add README.md 2>/dev/null || true
+        echo -e "${GREEN}✅ README updated${NC}"
+    fi
+    
+    # Update changelog
+    if [ -f "scripts/update-changelog.js" ]; then
+        CURRENT_VERSION=$(node -p "require('./package.json').version" 2>/dev/null || echo "1.0.0")
+        echo "Adding changelog entry for v$CURRENT_VERSION..."
+        npm run update-changelog "$CURRENT_VERSION" >/dev/null 2>&1
+        git add CHANGELOG.md 2>/dev/null || true
+        echo -e "${GREEN}✅ Changelog updated${NC}"
+    fi
+fi
 
 echo ""
 

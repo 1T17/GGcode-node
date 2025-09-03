@@ -27,8 +27,12 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 │   │   └── release.yml
 │   └── markdown-link-check-config.json
 ├── docs/ # Documentation
+│   ├── AI_AGENT_DOCUMENTATION.md
 │   ├── ARCHITECTURE.md
+│   ├── BUILD_DOCUMENTATION.md
+│   ├── COMMANDS.md
 │   ├── DEPLOYMENT.md
+│   ├── LOCALSTORAGE_LOGIC.md
 │   ├── PROJECT_STRUCTURE.md
 │   └── SVG_Path_Commands.md
 ├── GGCODE/ # Example files
@@ -276,14 +280,9 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 ├── .gitignore
 ├── .jsdoc.json
 ├── .prettierrc
-├── AI_AGENT_DOCUMENTATION.md
-├── BUILD_DOCUMENTATION.md
 ├── CHANGELOG.md
-├── COMMANDS.md
 ├── CONTRIBUTING.md
-├── ggcode.js
 ├── libggcode.so
-├── LOCALSTORAGE_LOGIC.md
 ├── MAINTENANCE.md
 ├── nodemon.json
 ├── nohup.out
@@ -292,6 +291,7 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 ├── README.md
 ├── server.log
 ├── setup.sh
+├── syntax-test.ggcode
 ├── USAGE.md
 └── webpack.config.js
 ```

@@ -129,6 +129,31 @@ echo -e "${GREEN}📁 Files to be committed:${NC}"
 echo "$STAGED_FILES" | sed 's/^/  ✓ /'
 echo ""
 
+# Auto-version bump
+CURRENT_VERSION=$(node -p "require('./package.json').version" 2>/dev/null || echo "1.0.0")
+echo -e "${BLUE}📦 Current version: v$CURRENT_VERSION${NC}"
+
+# Auto-increment patch version (1.0.1 → 1.0.2)
+IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
+MAJOR=${VERSION_PARTS[0]}
+MINOR=${VERSION_PARTS[1]}
+PATCH=${VERSION_PARTS[2]}
+NEW_PATCH=$((PATCH + 1))
+NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
+
+echo "Auto-bumping to v$NEW_VERSION..."
+
+# Update package.json version
+node -e "
+const fs = require('fs');
+const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+pkg.version = '$NEW_VERSION';
+fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+"
+
+git add package.json
+echo -e "${GREEN}✅ Version: v$CURRENT_VERSION → v$NEW_VERSION${NC}"
+
 # Quick documentation updates (optional)
 echo -e "${BLUE}📚 Quick Updates${NC}"
 read -p "Update docs? (Y/n): " UPDATE_DOCS
@@ -141,11 +166,10 @@ if [[ ! $UPDATE_DOCS =~ ^[Nn]$ ]]; then
         echo -e "${GREEN}✅ README updated${NC}"
     fi
     
-    # Update changelog
+    # Update changelog with NEW version
     if [ -f "scripts/update-changelog.js" ]; then
-        CURRENT_VERSION=$(node -p "require('./package.json').version" 2>/dev/null || echo "1.0.0")
-        echo "Adding changelog entry for v$CURRENT_VERSION..."
-        npm run update-changelog "$CURRENT_VERSION" >/dev/null 2>&1
+        echo "Adding changelog entry for v$NEW_VERSION..."
+        npm run update-changelog "$NEW_VERSION" >/dev/null 2>&1
         git add CHANGELOG.md 2>/dev/null || true
         echo -e "${GREEN}✅ Changelog updated${NC}"
     fi
@@ -165,17 +189,17 @@ fi
 
 # Auto-format commit message if it doesn't have a type
 if [[ "$COMMIT_INPUT" =~ ^(feat|fix|docs|style|refactor|test|chore|perf|ci|build): ]]; then
-    COMMIT_MSG="$COMMIT_INPUT"
+    COMMIT_MSG="$COMMIT_INPUT (v$NEW_VERSION)"
 else
     # Auto-detect type based on files
     if echo "$STAGED_FILES" | grep -q "\.md$\|README\|docs/"; then
-        COMMIT_MSG="docs: $COMMIT_INPUT"
+        COMMIT_MSG="docs: $COMMIT_INPUT (v$NEW_VERSION)"
     elif echo "$STAGED_FILES" | grep -q "test\|spec"; then
-        COMMIT_MSG="test: $COMMIT_INPUT"
+        COMMIT_MSG="test: $COMMIT_INPUT (v$NEW_VERSION)"
     elif echo "$STAGED_FILES" | grep -q "src/"; then
-        COMMIT_MSG="feat: $COMMIT_INPUT"
+        COMMIT_MSG="feat: $COMMIT_INPUT (v$NEW_VERSION)"
     else
-        COMMIT_MSG="chore: $COMMIT_INPUT"
+        COMMIT_MSG="chore: $COMMIT_INPUT (v$NEW_VERSION)"
     fi
 fi
 

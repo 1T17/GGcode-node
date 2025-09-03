@@ -281,9 +281,6 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 ├── CHANGELOG.md
 ├── COMMANDS.md
 ├── CONTRIBUTING.md
-├── deploy-and-build.sh
-├── deploy-script.sh
-├── deploy-simple.sh
 ├── ggcode.js
 ├── libggcode.so
 ├── LOCALSTORAGE_LOGIC.md
@@ -292,10 +289,9 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 ├── nohup.out
 ├── package-lock.json
 ├── package.json
-├── quick-problem-fix.sh
 ├── README.md
 ├── server.log
-├── update-all.sh
+├── setup.sh
 ├── USAGE.md
 └── webpack.config.js
 ```

@@ -153,6 +153,7 @@ class Application {
       this.server = this.app.listen(port, host, (err) => {
         if (err) {
           reject(err);
+
           return;
         }
 

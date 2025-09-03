@@ -62,7 +62,7 @@ class CompilationSystem {
         }
       } else {
         if (this.editorManager) {
-          this.editorManager.setOutputValue('Error: ' + result.error);
+          this.editorManager.setOutputValue(result.error);
         }
       }
     } catch (err) {

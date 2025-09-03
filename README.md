@@ -29,7 +29,8 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 ├── docs/ # Documentation
 │   ├── ARCHITECTURE.md
 │   ├── DEPLOYMENT.md
-│   └── PROJECT_STRUCTURE.md
+│   ├── PROJECT_STRUCTURE.md
+│   └── SVG_Path_Commands.md
 ├── GGCODE/ # Example files
 │   ├── advanced patterns.ggcode
 │   ├── advanced_control.ggcode
@@ -63,6 +64,9 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 │   ├── Stair Stringer.ggcode
 │   ├── star.ggcode
 │   ├── start spiral.ggcode
+│   ├── SVG.ggcode
+│   ├── test-arc.ggcode
+│   ├── test-svg-arcs.ggcode
 │   └── True Spiral with Arcs.ggcode
 ├── public/ # Static assets (legacy)
 │   ├── css/
@@ -277,11 +281,9 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 ├── CHANGELOG.md
 ├── COMMANDS.md
 ├── CONTRIBUTING.md
-├── debug-mime-fix.sh
 ├── deploy-and-build.sh
 ├── deploy-script.sh
 ├── deploy-simple.sh
-├── fix-mime-error.sh
 ├── ggcode.js
 ├── libggcode.so
 ├── LOCALSTORAGE_LOGIC.md
@@ -292,16 +294,8 @@ A modern web-based compiler for GGcode to G-code conversion with 3D visualizatio
 ├── package.json
 ├── quick-problem-fix.sh
 ├── README.md
-├── script-test.html
 ├── server.log
-├── simple-deploy.sh
-├── test_dictionary_integration.ggcode
-├── test_functions.ggcode
-├── test_r_f_colcoding.txt
-├── test-mime-server.js
 ├── update-all.sh
-├── update-simple.sh
-├── update.sh
 ├── USAGE.md
 └── webpack.config.js
 ```

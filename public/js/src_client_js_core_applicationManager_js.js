@@ -2094,7 +2094,7 @@ var CompilationSystem = /*#__PURE__*/function () {
                 }
               } else {
                 if (this.editorManager) {
-                  this.editorManager.setOutputValue('Error: ' + result.error);
+                  this.editorManager.setOutputValue(result.error);
                 }
               }
               _context.n = 4;

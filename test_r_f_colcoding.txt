@@ -1,8 +1,0 @@
-Test file for R[radius] and F[feed_rate] color coding:
-
-G01 X10 Y10 Z5 R[radius] F[feed_rate]
-G01 X20 Y20 Z10 R[arc_rad] F[250]
-G02 X30 Y30 I[i_offset] J[j_offset] R[center] F[200]
-R[diameter]
-F[rpm_speed]
-G03 X40 Y40 I5.0 J10.0 R[arc] F[100]

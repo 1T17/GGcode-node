@@ -1,0 +1,28 @@
+// Perfect 1/2 Circle ARC Test
+// Start: (10, 0), End: (-10, 0), Center: (0, 0), Radius: 10
+// Should produce exactly 180-degree arc!
+
+note {
+  Perfect Semicircle Test
+  SVG_A(10, 10, 0, 0, 1, -10, 0)
+}
+
+let safe_z = 2
+let cut_z = -1
+let feed_rate = 1000
+let current_x = 0
+let current_y = 0
+
+// MOVE to start point (10, 0)
+SVG_M(10, 0)
+
+// DRAW perfect 1/2 circle arc to (-10, 0)
+SVG_A(10, 10, 0, 0, 1, -10, 0)
+
+// Clean up
+G0 Z[safe_z]
+G0 X[0] Y[0]
+
+description {
+  Test complete - should see perfect semicircle G1 moves
+}

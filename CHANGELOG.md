@@ -5,6 +5,21 @@ All notable changes to the GGcode Compiler project will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.9] - 2025-09-03
+
+### 🐛 Fixed
+
+- fix: fix (ea39905)
+- fix(api): fix (13f4bec)
+- fix: fix (af6e9a8)
+
+### 🔧 Other
+
+- docs(gg): gg (b42ce30)
+- docs: .ggcode (76dcc7e)
+- style(editor): fix ui (7564ff2)
+
+
 ## [1.0.0] - 2025-08-30
 
 ### 🐛 Fixed

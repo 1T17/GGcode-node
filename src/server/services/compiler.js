@@ -4,6 +4,7 @@ const path = require('path');
 /**
  * CompilerService - Handles GGcode compilation through FFI interface
  * Provides proper error handling and memory management for native library calls
+ * Now includes stderr capture for detailed error messages from native library
  */
 class CompilerService {
   constructor(libPath = null) {
@@ -71,12 +72,13 @@ class CompilerService {
         // Create null-terminated buffer
         const inputBuffer = Buffer.from(cleanInput + '\0', 'utf8');
 
-        // Call native compilation function
-        const outputPtr = this.ggcode.compile_ggcode_from_string(
+        // Execute native compilation
+        const compilationResult = this.ggcode.compile_ggcode_from_string(
           inputBuffer,
           1
         );
 
+        const outputPtr = compilationResult;
         let output = '';
 
         // Handle output pointer safely
@@ -91,8 +93,15 @@ class CompilerService {
         // Free native memory
         this._freeMemory(outputPtr);
 
+        // Check if output looks like an error message
+        if (output.startsWith('; ERROR')) {
+          reject(new Error(output));
+          return;
+        }
+
         resolve(output);
       } catch (error) {
+        // FFI exception occurred - pass through the original error
         reject(new Error(`Compilation failed: ${error.message}`));
       }
     });

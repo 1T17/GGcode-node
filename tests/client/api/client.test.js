@@ -77,10 +77,10 @@ const APIClient = class {
 
   async _handleResponse(response) {
     const contentType = response.headers.get('content-type');
-    
+
     if (!response.ok) {
       let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
-      
+
       try {
         if (contentType && contentType.includes('application/json')) {
           const errorData = await response.json();
@@ -164,8 +164,15 @@ describe('APIClient', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    // Mock console methods to prevent Jest from complaining about unexpected output
+    jest.spyOn(console, 'error').mockImplementation(() => { });
     mockFetch = global.fetch;
     apiClient = new APIClient('http://localhost:3000');
+  });
+
+  afterEach(() => {
+    // Restore console methods
+    console.error.mockRestore();
   });
 
   describe('constructor', () => {
@@ -196,7 +203,7 @@ describe('APIClient', () => {
 
     test('should make GET request', async () => {
       await apiClient.get('/test');
-      
+
       expect(mockFetch).toHaveBeenCalledWith(
         'http://localhost:3000/test',
         expect.objectContaining({
@@ -211,7 +218,7 @@ describe('APIClient', () => {
     test('should make POST request with data', async () => {
       const testData = { key: 'value' };
       await apiClient.post('/test', testData);
-      
+
       expect(mockFetch).toHaveBeenCalledWith(
         'http://localhost:3000/test',
         expect.objectContaining({
@@ -227,7 +234,7 @@ describe('APIClient', () => {
     test('should make PUT request with data', async () => {
       const testData = { key: 'updated' };
       await apiClient.put('/test', testData);
-      
+
       expect(mockFetch).toHaveBeenCalledWith(
         'http://localhost:3000/test',
         expect.objectContaining({
@@ -239,7 +246,7 @@ describe('APIClient', () => {
 
     test('should make DELETE request', async () => {
       await apiClient.delete('/test');
-      
+
       expect(mockFetch).toHaveBeenCalledWith(
         'http://localhost:3000/test',
         expect.objectContaining({
@@ -270,7 +277,7 @@ describe('APIClient', () => {
   describe('_buildRequestConfig', () => {
     test('should build config for GET request', () => {
       const config = apiClient._buildRequestConfig('GET', null, {});
-      
+
       expect(config).toEqual({
         method: 'GET',
         headers: {
@@ -282,7 +289,7 @@ describe('APIClient', () => {
     test('should build config for POST request with JSON data', () => {
       const data = { key: 'value' };
       const config = apiClient._buildRequestConfig('POST', data, {});
-      
+
       expect(config).toEqual({
         method: 'POST',
         headers: {
@@ -299,7 +306,7 @@ describe('APIClient', () => {
         }
       };
       const config = apiClient._buildRequestConfig('GET', null, options);
-      
+
       expect(config.headers).toEqual({
         'Content-Type': 'application/json',
         'Authorization': 'Bearer token123'
@@ -309,7 +316,7 @@ describe('APIClient', () => {
     test('should handle string data for POST request', () => {
       const data = 'raw string data';
       const config = apiClient._buildRequestConfig('POST', data, {});
-      
+
       expect(config.body).toBe(data);
     });
   });
@@ -322,9 +329,9 @@ describe('APIClient', () => {
         headers: new Map([['content-type', 'application/json']]),
         json: () => Promise.resolve({ success: true, data: 'test' }),
       };
-      
+
       const result = await apiClient._handleResponse(mockResponse);
-      
+
       expect(result).toEqual({ success: true, data: 'test' });
     });
 
@@ -335,9 +342,9 @@ describe('APIClient', () => {
         headers: new Map([['content-type', 'text/plain']]),
         text: () => Promise.resolve('plain text response'),
       };
-      
+
       const result = await apiClient._handleResponse(mockResponse);
-      
+
       expect(result).toBe('plain text response');
     });
 
@@ -349,7 +356,7 @@ describe('APIClient', () => {
         headers: new Map([['content-type', 'application/json']]),
         json: () => Promise.resolve({ error: 'Resource not found' }),
       };
-      
+
       await expect(apiClient._handleResponse(mockResponse)).rejects.toThrow(APIError);
       await expect(apiClient._handleResponse(mockResponse)).rejects.toThrow('Resource not found');
     });
@@ -362,7 +369,7 @@ describe('APIClient', () => {
         headers: new Map([['content-type', 'text/plain']]),
         text: () => Promise.resolve('Server error occurred'),
       };
-      
+
       await expect(apiClient._handleResponse(mockResponse)).rejects.toThrow('Server error occurred');
     });
 
@@ -375,7 +382,7 @@ describe('APIClient', () => {
         json: () => Promise.reject(new Error('Invalid JSON')),
         text: () => Promise.resolve(''),
       };
-      
+
       await expect(apiClient._handleResponse(mockResponse)).rejects.toThrow('HTTP 400: Bad Request');
     });
   });
@@ -384,20 +391,20 @@ describe('APIClient', () => {
     test('should handle timeout errors', () => {
       const timeoutError = new Error('Request timeout');
       timeoutError.name = 'AbortError';
-      
+
       expect(() => apiClient._handleError(timeoutError, '/test')).toThrow(APIError);
       expect(() => apiClient._handleError(timeoutError, '/test')).toThrow('Request timeout');
     });
 
     test('should re-throw APIError instances', () => {
       const apiError = new APIError('Custom API error', 400);
-      
+
       expect(() => apiClient._handleError(apiError, '/test')).toThrow(apiError);
     });
 
     test('should wrap network errors in APIError', () => {
       const networkError = new Error('Network connection failed');
-      
+
       expect(() => apiClient._handleError(networkError, '/test')).toThrow(APIError);
       expect(() => apiClient._handleError(networkError, '/test')).toThrow('Network error');
     });
@@ -407,21 +414,21 @@ describe('APIClient', () => {
     test('should abort request after timeout', async () => {
       const client = new APIClient();
       client.setTimeout(100); // 100ms timeout
-      
+
       // Mock AbortController
       const mockAbort = jest.fn();
       global.AbortController = jest.fn(() => ({
         abort: mockAbort,
         signal: { aborted: false }
       }));
-      
+
       // Mock a slow response that gets aborted
       mockFetch.mockImplementation(() => {
         const error = new Error('Request timeout');
         error.name = 'AbortError';
         return Promise.reject(error);
       });
-      
+
       await expect(client.get('/slow-endpoint')).rejects.toThrow('Request timeout');
     });
   });
@@ -429,7 +436,7 @@ describe('APIClient', () => {
   describe('configuration methods', () => {
     test('should set default headers', () => {
       apiClient.setDefaultHeaders({ 'Authorization': 'Bearer token' });
-      
+
       expect(apiClient.defaultHeaders).toEqual({
         'Content-Type': 'application/json',
         'Authorization': 'Bearer token'
@@ -446,7 +453,7 @@ describe('APIClient', () => {
 describe('APIError', () => {
   test('should create error with message and status', () => {
     const error = new APIError('Test error', 404);
-    
+
     expect(error.message).toBe('Test error');
     expect(error.status).toBe(404);
     expect(error.name).toBe('APIError');
@@ -455,7 +462,7 @@ describe('APIError', () => {
   test('should identify network errors', () => {
     const networkError = new APIError('Network failed', 0);
     const httpError = new APIError('Not found', 404);
-    
+
     expect(networkError.isNetworkError()).toBe(true);
     expect(httpError.isNetworkError()).toBe(false);
   });
@@ -463,7 +470,7 @@ describe('APIError', () => {
   test('should identify timeout errors', () => {
     const timeoutError = new APIError('Timeout', 408);
     const otherError = new APIError('Other error', 500);
-    
+
     expect(timeoutError.isTimeoutError()).toBe(true);
     expect(otherError.isTimeoutError()).toBe(false);
   });
@@ -471,7 +478,7 @@ describe('APIError', () => {
   test('should identify client errors (4xx)', () => {
     const clientError = new APIError('Bad request', 400);
     const serverError = new APIError('Server error', 500);
-    
+
     expect(clientError.isClientError()).toBe(true);
     expect(serverError.isClientError()).toBe(false);
   });
@@ -479,7 +486,7 @@ describe('APIError', () => {
   test('should identify server errors (5xx)', () => {
     const serverError = new APIError('Internal error', 500);
     const clientError = new APIError('Not found', 404);
-    
+
     expect(serverError.isServerError()).toBe(true);
     expect(clientError.isServerError()).toBe(false);
   });

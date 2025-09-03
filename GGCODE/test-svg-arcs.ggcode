@@ -1,0 +1,29 @@
+// Test SVG Arcs from Uploaded File
+// Convert: M8 8a48 48 0 0 1 48 48  (arc from (8,8) to (56,56) with r=48)
+//        M8 24a32 32 0 0 1 32 32  (arc from (8,24) to (40,56) with r=32)
+//        M8 40a16 16 0 0 1 16 16  (arc from (8,40) to (24,56) with r=16)
+
+let safe_z = 2
+let cut_z = -1
+let feed_rate = 1000
+let bezier_steps = 20  // More steps for larger arcs
+
+// First arc: 48x48 radius, from (8,8) to (56,56)
+SVG_M(8, 8)
+SVG_A(48, 48, 0, 0, 1, 56, 56)  // large_arc=0, sweep=1
+
+// Second arc: 32x32 radius, from (8,24) to (40,56)
+SVG_M(8, 24)
+SVG_A(32, 32, 0, 0, 1, 40, 56)
+
+// Third arc: 16x16 radius, from (8,40) to (24,56)
+SVG_M(8, 40)
+SVG_A(16, 16, 0, 0, 1, 24, 56)
+
+// Clean up
+G0 Z[safe_z]
+G0 X[0] Y[0]
+
+description {
+  Tested all arcs from SVG file - should see proper elliptical approximations
+}

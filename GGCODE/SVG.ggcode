@@ -1,0 +1,420 @@
+// SVG Path Commands - Master GGcode Implementation
+// Complete toolkit for converting SVG paths to CNC G-code
+// Contains all SVG commands as optimized GGcode functions
+
+note {
+  SVG to GGcode Master File
+  Complete implementation of SVG path commands in GGcode
+  All functions available in one place
+  Author: GGcode SVG Toolkit
+  Version: 2.0
+}
+
+// ── G-code File Variables ──
+let id = 1003
+let nline = 1
+let decimalpoint = 3
+
+// ── Configuration ──
+let safe_z = 2 /// @number 1 10 // Safe Z height (mm)
+let cut_z = -1 /// @number -5 0 // Cutting Z depth (mm)
+let feed_rate = 1000 /// @number 200 3000 // Feed rate (mm/min)
+let bezier_steps = 10 /// @number 5 50 // Bézier/Arc approximation steps
+
+// ── Position Tracking ──
+let current_x = 0
+let current_y = 0
+let path_start_x = 0
+let path_start_y = 0
+
+// ── Initialization Function ──
+function init_position() {
+    current_x = 0
+    current_y = 0
+    G0 Z[safe_z] X[current_x] Y[current_y]
+}
+
+// ============================================================
+// SECTION 1: COMPACT FUNCTIONS (SVG_ prefix)
+// ============================================================
+
+// ── Move Commands ──
+function SVG_M(x, y) {
+    current_x = x
+    current_y = y
+    path_start_x = current_x
+    path_start_y = current_y
+    G0 Z[safe_z] X[current_x] Y[current_y]
+    G0 Z[cut_z]
+}
+
+function SVG_m(dx, dy) {
+    current_x = current_x + dx
+    current_y = current_y + dy
+    path_start_x = current_x
+    path_start_y = current_y
+    G0 Z[safe_z] X[current_x] Y[current_y]
+}
+
+// ── Line Commands ──
+function SVG_L(x, y) {
+    current_x = x
+    current_y = y
+    G1 Z[cut_z] F[feed_rate] X[current_x] Y[current_y]
+}
+
+function SVG_l(dx, dy) {
+    current_x = current_x + dx
+    current_y = current_y + dy
+    G1 Z[cut_z] F[feed_rate] X[current_x] Y[current_y]
+}
+
+// ── Horizontal/Vertical Lines ──
+function SVG_H(x) {
+    current_x = x
+    G1 Z[cut_z] F[feed_rate] X[current_x] Y[current_y]
+}
+
+function SVG_h(dx) {
+    current_x = current_x + dx
+    G1 Z[cut_z] F[feed_rate] X[current_x] Y[current_y]
+}
+
+function SVG_V(y) {
+    current_y = y
+    G1 Z[cut_z] F[feed_rate] X[current_x] Y[current_y]
+}
+
+function SVG_v(dy) {
+    current_y = current_y + dy
+    G1 Z[cut_z] F[feed_rate] X[current_x] Y[current_y]
+}
+
+// ── Close Path ──
+function SVG_Z() {
+    G1 Z[cut_z] F[feed_rate] X[path_start_x] Y[path_start_y]
+    current_x = path_start_x
+    current_y = path_start_y
+}
+
+// ============================================================
+// SECTION 2: CUBIC BEZIER CURVES (with approximation)
+// ============================================================
+
+// ── Note: Bézier curves are approximated using line segments
+// ── The math is calculated directly in the functions for simplicity
+
+function SVG_C(c1x, c1y, c2x, c2y, endx, endy) {
+    let start_x = current_x
+    let start_y = current_y
+
+    G1 Z[cut_z] F[feed_rate]
+
+    for i = 1..bezier_steps {
+        let t = i / bezier_steps
+        let mt = 1 - t
+        let mt2 = mt * mt
+        let mt3 = mt2 * mt
+        let t2 = t * t
+        let t3 = t2 * t
+
+        let x = mt3*start_x + 3*mt2*t*c1x + 3*mt*t2*c2x + t3*endx
+        let y = mt3*start_y + 3*mt2*t*c1y + 3*mt*t2*c2y + t3*endy
+
+        G1 X[x] Y[y] F[feed_rate]
+        current_x = x
+        current_y = y
+    }
+}
+
+function SVG_c(c1dx, c1dy, c2dx, c2dy, enddx, enddy) {
+    SVG_C(current_x + c1dx, current_y + c1dy,
+          current_x + c2dx, current_y + c2dy,
+          current_x + enddx, current_y + enddy)
+}
+
+// ── Smooth Cubic Bézier ──
+function SVG_S(c2x, c2y, endx, endy) {
+    SVG_C(current_x, current_y, c2x, c2y, endx, endy)
+}
+
+function SVG_s(c2dx, c2dy, enddx, enddy) {
+    SVG_c(0, 0, c2dx, c2dy, enddx, enddy)
+}
+
+// ============================================================
+// SECTION 3: QUADRATIC BEZIER CURVES (with approximation)
+// ============================================================
+
+function SVG_Q(cx, cy, endx, endy) {
+    let start_x = current_x
+    let start_y = current_y
+
+    G1 Z[cut_z] F[feed_rate]
+
+    for i = 1..bezier_steps {
+        let t = i / bezier_steps
+        let mt = 1 - t
+        let mt2 = mt * mt
+        let t2 = t * t
+
+        let x = mt2*start_x + 2*mt*t*cx + t2*endx
+        let y = mt2*start_y + 2*mt*t*cy + t2*endy
+
+        G1 X[x] Y[y] F[feed_rate]
+        current_x = x
+        current_y = y
+    }
+}
+
+function SVG_q(cdx, cdy, enddx, enddy) {
+    SVG_Q(current_x + cdx, current_y + cdy,
+          current_x + enddx, current_y + enddy)
+}
+
+// ── Smooth Quadratic Bézier ──
+function SVG_T(endx, endy) {
+    SVG_Q(current_x, current_y, endx, endy)
+}
+
+function SVG_t(enddx, enddy) {
+    SVG_q(0, 0, enddx, enddy)
+}
+
+// ============================================================
+// SECTION 4: ELLIPTICAL ARC (with approximation)
+// ============================================================
+
+function SVG_A(rx, ry, rotation, large_arc_flag, sweep_flag, endx, endy) {
+    // Handle degenerate cases
+    if (rx <= 0 || ry <= 0) {
+        G1 Z[cut_z] F[feed_rate] X[endx] Y[endy]
+        current_x = endx
+        current_y = endy
+    }
+
+    // Calculate center as midpoint (simplified approach)
+    let center_x = (current_x + endx) / 2
+    let center_y = (current_y + endy) / 2
+
+    // Calculate start and end angles from center
+    let start_angle = atan2(current_y - center_y, current_x - center_x)
+    let end_angle = atan2(endy - center_y, endx - center_x)
+
+    // Calculate sweep angle
+    let sweep_angle = end_angle - start_angle
+
+    // Adjust for flags
+    if (sweep_flag == 1 && sweep_angle < 0) {
+        sweep_angle = sweep_angle + 2*PI
+    }
+    if (sweep_flag == 0 && sweep_angle > 0) {
+        sweep_angle = sweep_angle - 2*PI
+    }
+
+    // Large arc flag adjustment
+    if (large_arc_flag == 1) {
+        if (sweep_flag == 1 && sweep_angle < PI) {
+            sweep_angle = sweep_angle + 2*PI
+        }
+        if (sweep_flag == 0 && sweep_angle > -PI) {
+            sweep_angle = sweep_angle - 2*PI
+        }
+    }
+
+    // Draw the arc with proper angles
+    G1 Z[cut_z] F[feed_rate]
+
+    let angle_step = sweep_angle / bezier_steps
+
+    for i = 0..bezier_steps {
+        let angle = start_angle + (i * angle_step)
+        let x = center_x + rx * cos(angle)
+        let y = center_y + ry * sin(angle)
+        G1 X[x] Y[y] F[feed_rate]
+    }
+
+    // Ensure exact endpoint
+    current_x = endx
+    current_y = endy
+    G1 X[current_x] Y[current_y] F[feed_rate]
+}
+
+function SVG_a(rx, ry, rotation, large_arc_flag, sweep_flag, enddx, enddy) {
+    let endx = current_x + enddx
+    let endy = current_y + enddy
+
+    // COMPLETE SVG ELLIPTICAL ARC IMPLEMENTATION - No return, No ^ operators
+
+    // Check if degenerate case
+    let is_degenerate_radii = (rx <= 0 || ry <= 0)
+    let is_same_point = (current_x == endx && current_y == endy)
+
+    if (is_degenerate_radii || is_same_point) {
+        G1 Z[cut_z] F[feed_rate] X[endx] Y[endy]
+        current_x = endx
+        current_y = endy
+    }
+
+    if (!is_degenerate_radii && !is_same_point) {
+        // Step 1: Calculate midpoint and distance
+        let mid_x = (current_x + endx) / 2
+        let mid_y = (current_y + endy) / 2
+        let dx = endx - current_x
+        let dy = endy - current_y
+        let dist = sqrt(dx*dx + dy*dy)
+
+        // Step 2: Scale radii if needed
+        let rx_abs = abs(rx)
+        let ry_abs = abs(ry)
+        let scale = 1
+
+        if (dist > 0) {
+            let dx_over_2rx = dx / (2 * rx_abs)
+            let dy_over_2ry = dy / (2 * ry_abs)
+            let lambda = dx_over_2rx*dx_over_2rx + dy_over_2ry*dy_over_2ry
+            if (lambda > 1) {
+                scale = sqrt(lambda)
+                rx_abs = rx_abs * scale
+                ry_abs = ry_abs * scale
+            }
+        }
+
+        // Step 3: Calculate ellipse center using SVG specification
+        let factor = (large_arc_flag == sweep_flag) ? -1 : 1
+
+        let rx_abs_sq = rx_abs * rx_abs
+        let ry_abs_sq = ry_abs * ry_abs
+        let dx0_sq = (current_x - mid_x) * (current_x - mid_x)
+        let dy0_sq = (current_y - mid_y) * (current_y - mid_y)
+
+        let term1_first = rx_abs_sq * ry_abs_sq - rx_abs_sq * dy0_sq
+        let term1_second = ry_abs_sq * dx0_sq
+        let term1 = term1_first - term1_second
+
+        let dy1_sq = (endy - current_y) * (endy - current_y)
+        let dx1_sq = (endx - current_x) * (endx - current_x)
+
+        let term2 = rx_abs_sq * dy1_sq + ry_abs_sq * dx1_sq
+
+        let center_x = mid_x
+        let center_y = mid_y
+
+        let valid_geometry = (term2 > 0)
+
+        if (valid_geometry) {
+            let coef = factor * sqrt(abs(term1) / term2)
+            center_x = mid_x + coef * ry_abs * dy / (rx_abs * dist)
+            center_y = mid_y - coef * rx_abs * dx / (ry_abs * dist)
+        }
+
+        // Step 4: Calculate start and end angles from the calculated center
+        let start_angle = atan2(current_y - center_y, current_x - center_x)
+        let end_angle = atan2(endy - center_y, endx - center_x)
+
+        // Step 5: Determine sweep angle considering flags
+        let sweep_angle = end_angle - start_angle
+
+        // Step 6: Handle sweep direction (SVG specification)
+        let sweep_clockwise = (sweep_flag == 1)
+        let sweep_negative = (sweep_angle < 0)
+
+        if (sweep_clockwise && sweep_negative) {
+            sweep_angle = sweep_angle + 2*PI
+        }
+        if (!sweep_clockwise && !sweep_negative) {
+            sweep_angle = sweep_angle - 2*PI
+        }
+
+        // Step 7: Handle large arc flag
+        let large_arc_needed = (large_arc_flag == 1)
+        let angle_half_pi = PI / 2
+        let angle_270_deg = 3*PI/2
+
+        if (large_arc_needed) {
+            if (sweep_clockwise && sweep_angle < PI) {
+                sweep_angle = sweep_angle + 2*PI
+            }
+            if (!sweep_clockwise && sweep_angle > -PI) {
+                sweep_angle = sweep_angle - 2*PI
+            }
+        }
+
+        // Step 8: Generate arc points
+        G1 Z[cut_z] F[feed_rate]
+
+        let steps = bezier_steps
+        if (steps < 3) {
+            steps = 3
+        }
+        if (steps > 25) {
+            steps = 25
+        }
+
+        let angle_step = sweep_angle / (steps - 1)
+
+        for i = 0..steps {
+            let current_angle = start_angle + (i * angle_step)
+            let cos_angle = cos(current_angle)
+            let sin_angle = sin(current_angle)
+            let x = center_x + rx_abs * cos_angle
+            let y = center_y + ry_abs * sin_angle
+            G1 X[x] Y[y] F[feed_rate]
+        }
+
+        // Step 9: Ensure exact endpoint
+        current_x = endx
+        current_y = endy
+
+        // Final endpoint command (always executed)
+        G1 X[current_x] Y[current_y] F[feed_rate]
+    }
+}
+
+// ============================================================
+// SECTION 5: COMPLETE USAGE EXAMPLES
+
+// Converted SVG
+let safe_z = 2
+let cut_z = -1
+let feed_rate = 1000
+
+// CIRCLES - convert to bezier approximation
+// Generated from test-clock.svg
+// SVG to GGCode conversion
+
+note {
+  Converted SVG Path
+  Source: test-clock.svg
+  Paths: 3
+}
+
+// SVG functions (copy these to your main file or include GGCODE/SVG.ggcode)
+let safe_z = 2
+let cut_z = -1
+let feed_rate = 1000
+let current_x = 0
+let current_y = 0
+let path_start_x = 0
+let path_start_y = 0
+
+// Include your SVG.ggcode functions here or reference them
+    
+    // Your converted paths:
+    // Path 1
+SVG_M(5.60, 3.20)
+SVG_A(2.40, 2.40, 0, 1, 1, 0.80, 3.20)
+SVG_A(2.40, 2.40, 0, 1, 1, 5.60, 3.20)
+
+// Path 2
+SVG_M(3.20, 1.60)
+SVG_L(3.20, 3.60)
+
+// Path 3
+SVG_M(3.20, 4.40)
+SVG_L(3.20, 4.80)
+    
+    // Clean up
+    G0 Z[safe_z]
+    G0 X[0] Y[0]
+    

@@ -34,6 +34,12 @@ router.post('/api/compile', async (req, res) => {
       code = req.body.ggcode || '';
     }
 
+    console.log('=== API ROUTE DEBUG ===');
+    console.log(
+      'Received code for compilation:',
+      code.substring(0, 100) + '...'
+    );
+
     const output = await compilerService.compile(code);
     res.json({ success: true, output });
   } catch (error) {
